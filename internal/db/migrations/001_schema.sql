@@ -40,3 +40,10 @@ CREATE TABLE gpu_pci_ids (
     FOREIGN KEY (gpu_id) REFERENCES gpus(id) ON DELETE CASCADE,
     UNIQUE (vendor_id, device_id, subsystem_vendor_id, subsystem_device_id)
 );
+
+CREATE TABLE gpu_aliases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    alias TEXT NOT NULL UNIQUE,
+    gpu_id INTEGER NOT NULL,
+    FOREIGN KEY (gpu_id) REFERENCES gpus(id) ON DELETE CASCADE
+);
