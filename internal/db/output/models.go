@@ -8,24 +8,12 @@ import (
 	"database/sql"
 )
 
-type AppleSiliconGpu struct {
-	ID                  int64           `json:"id"`
-	Name                string          `json:"name"`
-	GpuCores            sql.NullInt64   `json:"gpu_cores"`
-	MemoryGb            sql.NullInt64   `json:"memory_gb"`
-	MemoryType          sql.NullString  `json:"memory_type"`
-	MemoryBandwidthGbps sql.NullFloat64 `json:"memory_bandwidth_gbps"`
-	GpuTflops           sql.NullFloat64 `json:"gpu_tflops"`
-	NeuralEngineTops    sql.NullFloat64 `json:"neural_engine_tops"`
-	TdpWatts            sql.NullInt64   `json:"tdp_watts"`
-	ReleaseDate         sql.NullString  `json:"release_date"`
-	Architecture        sql.NullString  `json:"architecture"`
-}
-
 type Gpu struct {
 	ID                  int64           `json:"id"`
+	Vendor              string          `json:"vendor"`
 	Name                string          `json:"name"`
-	VramGb              sql.NullInt64   `json:"vram_gb"`
+	CanonicalName       sql.NullString  `json:"canonical_name"`
+	VramGb              sql.NullFloat64 `json:"vram_gb"`
 	MemoryType          sql.NullString  `json:"memory_type"`
 	MemoryBus           sql.NullInt64   `json:"memory_bus"`
 	Pcie                sql.NullString  `json:"pcie"`
@@ -40,36 +28,21 @@ type Gpu struct {
 	TdpWatts            sql.NullInt64   `json:"tdp_watts"`
 }
 
-type HfModel struct {
-	ID                           int64           `json:"id"`
-	Name                         string          `json:"name"`
-	Provider                     sql.NullString  `json:"provider"`
-	ParameterCount               sql.NullString  `json:"parameter_count"`
-	ParametersRaw                sql.NullInt64   `json:"parameters_raw"`
-	MinRamGb                     sql.NullFloat64 `json:"min_ram_gb"`
-	RecommendedRamGb             sql.NullFloat64 `json:"recommended_ram_gb"`
-	MinVramGb                    sql.NullFloat64 `json:"min_vram_gb"`
-	Quantization                 sql.NullString  `json:"quantization"`
-	Format                       sql.NullString  `json:"format"`
-	ContextLength                sql.NullInt64   `json:"context_length"`
-	UseCase                      sql.NullString  `json:"use_case"`
-	Capabilities                 sql.NullString  `json:"capabilities"`
-	PipelineTag                  sql.NullString  `json:"pipeline_tag"`
-	Architecture                 sql.NullString  `json:"architecture"`
-	HfDownloads                  sql.NullInt64   `json:"hf_downloads"`
-	HfLikes                      sql.NullInt64   `json:"hf_likes"`
-	ReleaseDate                  sql.NullString  `json:"release_date"`
-	NumHiddenLayers              sql.NullInt64   `json:"num_hidden_layers"`
-	NumAttentionHeads            sql.NullInt64   `json:"num_attention_heads"`
-	NumKeyValueHeads             sql.NullInt64   `json:"num_key_value_heads"`
-	HeadDim                      sql.NullInt64   `json:"head_dim"`
-	HiddenSize                   sql.NullInt64   `json:"hidden_size"`
-	VocabSize                    sql.NullInt64   `json:"vocab_size"`
-	MoeIntermediateSize          sql.NullInt64   `json:"moe_intermediate_size"`
-	SharedExpertIntermediateSize sql.NullInt64   `json:"shared_expert_intermediate_size"`
-	IsMoe                        sql.NullBool    `json:"is_moe"`
-	NumExperts                   sql.NullInt64   `json:"num_experts"`
-	ActiveExperts                sql.NullInt64   `json:"active_experts"`
-	ActiveParameters             sql.NullInt64   `json:"active_parameters"`
-	TrustLevel                   string          `json:"trust_level"`
+type GpuPciID struct {
+	ID                int64          `json:"id"`
+	VendorID          string         `json:"vendor_id"`
+	DeviceID          string         `json:"device_id"`
+	SubsystemVendorID sql.NullString `json:"subsystem_vendor_id"`
+	SubsystemDeviceID sql.NullString `json:"subsystem_device_id"`
+	GpuID             int64          `json:"gpu_id"`
+	Source            string         `json:"source"`
+	Confidence        float64        `json:"confidence"`
+}
+
+type User struct {
+	ID        int64         `json:"id"`
+	Username  string        `json:"username"`
+	GpuID     sql.NullInt64 `json:"gpu_id"`
+	CreatedAt sql.NullTime  `json:"created_at"`
+	UpdatedAt sql.NullTime  `json:"updated_at"`
 }

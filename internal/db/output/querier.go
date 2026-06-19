@@ -6,16 +6,10 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
-	GetAllAppleSiliconGPUs(ctx context.Context) ([]AppleSiliconGpu, error)
-	GetAllGPUs(ctx context.Context) ([]Gpu, error)
-	GetAppleSiliconGPUByName(ctx context.Context, name string) (AppleSiliconGpu, error)
 	GetGPUByName(ctx context.Context, name string) (Gpu, error)
-	GetGPUsByArchitecture(ctx context.Context, architecture sql.NullString) ([]Gpu, error)
-	GetGPUsByVRAM(ctx context.Context, vramGb sql.NullInt64) ([]Gpu, error)
 }
 
 var _ Querier = (*Queries)(nil)

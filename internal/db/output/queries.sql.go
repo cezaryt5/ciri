@@ -7,116 +7,10 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
-const getAllAppleSiliconGPUs = `-- name: GetAllAppleSiliconGPUs :many
-SELECT id, name, gpu_cores, memory_gb, memory_type, memory_bandwidth_gbps, gpu_tflops, neural_engine_tops, tdp_watts, release_date, architecture FROM apple_silicon_gpus
-`
-
-func (q *Queries) GetAllAppleSiliconGPUs(ctx context.Context) ([]AppleSiliconGpu, error) {
-	rows, err := q.db.QueryContext(ctx, getAllAppleSiliconGPUs)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []AppleSiliconGpu
-	for rows.Next() {
-		var i AppleSiliconGpu
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.GpuCores,
-			&i.MemoryGb,
-			&i.MemoryType,
-			&i.MemoryBandwidthGbps,
-			&i.GpuTflops,
-			&i.NeuralEngineTops,
-			&i.TdpWatts,
-			&i.ReleaseDate,
-			&i.Architecture,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getAllGPUs = `-- name: GetAllGPUs :many
-SELECT id, name, vram_gb, memory_type, memory_bus, pcie, shading_units, tmus, rops, release_date, architecture, memory_bandwidth_gbps, fp16_tflops, int8_tops, tdp_watts FROM gpus
-`
-
-func (q *Queries) GetAllGPUs(ctx context.Context) ([]Gpu, error) {
-	rows, err := q.db.QueryContext(ctx, getAllGPUs)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Gpu
-	for rows.Next() {
-		var i Gpu
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.VramGb,
-			&i.MemoryType,
-			&i.MemoryBus,
-			&i.Pcie,
-			&i.ShadingUnits,
-			&i.Tmus,
-			&i.Rops,
-			&i.ReleaseDate,
-			&i.Architecture,
-			&i.MemoryBandwidthGbps,
-			&i.Fp16Tflops,
-			&i.Int8Tops,
-			&i.TdpWatts,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getAppleSiliconGPUByName = `-- name: GetAppleSiliconGPUByName :one
-SELECT id, name, gpu_cores, memory_gb, memory_type, memory_bandwidth_gbps, gpu_tflops, neural_engine_tops, tdp_watts, release_date, architecture FROM apple_silicon_gpus WHERE name = ?
-`
-
-func (q *Queries) GetAppleSiliconGPUByName(ctx context.Context, name string) (AppleSiliconGpu, error) {
-	row := q.db.QueryRowContext(ctx, getAppleSiliconGPUByName, name)
-	var i AppleSiliconGpu
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.GpuCores,
-		&i.MemoryGb,
-		&i.MemoryType,
-		&i.MemoryBandwidthGbps,
-		&i.GpuTflops,
-		&i.NeuralEngineTops,
-		&i.TdpWatts,
-		&i.ReleaseDate,
-		&i.Architecture,
-	)
-	return i, err
-}
-
 const getGPUByName = `-- name: GetGPUByName :one
-SELECT id, name, vram_gb, memory_type, memory_bus, pcie, shading_units, tmus, rops, release_date, architecture, memory_bandwidth_gbps, fp16_tflops, int8_tops, tdp_watts FROM gpus WHERE name = ?
+SELECT id, vendor, name, canonical_name, vram_gb, memory_type, memory_bus, pcie, shading_units, tmus, rops, release_date, architecture, memory_bandwidth_gbps, fp16_tflops, int8_tops, tdp_watts FROM gpus WHERE name = ?
 `
 
 func (q *Queries) GetGPUByName(ctx context.Context, name string) (Gpu, error) {
@@ -124,7 +18,9 @@ func (q *Queries) GetGPUByName(ctx context.Context, name string) (Gpu, error) {
 	var i Gpu
 	err := row.Scan(
 		&i.ID,
+		&i.Vendor,
 		&i.Name,
+		&i.CanonicalName,
 		&i.VramGb,
 		&i.MemoryType,
 		&i.MemoryBus,
@@ -140,90 +36,4 @@ func (q *Queries) GetGPUByName(ctx context.Context, name string) (Gpu, error) {
 		&i.TdpWatts,
 	)
 	return i, err
-}
-
-const getGPUsByArchitecture = `-- name: GetGPUsByArchitecture :many
-SELECT id, name, vram_gb, memory_type, memory_bus, pcie, shading_units, tmus, rops, release_date, architecture, memory_bandwidth_gbps, fp16_tflops, int8_tops, tdp_watts FROM gpus WHERE architecture = ?
-`
-
-func (q *Queries) GetGPUsByArchitecture(ctx context.Context, architecture sql.NullString) ([]Gpu, error) {
-	rows, err := q.db.QueryContext(ctx, getGPUsByArchitecture, architecture)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Gpu
-	for rows.Next() {
-		var i Gpu
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.VramGb,
-			&i.MemoryType,
-			&i.MemoryBus,
-			&i.Pcie,
-			&i.ShadingUnits,
-			&i.Tmus,
-			&i.Rops,
-			&i.ReleaseDate,
-			&i.Architecture,
-			&i.MemoryBandwidthGbps,
-			&i.Fp16Tflops,
-			&i.Int8Tops,
-			&i.TdpWatts,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getGPUsByVRAM = `-- name: GetGPUsByVRAM :many
-SELECT id, name, vram_gb, memory_type, memory_bus, pcie, shading_units, tmus, rops, release_date, architecture, memory_bandwidth_gbps, fp16_tflops, int8_tops, tdp_watts FROM gpus WHERE vram_gb >= ? ORDER BY vram_gb
-`
-
-func (q *Queries) GetGPUsByVRAM(ctx context.Context, vramGb sql.NullInt64) ([]Gpu, error) {
-	rows, err := q.db.QueryContext(ctx, getGPUsByVRAM, vramGb)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Gpu
-	for rows.Next() {
-		var i Gpu
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.VramGb,
-			&i.MemoryType,
-			&i.MemoryBus,
-			&i.Pcie,
-			&i.ShadingUnits,
-			&i.Tmus,
-			&i.Rops,
-			&i.ReleaseDate,
-			&i.Architecture,
-			&i.MemoryBandwidthGbps,
-			&i.Fp16Tflops,
-			&i.Int8Tops,
-			&i.TdpWatts,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
