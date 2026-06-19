@@ -1,0 +1,18 @@
+DELETE FROM apple_silicon_gpus;
+INSERT INTO apple_silicon_gpus (name, gpu_cores, memory_gb, memory_type, memory_bandwidth_gbps, gpu_tflops, neural_engine_tops, tdp_watts, release_date, architecture) VALUES
+  ('Apple M4 Ultra (GPU)', 32, 192, 'LPDDR5X', 819.00, 45.0, 38.0, 120, '2025-03', 'Apple M4'),
+  ('Apple M4 Max (GPU)', 40, 128, 'LPDDR5X', 546.00, 39.0, 38.0, 90, '2024-11', 'Apple M4'),
+  ('Apple M4 Pro (GPU)', 20, 48, 'LPDDR5X', 273.00, 18.5, 18.0, 40, '2024-11', 'Apple M4'),
+  ('Apple M4 (GPU)', 10, 32, 'LPDDR5X', 136.00, 5.4, 38.0, 22, '2024-11', 'Apple M4'),
+  ('Apple M3 Ultra (GPU)', 60, 192, 'LPDDR5X', 819.00, 39.0, 32.0, 140, '2025-03', 'Apple M3'),
+  ('Apple M3 Max (GPU)', 40, 128, 'LPDDR5X', 546.00, 30.0, 32.0, 60, '2024-11', 'Apple M3'),
+  ('Apple M3 Pro (GPU)', 18, 36, 'LPDDR5X', 273.00, 14.1, 18.0, 27, '2024-11', 'Apple M3'),
+  ('Apple M3 (GPU)', 10, 24, 'LPDDR5X', 136.00, 4.1, 18.0, 15, '2024-11', 'Apple M3'),
+  ('Apple M2 Ultra (GPU)', 76, 192, 'LPDDR5', 800.00, 35.0, 31.6, 140, '2023-06', 'Apple M2'),
+  ('Apple M2 Max (GPU)', 38, 96, 'LPDDR5', 400.00, 17.2, 15.8, 75, '2023-02', 'Apple M2'),
+  ('Apple M2 Pro (GPU)', 19, 32, 'LPDDR5', 200.00, 8.6, 15.8, 30, '2023-02', 'Apple M2'),
+  ('Apple M2 (GPU)', 10, 24, 'LPDDR5', 100.00, 3.6, 15.8, 18, '2022-07', 'Apple M2'),
+  ('Apple M1 Ultra (GPU)', 64, 128, 'LPDDR4X', 800.00, 27.2, 22.0, 120, '2022-03', 'Apple M1'),
+  ('Apple M1 Max (GPU)', 32, 64, 'LPDDR4X', 400.00, 13.6, 11.0, 60, '2021-10', 'Apple M1'),
+  ('Apple M1 Pro (GPU)', 16, 32, 'LPDDR4X', 200.00, 6.8, 11.0, 30, '2021-10', 'Apple M1'),
+  ('Apple M1 (GPU)', 8, 16, 'LPDDR4X', 68.00, 2.6, 11.0, 10, '2020-11', 'Apple M1');
