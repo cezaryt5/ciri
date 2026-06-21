@@ -8,3 +8,8 @@ go.sum
 pci.ids
 Apple_Silicon_GPUs.csv
 GPUs.csv
+merge_gpus.py
+
+# agents
+.kilo
+.opencode
