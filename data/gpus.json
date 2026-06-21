@@ -1,0 +1,5231 @@
+[
+  {
+    "name": "AMD Radeon RX 9070 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7550",
+    "pci_device_ids": [
+      "7550"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 4096.0,
+    "tmus": 256.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2025-03-06",
+    "architecture": "Navi 48",
+    "memory_bandwidth_gbps": 640.0,
+    "tflops": 100.0,
+    "int8_tops": 100.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 304.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5090",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2b85",
+    "pci_device_ids": [
+      "2b85",
+      "2b87",
+      "2b8c",
+      "2c18",
+      "2c58"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2b85"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2c18",
+          "2c58"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "2b87",
+          "2b8c"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 32.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 512.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 21760.0,
+    "tmus": 680.0,
+    "rops": 176.0,
+    "gpu_cores": null,
+    "release_date": "2025-01-30",
+    "architecture": "GB202",
+    "memory_bandwidth_gbps": 1792.0,
+    "tflops": 209.5,
+    "int8_tops": 838.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 575.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2f04",
+    "pci_device_ids": [
+      "2d18",
+      "2d58",
+      "2f04"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2f04"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d18",
+          "2d58"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 192.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2025-03-04",
+    "architecture": "GB205",
+    "memory_bandwidth_gbps": 672.0,
+    "tflops": 58.4,
+    "int8_tops": 233.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "AMD Radeon RX 9060 XT 16 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7590",
+    "pci_device_ids": [
+      "7590"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7590"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2025-06-04",
+    "architecture": "Navi 44",
+    "memory_bandwidth_gbps": 320.0,
+    "tflops": 40.0,
+    "int8_tops": 40.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5070 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2c05",
+    "pci_device_ids": [
+      "2c05",
+      "2f18",
+      "2f58"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2c05"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2f18",
+          "2f58"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 8960.0,
+    "tmus": 280.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2025-02-20",
+    "architecture": "GB203",
+    "memory_bandwidth_gbps": 896.0,
+    "tflops": 81.9,
+    "int8_tops": 327.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5060",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2d05",
+    "pci_device_ids": [
+      "2d05",
+      "2d19",
+      "2d59"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d05"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d19",
+          "2d59"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x8",
+    "shading_units": 3840.0,
+    "tmus": 120.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2025-05-19",
+    "architecture": "GB206",
+    "memory_bandwidth_gbps": 400.0,
+    "tflops": 36.9,
+    "int8_tops": 147.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5060 Ti 16 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2d04",
+    "pci_device_ids": [
+      "2d04"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d04"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x8",
+    "shading_units": 4608.0,
+    "tmus": 144.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2025-04-16",
+    "architecture": "GB206",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 46.1,
+    "int8_tops": 184.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5080",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2c02",
+    "pci_device_ids": [
+      "2c02",
+      "2c19",
+      "2c59"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2c02"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2c19",
+          "2c59"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 10752.0,
+    "tmus": 336.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2025-01-30",
+    "architecture": "GB203",
+    "memory_bandwidth_gbps": 960.0,
+    "tflops": 104.8,
+    "int8_tops": 419.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 360.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3080",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2206",
+    "pci_device_ids": [
+      "2206",
+      "220a",
+      "2216",
+      "222f",
+      "249c",
+      "24dc"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2206"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "249c",
+          "24dc"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "220a",
+          "2216",
+          "222f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 10.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 320.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 8704.0,
+    "tmus": 272.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2020-09-01",
+    "architecture": "GA102",
+    "memory_bandwidth_gbps": 760.0,
+    "tflops": 29.8,
+    "int8_tops": 59.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 320.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2484",
+    "pci_device_ids": [
+      "2484",
+      "2488",
+      "248d",
+      "249d",
+      "24af",
+      "24bf",
+      "24c8",
+      "24dd"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2484",
+          "248d"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "249d",
+          "24dd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "24af",
+          "24bf"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2488",
+          "24c8"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5888.0,
+    "tmus": 184.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2020-09-01",
+    "architecture": "GA104",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 18.7,
+    "int8_tops": 37.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 220.0
+  },
+  {
+    "name": "AMD Radeon RX 580",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "67df",
+    "pci_device_ids": [
+      "67df",
+      "aaf0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2304.0,
+    "tmus": 144.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2017-04-18",
+    "architecture": "Polaris 20",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 6.2,
+    "int8_tops": 6.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 185.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3060 12 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2501",
+    "pci_device_ids": [
+      "2487",
+      "24ad",
+      "24c7",
+      "2501",
+      "2503",
+      "2504",
+      "2509",
+      "2520",
+      "2521",
+      "252f",
+      "2544",
+      "2560",
+      "2561"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2487",
+          "2501",
+          "2503",
+          "2544"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2520",
+          "2521",
+          "2560",
+          "2561"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "24ad",
+          "252f"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "24c7",
+          "2504",
+          "2509"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3584.0,
+    "tmus": 112.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2021-01-12",
+    "architecture": "GA106",
+    "memory_bandwidth_gbps": 360.0,
+    "tflops": 12.7,
+    "int8_tops": 25.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 170.0
+  },
+  {
+    "name": "AMD Radeon RX 7600",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7480",
+    "pci_device_ids": [
+      "7480"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7480"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2023-05-24",
+    "architecture": "Navi 33",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 35.3,
+    "int8_tops": 35.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 165.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5050",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2d83",
+    "pci_device_ids": [
+      "2d83",
+      "2d98",
+      "2dd8"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d83"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d98",
+          "2dd8"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x8",
+    "shading_units": 2560.0,
+    "tmus": 80.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2025-07-01",
+    "architecture": "GB207",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 26.2,
+    "int8_tops": 104.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 115.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4090",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2684",
+    "pci_device_ids": [
+      "2684",
+      "2685",
+      "2717",
+      "2757"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2684"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2717",
+          "2757"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2685"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 16384.0,
+    "tmus": 512.0,
+    "rops": 176.0,
+    "gpu_cores": null,
+    "release_date": "2022-09-20",
+    "architecture": "AD102",
+    "memory_bandwidth_gbps": 1008.0,
+    "tflops": 165.2,
+    "int8_tops": 330.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 450.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3060 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2486",
+    "pci_device_ids": [
+      "2414",
+      "2486",
+      "2489",
+      "248e",
+      "24c9"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2414",
+          "2486",
+          "248e"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "2489",
+          "24c9"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 4864.0,
+    "tmus": 152.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2020-12-01",
+    "architecture": "GA104",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 16.2,
+    "int8_tops": 32.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 200.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1080 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1b06",
+    "pci_device_ids": [
+      "1b01",
+      "1b06"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b06"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "1b01"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 11.0,
+    "memory_type": "GDDR5X",
+    "memory_bus": 352.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 3584.0,
+    "tmus": 224.0,
+    "rops": 88.0,
+    "gpu_cores": null,
+    "release_date": "2017-03-10",
+    "architecture": "GP102",
+    "memory_bandwidth_gbps": 484.0,
+    "tflops": 11.3,
+    "int8_tops": 22.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "AMD Radeon RX 9070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7550",
+    "pci_device_ids": [
+      "7550"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 3584.0,
+    "tmus": 224.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2025-03-06",
+    "architecture": "Navi 48",
+    "memory_bandwidth_gbps": 512.0,
+    "tflops": 80.0,
+    "int8_tops": 80.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "AMD Radeon RX 7900 XTX",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "744c",
+    "pci_device_ids": [
+      "744c"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 384.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2022-11-03",
+    "architecture": "Navi 31",
+    "memory_bandwidth_gbps": 960.0,
+    "tflops": 122.8,
+    "int8_tops": 122.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 355.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4060",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2882",
+    "pci_device_ids": [
+      "2808",
+      "2882",
+      "28a0",
+      "28e0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2808",
+          "2882"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "28a0",
+          "28e0"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 3072.0,
+    "tmus": 96.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2023-05-18",
+    "architecture": "AD107",
+    "memory_bandwidth_gbps": 272.0,
+    "tflops": 28.2,
+    "int8_tops": 56.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 115.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2786",
+    "pci_device_ids": [
+      "2709",
+      "2786",
+      "2820",
+      "2860"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2709",
+          "2786"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2820",
+          "2860"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5888.0,
+    "tmus": 184.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2023-04-12",
+    "architecture": "AD104",
+    "memory_bandwidth_gbps": 504.0,
+    "tflops": 64.2,
+    "int8_tops": 128.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 200.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2060",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1e89",
+    "pci_device_ids": [
+      "1e89",
+      "1f03",
+      "1f08",
+      "1f11",
+      "1f12",
+      "1f15",
+      "1f51",
+      "1f55"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e89"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f11",
+          "1f15",
+          "1f51",
+          "1f55"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1f12"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "1f03",
+          "1f08"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1920.0,
+    "tmus": 120.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2019-01-07",
+    "architecture": "TU106",
+    "memory_bandwidth_gbps": 336.0,
+    "tflops": 10.7,
+    "int8_tops": 21.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 160.0
+  },
+  {
+    "name": "AMD Radeon RX 6700 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73df",
+    "pci_device_ids": [
+      "73df"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73df"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2021-03-03",
+    "architecture": "Navi 22",
+    "memory_bandwidth_gbps": 384.0,
+    "tflops": 52.3,
+    "int8_tops": 52.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 230.0
+  },
+  {
+    "name": "AMD Radeon RX 9070 GRE",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7550",
+    "pci_device_ids": [
+      "7550"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 3072.0,
+    "tmus": 192.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2025-05-08",
+    "architecture": "Navi 48",
+    "memory_bandwidth_gbps": 384.0,
+    "tflops": 60.0,
+    "int8_tops": 60.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 200.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2080 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1e04",
+    "pci_device_ids": [
+      "1e03",
+      "1e04",
+      "1e07",
+      "1e2d",
+      "1e2e"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e04"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "engineering": {
+        "ids": [
+          "1e2d",
+          "1e2e"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "1e03",
+          "1e07"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 11.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 352.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 4352.0,
+    "tmus": 272.0,
+    "rops": 88.0,
+    "gpu_cores": null,
+    "release_date": "2018-09-20",
+    "architecture": "TU102",
+    "memory_bandwidth_gbps": 616.0,
+    "tflops": 26.9,
+    "int8_tops": 53.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1660 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "21c4",
+    "pci_device_ids": [
+      "1f09",
+      "21c4"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f09",
+          "21c4"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1408.0,
+    "tmus": 88.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2019-10-29",
+    "architecture": "TU116",
+    "memory_bandwidth_gbps": 336.0,
+    "tflops": 5.2,
+    "int8_tops": 10.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 125.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3080 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2208",
+    "pci_device_ids": [
+      "2205",
+      "2208",
+      "2420",
+      "2460"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2208"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2420",
+          "2460"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2205"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10240.0,
+    "tmus": 320.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2021-05-31",
+    "architecture": "GA102",
+    "memory_bandwidth_gbps": 912.0,
+    "tflops": 34.1,
+    "int8_tops": 68.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 350.0
+  },
+  {
+    "name": "AMD Radeon RX 6600",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73ff",
+    "pci_device_ids": [
+      "73ff"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 1792.0,
+    "tmus": 112.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2021-10-13",
+    "architecture": "Navi 23",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 34.2,
+    "int8_tops": 34.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 132.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3090",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2204",
+    "pci_device_ids": [
+      "2204",
+      "222b"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2204"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "engineering": {
+        "ids": [
+          "222b"
+        ],
+        "description": "Engineering sample"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10496.0,
+    "tmus": 328.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2020-09-01",
+    "architecture": "GA102",
+    "memory_bandwidth_gbps": 936.0,
+    "tflops": 35.6,
+    "int8_tops": 71.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 350.0
+  },
+  {
+    "name": "Intel Arc B580",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "8086",
+    "pci_device_id": "e20b",
+    "pci_device_ids": [
+      "e20b"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "e20b"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2024-12-13",
+    "architecture": "BMG-G21",
+    "memory_bandwidth_gbps": 192.0,
+    "tflops": 15.0,
+    "int8_tops": 30.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 190.0
+  },
+  {
+    "name": "AMD Radeon RX 5700 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "731f",
+    "pci_device_ids": [
+      "731f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-07-07",
+    "architecture": "Navi 10",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 47.7,
+    "int8_tops": 47.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 225.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1650",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1f82",
+    "pci_device_ids": [
+      "1f0a",
+      "1f82",
+      "1f91",
+      "1f92",
+      "1f94",
+      "1f96",
+      "1f99",
+      "1f9d",
+      "1fd9",
+      "1fdd",
+      "2188"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f0a",
+          "1f82",
+          "2188"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f91",
+          "1f92",
+          "1f94",
+          "1f96",
+          "1f99",
+          "1f9d",
+          "1fd9",
+          "1fdd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 896.0,
+    "tmus": 56.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2019-04-23",
+    "architecture": "TU117",
+    "memory_bandwidth_gbps": 128.0,
+    "tflops": 3.0,
+    "int8_tops": 6.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 75.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5060 Ti 8 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2d04",
+    "pci_device_ids": [
+      "2d04"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d04"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x8",
+    "shading_units": 4608.0,
+    "tmus": 144.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2025-04-16",
+    "architecture": "GB206",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 46.1,
+    "int8_tops": 184.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "AMD Radeon RX 7800 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "747e",
+    "pci_device_ids": [
+      "747e"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "747e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3840.0,
+    "tmus": 240.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2023-08-25",
+    "architecture": "Navi 32",
+    "memory_bandwidth_gbps": 624.0,
+    "tflops": 74.5,
+    "int8_tops": 74.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 263.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3070 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2207",
+    "pci_device_ids": [
+      "2207",
+      "2482",
+      "248c",
+      "24a0",
+      "24e0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2207",
+          "2482",
+          "248c"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24a0",
+          "24e0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 192.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2021-05-31",
+    "architecture": "GA104",
+    "memory_bandwidth_gbps": 608.0,
+    "tflops": 21.7,
+    "int8_tops": 43.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 290.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1060 6 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "10f1",
+    "pci_device_ids": [
+      "1b83",
+      "1b84",
+      "1c02",
+      "1c03",
+      "1c04",
+      "1c06",
+      "1c20",
+      "1c23",
+      "1c60",
+      "10f1"
+    ],
+    "pci_variants": {
+      "mobile": {
+        "ids": [
+          "1c20",
+          "1c23",
+          "1c60"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1b83",
+          "1b84",
+          "1c02",
+          "1c03",
+          "1c04",
+          "1c06"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      },
+      "desktop": {
+        "ids": [
+          "10f1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1280.0,
+    "tmus": 80.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2016-07-19",
+    "architecture": "GP106",
+    "memory_bandwidth_gbps": 192.0,
+    "tflops": 4.4,
+    "int8_tops": 8.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1050 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1c82",
+    "pci_device_ids": [
+      "1c21",
+      "1c61",
+      "1c82",
+      "1c8c",
+      "1c8f",
+      "1ccc"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1c82"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1c21",
+          "1c61",
+          "1c8c",
+          "1ccc"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1c8f"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 768.0,
+    "tmus": 48.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2016-10-25",
+    "architecture": "GP107",
+    "memory_bandwidth_gbps": 112.0,
+    "tflops": 2.1,
+    "int8_tops": 4.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 75.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3050 8 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2507",
+    "pci_device_ids": [
+      "2507",
+      "2508",
+      "2582",
+      "2583",
+      "2584",
+      "25a2",
+      "25a5",
+      "25ab",
+      "25ac",
+      "25af",
+      "25e2",
+      "25e5",
+      "25ec",
+      "2822",
+      "28a3",
+      "28e3"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2507"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25a2",
+          "25a5",
+          "25ab",
+          "25ac",
+          "25e2",
+          "25e5",
+          "25ec",
+          "2822",
+          "28a3",
+          "28e3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "25af"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2508",
+          "2582",
+          "2583",
+          "2584"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2560.0,
+    "tmus": 80.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2022-01-04",
+    "architecture": "GA106",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 16.5,
+    "int8_tops": 33.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 130.0
+  },
+  {
+    "name": "AMD Radeon RX 6800 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73bf",
+    "pci_device_ids": [
+      "73bf"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73bf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 4608.0,
+    "tmus": 288.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2020-10-28",
+    "architecture": "Navi 21",
+    "memory_bandwidth_gbps": 512.0,
+    "tflops": 86.8,
+    "int8_tops": 86.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1b81",
+    "pci_device_ids": [
+      "1b81",
+      "1ba1",
+      "1ba2",
+      "1bad",
+      "1be1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1ba1",
+          "1ba2",
+          "1be1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "1bad"
+        ],
+        "description": "Engineering sample"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1920.0,
+    "tmus": 120.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2016-06-10",
+    "architecture": "GP104",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 6.5,
+    "int8_tops": 13.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2060 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1f06",
+    "pci_device_ids": [
+      "1f06",
+      "1f42",
+      "1f47"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f06",
+          "1f42",
+          "1f47"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2176.0,
+    "tmus": 136.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-07-09",
+    "architecture": "TU106",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 14.2,
+    "int8_tops": 28.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 175.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4080",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2704",
+    "pci_device_ids": [
+      "2704",
+      "27a0",
+      "27e0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2704"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "27a0",
+          "27e0"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 9728.0,
+    "tmus": 304.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2022-09-20",
+    "architecture": "AD103",
+    "memory_bandwidth_gbps": 717.0,
+    "tflops": 97.5,
+    "int8_tops": 195.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 320.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4070 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2783",
+    "pci_device_ids": [
+      "2783"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2783"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 7168.0,
+    "tmus": 224.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2024-01-08",
+    "architecture": "AD104",
+    "memory_bandwidth_gbps": 504.0,
+    "tflops": 72.2,
+    "int8_tops": 144.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 220.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1080",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1b80",
+    "pci_device_ids": [
+      "1b80",
+      "1ba0",
+      "1be0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b80"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1ba0",
+          "1be0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR5X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2016-05-27",
+    "architecture": "GP104",
+    "memory_bandwidth_gbps": 320.0,
+    "tflops": 8.9,
+    "int8_tops": 17.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2689",
+    "pci_device_ids": [
+      "2689",
+      "2705"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2689",
+          "2705"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 8448.0,
+    "tmus": 264.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2024-01-08",
+    "architecture": "AD103",
+    "memory_bandwidth_gbps": 672.0,
+    "tflops": 353.0,
+    "int8_tops": 353.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 285.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4080 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2702",
+    "pci_device_ids": [
+      "2702",
+      "2703"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2702",
+          "2703"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10240.0,
+    "tmus": 320.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2024-01-08",
+    "architecture": "AD103",
+    "memory_bandwidth_gbps": 736.0,
+    "tflops": 104.4,
+    "int8_tops": 208.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 320.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4070 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2782",
+    "pci_device_ids": [
+      "2782"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2782"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 7680.0,
+    "tmus": 240.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-03",
+    "architecture": "AD104",
+    "memory_bandwidth_gbps": 504.0,
+    "tflops": 80.2,
+    "int8_tops": 160.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 285.0
+  },
+  {
+    "name": "AMD Radeon RX 570",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "67df",
+    "pci_device_ids": [
+      "67df",
+      "aaf0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2017-04-18",
+    "architecture": "Polaris 20",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 5.1,
+    "int8_tops": 5.1,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2070 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1e84",
+    "pci_device_ids": [
+      "1e84",
+      "1e91",
+      "1ec2",
+      "1ec7",
+      "1ed1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e84",
+          "1ec2",
+          "1ec7"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e91",
+          "1ed1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-07-09",
+    "architecture": "TU104",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 18.1,
+    "int8_tops": 36.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 215.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4060 Ti 8 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2803",
+    "pci_device_ids": [
+      "2788",
+      "2803",
+      "2805"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2788",
+          "2803"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "2805"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 4352.0,
+    "tmus": 136.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2023-05-18",
+    "architecture": "AD106",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 35.3,
+    "int8_tops": 70.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 160.0
+  },
+  {
+    "name": "AMD Radeon RX 6600 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73ff",
+    "pci_device_ids": [
+      "73ff"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2021-07-30",
+    "architecture": "Navi 23",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 37.3,
+    "int8_tops": 37.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 160.0
+  },
+  {
+    "name": "AMD Radeon RX 7700 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "747e",
+    "pci_device_ids": [
+      "747e"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "747e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3456.0,
+    "tmus": 216.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2023-08-25",
+    "architecture": "Navi 32",
+    "memory_bandwidth_gbps": 432.0,
+    "tflops": 56.1,
+    "int8_tops": 56.1,
+    "neural_engine_tops": null,
+    "tdp_watts": 245.0
+  },
+  {
+    "name": "NVIDIA RTX PRO 6000 Blackwell",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2bb1",
+    "pci_device_ids": [
+      "2bb1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2bb1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 96.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 512.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 24064.0,
+    "tmus": 752.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2025-03-18",
+    "architecture": "GB202",
+    "memory_bandwidth_gbps": 1792.0,
+    "tflops": 209.5,
+    "int8_tops": 838.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 400.0
+  },
+  {
+    "name": "AMD Radeon RX 7900 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "744c",
+    "pci_device_ids": [
+      "744c"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 20.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 320.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5376.0,
+    "tmus": 336.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2022-11-03",
+    "architecture": "Navi 31",
+    "memory_bandwidth_gbps": 800.0,
+    "tflops": 103.2,
+    "int8_tops": 103.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 315.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1f02",
+    "pci_device_ids": [
+      "1f02",
+      "1f07",
+      "1f10",
+      "1f14",
+      "1f50",
+      "1f54"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f02"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f10",
+          "1f14",
+          "1f50",
+          "1f54"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1f07"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2304.0,
+    "tmus": 144.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2018-10-17",
+    "architecture": "TU106",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 15.7,
+    "int8_tops": 31.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 175.0
+  },
+  {
+    "name": "AMD Radeon RX 6800",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73bf",
+    "pci_device_ids": [
+      "73bf"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73bf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3840.0,
+    "tmus": 240.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2020-10-28",
+    "architecture": "Navi 21",
+    "memory_bandwidth_gbps": 512.0,
+    "tflops": 71.2,
+    "int8_tops": 71.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3090 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2203",
+    "pci_device_ids": [
+      "2203"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2203"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6X",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10752.0,
+    "tmus": 336.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2022-01-27",
+    "architecture": "GA102",
+    "memory_bandwidth_gbps": 1008.0,
+    "tflops": 40.0,
+    "int8_tops": 80.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 450.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1660 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2182",
+    "pci_device_ids": [
+      "2182",
+      "2191",
+      "21d1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2182"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2191",
+          "21d1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1536.0,
+    "tmus": 96.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2019-02-22",
+    "architecture": "TU116",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 5.2,
+    "int8_tops": 10.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 750 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1380",
+    "pci_device_ids": [
+      "11c7",
+      "1380",
+      "139d"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "11c7",
+          "1380",
+          "139d"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 640.0,
+    "tmus": 40.0,
+    "rops": 16.0,
+    "gpu_cores": null,
+    "release_date": "2014-02-18",
+    "architecture": "GM107",
+    "memory_bandwidth_gbps": 86.0,
+    "tflops": 1.3,
+    "int8_tops": 2.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 60.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2080",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1e82",
+    "pci_device_ids": [
+      "1e82",
+      "1e87",
+      "1e90",
+      "1ed0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e82"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e90",
+          "1ed0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1e87"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2944.0,
+    "tmus": 184.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2018-09-20",
+    "architecture": "TU104",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 20.2,
+    "int8_tops": 40.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 215.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 970",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "13c2",
+    "pci_device_ids": [
+      "13c2"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "13c2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1664.0,
+    "tmus": 104.0,
+    "rops": 56.0,
+    "gpu_cores": null,
+    "release_date": "2014-09-19",
+    "architecture": "GM204",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 4.0,
+    "int8_tops": 8.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 145.0
+  },
+  {
+    "name": "AMD Radeon RX 6900 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73af",
+    "pci_device_ids": [
+      "73af"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73af"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5120.0,
+    "tmus": 320.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2020-10-28",
+    "architecture": "Navi 21",
+    "memory_bandwidth_gbps": 512.0,
+    "tflops": 103.0,
+    "int8_tops": 103.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1660",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2184",
+    "pci_device_ids": [
+      "2184"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2184"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1408.0,
+    "tmus": 88.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2019-03-14",
+    "architecture": "TU116",
+    "memory_bandwidth_gbps": 192.0,
+    "tflops": 5.2,
+    "int8_tops": 10.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "AMD Radeon RX 6750 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73df",
+    "pci_device_ids": [
+      "73df"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73df"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 2560.0,
+    "tmus": 160.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2022-03-03",
+    "architecture": "Navi 22",
+    "memory_bandwidth_gbps": 432.0,
+    "tflops": 58.4,
+    "int8_tops": 58.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 960",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1401",
+    "pci_device_ids": [
+      "13d8",
+      "1401",
+      "1404",
+      "1406"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1401"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "13d8",
+          "1404",
+          "1406"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1024.0,
+    "tmus": 64.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2015-01-22",
+    "architecture": "GM206",
+    "memory_bandwidth_gbps": 112.0,
+    "tflops": 2.4,
+    "int8_tops": 4.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "AMD Radeon RX 6500 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "743f",
+    "pci_device_ids": [
+      "743f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "743f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 64.0,
+    "pcie": "PCIe 4.0 x4",
+    "shading_units": 1024.0,
+    "tmus": 64.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2022-01-19",
+    "architecture": "Navi 24",
+    "memory_bandwidth_gbps": 144.0,
+    "tflops": 16.8,
+    "int8_tops": 16.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 107.0
+  },
+  {
+    "name": "AMD Radeon RX 5500 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7340",
+    "pci_device_ids": [
+      "7340"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7340"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 1408.0,
+    "tmus": 88.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2019-12-12",
+    "architecture": "Navi 14",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 25.2,
+    "int8_tops": 25.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 130.0
+  },
+  {
+    "name": "NVIDIA GeForce GT 1030",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1d01",
+    "pci_device_ids": [
+      "0fc5",
+      "1d01"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0fc5",
+          "1d01"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 64.0,
+    "pcie": "PCIe 3.0 x4",
+    "shading_units": 384.0,
+    "tmus": 24.0,
+    "rops": 16.0,
+    "gpu_cores": null,
+    "release_date": "2017-05-17",
+    "architecture": "GP108",
+    "memory_bandwidth_gbps": 48.0,
+    "tflops": 0.7,
+    "int8_tops": 1.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 30.0
+  },
+  {
+    "name": "AMD Radeon RX 580 2048SP",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "6fdf",
+    "pci_device_ids": [
+      "6fdf"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6fdf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2018-10-15",
+    "architecture": "Polaris 20",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 5.2,
+    "int8_tops": 5.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 3050 6 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2291",
+    "pci_device_ids": [
+      "2507",
+      "2508",
+      "2582",
+      "2583",
+      "2584",
+      "25a2",
+      "25a5",
+      "25ab",
+      "25ac",
+      "25af",
+      "25e2",
+      "25e5",
+      "25ec",
+      "2822",
+      "28a3",
+      "28e3",
+      "2291"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2507",
+          "2291"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25a2",
+          "25a5",
+          "25ab",
+          "25ac",
+          "25e2",
+          "25e5",
+          "25ec",
+          "2822",
+          "28a3",
+          "28e3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "25af"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2508",
+          "2582",
+          "2583",
+          "2584"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 96.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2304.0,
+    "tmus": 72.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2024-02-02",
+    "architecture": "GA107",
+    "memory_bandwidth_gbps": 168.0,
+    "tflops": 12.1,
+    "int8_tops": 24.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 70.0
+  },
+  {
+    "name": "AMD Radeon RX 7600 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7480",
+    "pci_device_ids": [
+      "7480"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7480"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2024-01-08",
+    "architecture": "Navi 33",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 35.3,
+    "int8_tops": 35.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "AMD Radeon RX 5600 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "731f",
+    "pci_device_ids": [
+      "731f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 2304.0,
+    "tmus": 144.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2020-01-21",
+    "architecture": "Navi 10",
+    "memory_bandwidth_gbps": 336.0,
+    "tflops": 33.7,
+    "int8_tops": 33.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "AMD Radeon RX 550",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "6981",
+    "pci_device_ids": [
+      "6981"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6981"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x8",
+    "shading_units": 512.0,
+    "tmus": 32.0,
+    "rops": 16.0,
+    "gpu_cores": null,
+    "release_date": "2017-04-20",
+    "architecture": "Lexa",
+    "memory_bandwidth_gbps": 112.0,
+    "tflops": 3.5,
+    "int8_tops": 3.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 50.0
+  },
+  {
+    "name": "AMD Radeon RX 9060 XT 8 GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "7590",
+    "pci_device_ids": [
+      "7590"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7590"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2025-06-04",
+    "architecture": "Navi 44",
+    "memory_bandwidth_gbps": 320.0,
+    "tflops": 40.0,
+    "int8_tops": 40.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 150.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 2080 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1e81",
+    "pci_device_ids": [
+      "1e81",
+      "1e93",
+      "1ed3"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e93",
+          "1ed3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 3072.0,
+    "tmus": 192.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-07-23",
+    "architecture": "TU104",
+    "memory_bandwidth_gbps": 496.0,
+    "tflops": 22.4,
+    "int8_tops": 44.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "AMD Radeon RX 6650 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73ff",
+    "pci_device_ids": [
+      "73ff"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2022-05-10",
+    "architecture": "Navi 23",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 40.2,
+    "int8_tops": 40.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "AMD Radeon 780M",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "15bf",
+    "pci_device_ids": [
+      "15bf"
+    ],
+    "pci_variants": {},
+    "vram_gb": null,
+    "memory_type": "System Shared",
+    "memory_bus": null,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 768.0,
+    "tmus": 48.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-04",
+    "architecture": "Phoenix",
+    "memory_bandwidth_gbps": 50.0,
+    "tflops": 4.8,
+    "int8_tops": 9.6,
+    "neural_engine_tops": null,
+    "tdp_watts": 28.0
+  },
+  {
+    "name": "AMD Radeon RX 7900 GRE",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "744c",
+    "pci_device_ids": [
+      "744c"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5120.0,
+    "tmus": 320.0,
+    "rops": 160.0,
+    "gpu_cores": null,
+    "release_date": "2023-07-27",
+    "architecture": "Navi 31",
+    "memory_bandwidth_gbps": 576.0,
+    "tflops": 83.2,
+    "int8_tops": 83.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 260.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1050",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1c81",
+    "pci_device_ids": [
+      "1c22",
+      "1c62",
+      "1c81",
+      "1c83",
+      "1c8d",
+      "1c91",
+      "1c92",
+      "1ccd"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1c81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1c22",
+          "1c62",
+          "1c8d",
+          "1c92",
+          "1ccd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1c91"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "1c83"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 640.0,
+    "tmus": 40.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2016-10-25",
+    "architecture": "GP107",
+    "memory_bandwidth_gbps": 112.0,
+    "tflops": 1.9,
+    "int8_tops": 3.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 75.0
+  },
+  {
+    "name": "AMD Radeon RX 590",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "67df",
+    "pci_device_ids": [
+      "67df",
+      "aaf0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2304.0,
+    "tmus": 144.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2018-11-15",
+    "architecture": "Polaris 30",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 7.1,
+    "int8_tops": 7.1,
+    "neural_engine_tops": null,
+    "tdp_watts": 225.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 980 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "17c8",
+    "pci_device_ids": [
+      "17c8"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "17c8"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 6.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2816.0,
+    "tmus": 176.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2015-06-02",
+    "architecture": "GM200",
+    "memory_bandwidth_gbps": 336.0,
+    "tflops": 6.2,
+    "int8_tops": 12.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA GeForce 210",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "0a23",
+    "pci_device_ids": [
+      "0a23",
+      "0a65"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0a23",
+          "0a65"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 0.5,
+    "memory_type": "DDR3",
+    "memory_bus": 64.0,
+    "pcie": "PCIe 2.0 x16",
+    "shading_units": 16.0,
+    "tmus": 8.0,
+    "rops": 4.0,
+    "gpu_cores": null,
+    "release_date": "2009-10-12",
+    "architecture": "GT218S",
+    "memory_bandwidth_gbps": 14.0,
+    "tflops": 0.04,
+    "int8_tops": 0.08,
+    "neural_engine_tops": null,
+    "tdp_watts": 30.0
+  },
+  {
+    "name": "AMD Radeon RX 5700",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "731f",
+    "pci_device_ids": [
+      "731f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 2304.0,
+    "tmus": 144.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-07-07",
+    "architecture": "Navi 10",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 42.9,
+    "int8_tops": 42.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 220.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1070 Ti",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1b82",
+    "pci_device_ids": [
+      "1b82"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b82"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2432.0,
+    "tmus": 152.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2017-11-02",
+    "architecture": "GP104",
+    "memory_bandwidth_gbps": 256.0,
+    "tflops": 8.1,
+    "int8_tops": 16.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 1650 SUPER",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2187",
+    "pci_device_ids": [
+      "2187"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2187"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 1280.0,
+    "tmus": 80.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2019-11-22",
+    "architecture": "TU116",
+    "memory_bandwidth_gbps": 192.0,
+    "tflops": 4.4,
+    "int8_tops": 8.8,
+    "neural_engine_tops": null,
+    "tdp_watts": 100.0
+  },
+  {
+    "name": "AMD Radeon RX 6950 XT",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "73af",
+    "pci_device_ids": [
+      "73af"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73af"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 5120.0,
+    "tmus": 320.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2022-05-10",
+    "architecture": "Navi 21",
+    "memory_bandwidth_gbps": 576.0,
+    "tflops": 114.5,
+    "int8_tops": 114.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 335.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 6070",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 16.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 192.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "Unknown",
+    "architecture": "GR205",
+    "memory_bandwidth_gbps": 896.0,
+    "tflops": 81.9,
+    "int8_tops": 327.7,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "AMD Radeon RX Vega 64",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "6860",
+    "pci_device_ids": [
+      "6860",
+      "686c"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6860"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "686c"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "HBM2",
+    "memory_bus": 2048.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 4096.0,
+    "tmus": 256.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2017-08-07",
+    "architecture": "Vega 10",
+    "memory_bandwidth_gbps": 484.0,
+    "tflops": 26.6,
+    "int8_tops": 53.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 295.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 980",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "13c0",
+    "pci_device_ids": [
+      "13c0",
+      "13da",
+      "13e7",
+      "161a"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "13c0"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "13da",
+          "161a"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "13e7"
+        ],
+        "description": "Engineering sample"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2014-09-19",
+    "architecture": "GM204",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 4.6,
+    "int8_tops": 9.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 165.0
+  },
+  {
+    "name": "NVIDIA N1X 48SM",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2e12",
+    "pci_device_ids": [
+      "2e12"
+    ],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 384.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2026-06-01",
+    "architecture": "GB20B",
+    "memory_bandwidth_gbps": 273.0,
+    "tflops": 60.0,
+    "int8_tops": 120.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 140.0
+  },
+  {
+    "name": "NVIDIA GeForce GT 730",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "0f02",
+    "pci_device_ids": [
+      "0f02",
+      "0f06",
+      "0fc9",
+      "1287"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0f02",
+          "0f06",
+          "0fc9",
+          "1287"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "DDR3",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 2.0 x16",
+    "shading_units": 96.0,
+    "tmus": 16.0,
+    "rops": 4.0,
+    "gpu_cores": null,
+    "release_date": "2014-06-18",
+    "architecture": "GF108",
+    "memory_bandwidth_gbps": 35.0,
+    "tflops": 0.2,
+    "int8_tops": 0.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 49.0
+  },
+  {
+    "name": "AMD Radeon VII",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "66af",
+    "pci_device_ids": [
+      "66af",
+      "ab20"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "66af",
+          "ab20"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "HBM2",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 3840.0,
+    "tmus": 240.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2019-02-07",
+    "architecture": "Vega 20",
+    "memory_bandwidth_gbps": 1024.0,
+    "tflops": 27.5,
+    "int8_tops": 55.1,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "AMD Radeon RX 470",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "67df",
+    "pci_device_ids": [
+      "67df",
+      "aaf0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 2048.0,
+    "tmus": 128.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2016-08-04",
+    "architecture": "Ellesmere",
+    "memory_bandwidth_gbps": 224.0,
+    "tflops": 4.9,
+    "int8_tops": 4.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "NVIDIA GeForce RTX 5070 Mobile",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "22eb",
+    "pci_device_ids": [
+      "22eb"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "22eb"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR7",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 4608.0,
+    "tmus": 144.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2025-04",
+    "architecture": "GB206",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 46.1,
+    "int8_tops": 184.3,
+    "neural_engine_tops": null,
+    "tdp_watts": 115.0
+  },
+  {
+    "name": "NVIDIA GeForce GTX 950",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1402",
+    "pci_device_ids": [
+      "1402"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1402"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 2.0,
+    "memory_type": "GDDR5",
+    "memory_bus": 128.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 768.0,
+    "tmus": 48.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2015-08-20",
+    "architecture": "GM206",
+    "memory_bandwidth_gbps": 112.0,
+    "tflops": 2.1,
+    "int8_tops": 4.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 90.0
+  },
+  {
+    "name": "AMD Radeon Instinct MI50",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "66a1",
+    "pci_device_ids": [
+      "66a1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "66a1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "HBM2",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3840.0,
+    "tmus": 240.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2018-11-18",
+    "architecture": "Vega 20",
+    "memory_bandwidth_gbps": 1024.0,
+    "tflops": 13.3,
+    "int8_tops": 26.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA GB10",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2e12",
+    "pci_device_ids": [
+      "2e12"
+    ],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 384.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2025-10-15",
+    "architecture": "GB20B",
+    "memory_bandwidth_gbps": 273.0,
+    "tflops": 31.0,
+    "int8_tops": 62.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 180.0
+  },
+  {
+    "name": "AMD Radeon RX Vega 56",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "687f",
+    "pci_device_ids": [
+      "687f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "687f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "HBM2",
+    "memory_bus": 2048.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 3584.0,
+    "tmus": 224.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2017-08-14",
+    "architecture": "Vega 10",
+    "memory_bandwidth_gbps": 410.0,
+    "tflops": 22.2,
+    "int8_tops": 44.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 210.0
+  },
+  {
+    "name": "AMD Radeon RX 6400",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "743f",
+    "pci_device_ids": [
+      "743f"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "743f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 4.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 64.0,
+    "pcie": "PCIe 4.0 x4",
+    "shading_units": 768.0,
+    "tmus": 48.0,
+    "rops": 32.0,
+    "gpu_cores": null,
+    "release_date": "2022-01-19",
+    "architecture": "Navi 24",
+    "memory_bandwidth_gbps": 128.0,
+    "tflops": 12.2,
+    "int8_tops": 12.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 53.0
+  },
+  {
+    "name": "NVIDIA H100 SXM5",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2330",
+    "pci_device_ids": [
+      "2330"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2330"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 80.0,
+    "memory_type": "HBM3",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 16896.0,
+    "tmus": 528.0,
+    "rops": 24.0,
+    "gpu_cores": null,
+    "release_date": "2022-09-21",
+    "architecture": "Hopper",
+    "memory_bandwidth_gbps": 3350.0,
+    "tflops": 989.5,
+    "int8_tops": 3958.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 700.0
+  },
+  {
+    "name": "NVIDIA H100 PCIe",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2331",
+    "pci_device_ids": [
+      "2331"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2331"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 80.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 16896.0,
+    "tmus": 528.0,
+    "rops": 24.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-03",
+    "architecture": "Hopper",
+    "memory_bandwidth_gbps": 2000.0,
+    "tflops": 756.5,
+    "int8_tops": 3026.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 350.0
+  },
+  {
+    "name": "NVIDIA H100 NVL",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "233b",
+    "pci_device_ids": [
+      "233b"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "233b"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 94.0,
+    "memory_type": "HBM3",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 16896.0,
+    "tmus": 528.0,
+    "rops": 24.0,
+    "gpu_cores": null,
+    "release_date": "2022-12-06",
+    "architecture": "Hopper",
+    "memory_bandwidth_gbps": 3900.0,
+    "tflops": 835.5,
+    "int8_tops": 3341.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 400.0
+  },
+  {
+    "name": "NVIDIA H200 SXM",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2335",
+    "pci_device_ids": [
+      "2335"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2335"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 141.0,
+    "memory_type": "HBM3e",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 16896.0,
+    "tmus": 528.0,
+    "rops": 24.0,
+    "gpu_cores": null,
+    "release_date": "2024-06-03",
+    "architecture": "Hopper",
+    "memory_bandwidth_gbps": 4800.0,
+    "tflops": 989.5,
+    "int8_tops": 3958.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 700.0
+  },
+  {
+    "name": "NVIDIA A100 SXM4 80GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "20b2",
+    "pci_device_ids": [
+      "20b2"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 80.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6912.0,
+    "tmus": 432.0,
+    "rops": 120.0,
+    "gpu_cores": null,
+    "release_date": "2020-06-18",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 2000.0,
+    "tflops": 312.0,
+    "int8_tops": 624.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 400.0
+  },
+  {
+    "name": "NVIDIA A100 PCIe 80GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "20b5",
+    "pci_device_ids": [
+      "20b5"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b5"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 80.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6912.0,
+    "tmus": 432.0,
+    "rops": 120.0,
+    "gpu_cores": null,
+    "release_date": "2020-06-18",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 2000.0,
+    "tflops": 312.0,
+    "int8_tops": 624.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA A100 PCIe 40GB",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "20b1",
+    "pci_device_ids": [
+      "20b1",
+      "20f1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b1",
+          "20f1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 40.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 5120.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6912.0,
+    "tmus": 432.0,
+    "rops": 120.0,
+    "gpu_cores": null,
+    "release_date": "2020-06-18",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 1600.0,
+    "tflops": 312.0,
+    "int8_tops": 624.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA L40S",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "26b9",
+    "pci_device_ids": [
+      "26b9"
+    ],
+    "pci_variants": {},
+    "vram_gb": 48.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 18176.0,
+    "tmus": 568.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 864.0,
+    "tflops": 733.0,
+    "int8_tops": 733.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 350.0
+  },
+  {
+    "name": "NVIDIA L40",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "26b5",
+    "pci_device_ids": [
+      "26b5"
+    ],
+    "pci_variants": {},
+    "vram_gb": 48.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 18176.0,
+    "tmus": 568.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 696.0,
+    "tflops": 362.0,
+    "int8_tops": 362.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA L4",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "27b8",
+    "pci_device_ids": [
+      "27b8"
+    ],
+    "pci_variants": {},
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 7424.0,
+    "tmus": 232.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 300.0,
+    "tflops": 242.0,
+    "int8_tops": 485.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 72.0
+  },
+  {
+    "name": "NVIDIA A40",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2235",
+    "pci_device_ids": [
+      "2235"
+    ],
+    "pci_variants": {},
+    "vram_gb": 48.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10752.0,
+    "tmus": 336.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2020-10-13",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 696.0,
+    "tflops": 149.7,
+    "int8_tops": 299.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA A10G",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2237",
+    "pci_device_ids": [
+      "2237"
+    ],
+    "pci_variants": {},
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 9216.0,
+    "tmus": 288.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2021-11-12",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 600.0,
+    "tflops": 70.0,
+    "int8_tops": 140.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "AMD Instinct MI300X",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "74a0",
+    "pci_device_ids": [
+      "74a0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 192.0,
+    "memory_type": "HBM3",
+    "memory_bus": 8192.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 30720.0,
+    "tmus": 1920.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2023-12-06",
+    "architecture": "CDNA 3",
+    "memory_bandwidth_gbps": 5300.0,
+    "tflops": 1307.4,
+    "int8_tops": 2614.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 750.0
+  },
+  {
+    "name": "AMD Instinct MI300A",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "74a0",
+    "pci_device_ids": [
+      "74a0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 128.0,
+    "memory_type": "HBM3",
+    "memory_bus": 8192.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 30720.0,
+    "tmus": 1920.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2023-12-06",
+    "architecture": "CDNA 3",
+    "memory_bandwidth_gbps": 5300.0,
+    "tflops": 980.6,
+    "int8_tops": 1961.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 760.0
+  },
+  {
+    "name": "AMD Instinct MI325X",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "74a5",
+    "pci_device_ids": [
+      "74a5",
+      "74b9"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a5"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "74b9"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 256.0,
+    "memory_type": "HBM3e",
+    "memory_bus": 8192.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 30720.0,
+    "tmus": 1920.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2024-11-01",
+    "architecture": "CDNA 3",
+    "memory_bandwidth_gbps": 6000.0,
+    "tflops": 1307.4,
+    "int8_tops": 2614.9,
+    "neural_engine_tops": null,
+    "tdp_watts": 1000.0
+  },
+  {
+    "name": "AMD Instinct MI250X",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "74a2",
+    "pci_device_ids": [
+      "74a2"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 128.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 8192.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 14080.0,
+    "tmus": 880.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2021-11-08",
+    "architecture": "CDNA 2",
+    "memory_bandwidth_gbps": 3200.0,
+    "tflops": 383.0,
+    "int8_tops": 766.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 560.0
+  },
+  {
+    "name": "AMD Instinct MI210",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "74a4",
+    "pci_device_ids": [
+      "74a4"
+    ],
+    "pci_variants": {},
+    "vram_gb": 64.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6656.0,
+    "tmus": 416.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2021-12-08",
+    "architecture": "CDNA 2",
+    "memory_bandwidth_gbps": 3200.0,
+    "tflops": 179.3,
+    "int8_tops": 358.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "AMD Instinct MI100",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "1002",
+    "pci_device_id": "738c",
+    "pci_device_ids": [
+      "738c",
+      "738e"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "738c",
+          "738e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 32.0,
+    "memory_type": "HBM2",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 7680.0,
+    "tmus": 480.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2020-11-12",
+    "architecture": "CDNA",
+    "memory_bandwidth_gbps": 1500.0,
+    "tflops": 184.6,
+    "int8_tops": 369.2,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA Tesla V100 SXM2",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1db5",
+    "pci_device_ids": [
+      "1db5"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1db5"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 32.0,
+    "memory_type": "HBM2",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 5120.0,
+    "tmus": 320.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2017-05-10",
+    "architecture": "Volta",
+    "memory_bandwidth_gbps": 900.0,
+    "tflops": 125.0,
+    "int8_tops": 0.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA Tesla V100 PCIe",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "1db6",
+    "pci_device_ids": [
+      "1db6"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1db6"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 32.0,
+    "memory_type": "HBM2",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 3.0 x16",
+    "shading_units": 5120.0,
+    "tmus": 320.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2017-05-10",
+    "architecture": "Volta",
+    "memory_bandwidth_gbps": 900.0,
+    "tflops": 125.0,
+    "int8_tops": 0.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA RTX 6000 Ada",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "26b1",
+    "pci_device_ids": [
+      "26b1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "26b1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 48.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 18176.0,
+    "tmus": 568.0,
+    "rops": 192.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 960.0,
+    "tflops": 91.1,
+    "int8_tops": 1457.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA RTX 5000 Ada",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "26b2",
+    "pci_device_ids": [
+      "26b2",
+      "2730",
+      "2770"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "26b2"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2730"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2770"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 32.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 12800.0,
+    "tmus": 400.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 576.0,
+    "tflops": 65.3,
+    "int8_tops": 522.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 250.0
+  },
+  {
+    "name": "NVIDIA RTX 4500 Ada",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "27b1",
+    "pci_device_ids": [
+      "27b1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "27b1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 8192.0,
+    "tmus": 256.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 432.0,
+    "tflops": 44.1,
+    "int8_tops": 280.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 200.0
+  },
+  {
+    "name": "NVIDIA RTX 4000 Ada",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "27b2",
+    "pci_device_ids": [
+      "27b2",
+      "27ba",
+      "27fa"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "27b2"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "27ba"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "27fa"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 20.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 160.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 6144.0,
+    "tmus": 192.0,
+    "rops": 80.0,
+    "gpu_cores": null,
+    "release_date": "2023-01-18",
+    "architecture": "Ada Lovelace",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 35.3,
+    "int8_tops": 193.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 130.0
+  },
+  {
+    "name": "NVIDIA RTX A6000",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2230",
+    "pci_device_ids": [
+      "2230"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2230"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 48.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 384.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 10752.0,
+    "tmus": 336.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2020-10-13",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 768.0,
+    "tflops": 38.7,
+    "int8_tops": 77.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 300.0
+  },
+  {
+    "name": "NVIDIA RTX A5000",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2231",
+    "pci_device_ids": [
+      "2231",
+      "24b6"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2231"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24b6"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 24.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 8192.0,
+    "tmus": 256.0,
+    "rops": 96.0,
+    "gpu_cores": null,
+    "release_date": "2021-04-12",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 768.0,
+    "tflops": 27.8,
+    "int8_tops": 55.5,
+    "neural_engine_tops": null,
+    "tdp_watts": 230.0
+  },
+  {
+    "name": "NVIDIA RTX A4000",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "24b0",
+    "pci_device_ids": [
+      "24b0",
+      "24b7"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "24b0"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24b7"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 6144.0,
+    "tmus": 192.0,
+    "rops": 64.0,
+    "gpu_cores": null,
+    "release_date": "2021-04-12",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 448.0,
+    "tflops": 19.2,
+    "int8_tops": 38.4,
+    "neural_engine_tops": null,
+    "tdp_watts": 140.0
+  },
+  {
+    "name": "NVIDIA RTX A2000",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "10de",
+    "pci_device_id": "2531",
+    "pci_device_ids": [
+      "2531",
+      "2571",
+      "25b8",
+      "25ba",
+      "25fa"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2531"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25b8",
+          "25ba"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2571",
+          "25fa"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
+    "vram_gb": 12.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 192.0,
+    "pcie": "PCIe 4.0 x8",
+    "shading_units": 3328.0,
+    "tmus": 104.0,
+    "rops": 48.0,
+    "gpu_cores": null,
+    "release_date": "2021-09-21",
+    "architecture": "Ampere",
+    "memory_bandwidth_gbps": 288.0,
+    "tflops": 7.8,
+    "int8_tops": 15.6,
+    "neural_engine_tops": null,
+    "tdp_watts": 70.0
+  },
+  {
+    "name": "Intel Gaudi 3",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "8086",
+    "pci_device_id": "1060",
+    "pci_device_ids": [
+      "1060"
+    ],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 5.0 x16",
+    "shading_units": 0.0,
+    "tmus": 0.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2024-09-01",
+    "architecture": "Gaudi 3",
+    "memory_bandwidth_gbps": 3700.0,
+    "tflops": 1835.0,
+    "int8_tops": 1835.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 900.0
+  },
+  {
+    "name": "Intel Gaudi 2",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "8086",
+    "pci_device_id": "1020",
+    "pci_device_ids": [
+      "1020"
+    ],
+    "pci_variants": {},
+    "vram_gb": 96.0,
+    "memory_type": "HBM2e",
+    "memory_bus": 4096.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 0.0,
+    "tmus": 0.0,
+    "rops": null,
+    "gpu_cores": null,
+    "release_date": "2022-05-01",
+    "architecture": "Gaudi 2",
+    "memory_bandwidth_gbps": 2450.0,
+    "tflops": 432.0,
+    "int8_tops": 865.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 600.0
+  },
+  {
+    "name": "Intel Arc A770",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "8086",
+    "pci_device_id": "56a0",
+    "pci_device_ids": [
+      "56a0"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "56a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 16.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 4096.0,
+    "tmus": 256.0,
+    "rops": 128.0,
+    "gpu_cores": null,
+    "release_date": "2022-10-12",
+    "architecture": "Alchemist",
+    "memory_bandwidth_gbps": 560.0,
+    "tflops": 21.0,
+    "int8_tops": 41.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 225.0
+  },
+  {
+    "name": "Intel Arc A750",
+    "category": "discrete_gpu",
+    "pci_vendor_id": "8086",
+    "pci_device_id": "56a1",
+    "pci_device_ids": [
+      "56a1"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "56a1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
+    "vram_gb": 8.0,
+    "memory_type": "GDDR6",
+    "memory_bus": 256.0,
+    "pcie": "PCIe 4.0 x16",
+    "shading_units": 3584.0,
+    "tmus": 224.0,
+    "rops": 112.0,
+    "gpu_cores": null,
+    "release_date": "2022-10-12",
+    "architecture": "Alchemist",
+    "memory_bandwidth_gbps": 560.0,
+    "tflops": 17.5,
+    "int8_tops": 35.0,
+    "neural_engine_tops": null,
+    "tdp_watts": 225.0
+  },
+  {
+    "name": "Apple M4 Ultra (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 192.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 32.0,
+    "release_date": "2025-03",
+    "architecture": "Apple M4",
+    "memory_bandwidth_gbps": 819.0,
+    "tflops": 45.0,
+    "int8_tops": null,
+    "neural_engine_tops": 38.0,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "Apple M4 Max (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 40.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M4",
+    "memory_bandwidth_gbps": 546.0,
+    "tflops": 39.0,
+    "int8_tops": null,
+    "neural_engine_tops": 38.0,
+    "tdp_watts": 90.0
+  },
+  {
+    "name": "Apple M4 Pro (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 48.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 20.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M4",
+    "memory_bandwidth_gbps": 273.0,
+    "tflops": 18.5,
+    "int8_tops": null,
+    "neural_engine_tops": 18.0,
+    "tdp_watts": 40.0
+  },
+  {
+    "name": "Apple M4 (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 32.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 10.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M4",
+    "memory_bandwidth_gbps": 136.0,
+    "tflops": 5.4,
+    "int8_tops": null,
+    "neural_engine_tops": 38.0,
+    "tdp_watts": 22.0
+  },
+  {
+    "name": "Apple M3 Ultra (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 192.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 60.0,
+    "release_date": "2025-03",
+    "architecture": "Apple M3",
+    "memory_bandwidth_gbps": 819.0,
+    "tflops": 39.0,
+    "int8_tops": null,
+    "neural_engine_tops": 32.0,
+    "tdp_watts": 140.0
+  },
+  {
+    "name": "Apple M3 Max (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 40.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M3",
+    "memory_bandwidth_gbps": 546.0,
+    "tflops": 30.0,
+    "int8_tops": null,
+    "neural_engine_tops": 32.0,
+    "tdp_watts": 60.0
+  },
+  {
+    "name": "Apple M3 Pro (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 36.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 18.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M3",
+    "memory_bandwidth_gbps": 273.0,
+    "tflops": 14.1,
+    "int8_tops": null,
+    "neural_engine_tops": 18.0,
+    "tdp_watts": 27.0
+  },
+  {
+    "name": "Apple M3 (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 24.0,
+    "memory_type": "LPDDR5X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 10.0,
+    "release_date": "2024-11",
+    "architecture": "Apple M3",
+    "memory_bandwidth_gbps": 136.0,
+    "tflops": 4.1,
+    "int8_tops": null,
+    "neural_engine_tops": 18.0,
+    "tdp_watts": 15.0
+  },
+  {
+    "name": "Apple M2 Ultra (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 192.0,
+    "memory_type": "LPDDR5",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 76.0,
+    "release_date": "2023-06",
+    "architecture": "Apple M2",
+    "memory_bandwidth_gbps": 800.0,
+    "tflops": 35.0,
+    "int8_tops": null,
+    "neural_engine_tops": 31.6,
+    "tdp_watts": 140.0
+  },
+  {
+    "name": "Apple M2 Max (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 96.0,
+    "memory_type": "LPDDR5",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 38.0,
+    "release_date": "2023-02",
+    "architecture": "Apple M2",
+    "memory_bandwidth_gbps": 400.0,
+    "tflops": 17.2,
+    "int8_tops": null,
+    "neural_engine_tops": 15.8,
+    "tdp_watts": 75.0
+  },
+  {
+    "name": "Apple M2 Pro (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 32.0,
+    "memory_type": "LPDDR5",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 19.0,
+    "release_date": "2023-02",
+    "architecture": "Apple M2",
+    "memory_bandwidth_gbps": 200.0,
+    "tflops": 8.6,
+    "int8_tops": null,
+    "neural_engine_tops": 15.8,
+    "tdp_watts": 30.0
+  },
+  {
+    "name": "Apple M2 (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 24.0,
+    "memory_type": "LPDDR5",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 10.0,
+    "release_date": "2022-07",
+    "architecture": "Apple M2",
+    "memory_bandwidth_gbps": 100.0,
+    "tflops": 3.6,
+    "int8_tops": null,
+    "neural_engine_tops": 15.8,
+    "tdp_watts": 18.0
+  },
+  {
+    "name": "Apple M1 Ultra (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 128.0,
+    "memory_type": "LPDDR4X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 64.0,
+    "release_date": "2022-03",
+    "architecture": "Apple M1",
+    "memory_bandwidth_gbps": 800.0,
+    "tflops": 27.2,
+    "int8_tops": null,
+    "neural_engine_tops": 22.0,
+    "tdp_watts": 120.0
+  },
+  {
+    "name": "Apple M1 Max (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 64.0,
+    "memory_type": "LPDDR4X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 32.0,
+    "release_date": "2021-10",
+    "architecture": "Apple M1",
+    "memory_bandwidth_gbps": 400.0,
+    "tflops": 13.6,
+    "int8_tops": null,
+    "neural_engine_tops": 11.0,
+    "tdp_watts": 60.0
+  },
+  {
+    "name": "Apple M1 Pro (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 32.0,
+    "memory_type": "LPDDR4X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 16.0,
+    "release_date": "2021-10",
+    "architecture": "Apple M1",
+    "memory_bandwidth_gbps": 200.0,
+    "tflops": 6.8,
+    "int8_tops": null,
+    "neural_engine_tops": 11.0,
+    "tdp_watts": 30.0
+  },
+  {
+    "name": "Apple M1 (GPU)",
+    "category": "apple_silicon",
+    "pci_vendor_id": "106b",
+    "pci_device_id": null,
+    "pci_device_ids": [],
+    "pci_variants": {},
+    "vram_gb": 16.0,
+    "memory_type": "LPDDR4X",
+    "memory_bus": null,
+    "pcie": null,
+    "shading_units": null,
+    "tmus": null,
+    "rops": null,
+    "gpu_cores": 8.0,
+    "release_date": "2020-11",
+    "architecture": "Apple M1",
+    "memory_bandwidth_gbps": 68.0,
+    "tflops": 2.6,
+    "int8_tops": null,
+    "neural_engine_tops": 11.0,
+    "tdp_watts": 10.0
+  }
+]

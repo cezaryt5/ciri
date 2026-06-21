@@ -1,6 +1,16 @@
-# db
-ciri.db
-
 # go modules 
 go.mod
 go.sum
+
+
+
+# unrelated files
+pci.ids
+Apple_Silicon_GPUs.csv
+GPUs.csv
+merge_gpus.py
+internal/hardware/example.go
+
+# agents
+.kilo
+.opencode
