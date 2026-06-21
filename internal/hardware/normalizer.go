@@ -22,8 +22,16 @@ var (
 	specialCharRe   = regexp.MustCompile(`[^\w\s-]`)
 )
 
-// NormalizeGPUName converts a raw GPU marketing string into a compact,
-// searchable canonical form. Examples:
+// NormalizeGPUName — internal/hardware/normalizer.go:32
+// Called from: detection.go:210 (in LoadGPUDB); matcher_ghw.go:27; matcher_vendor.go:35,140;
+//
+//	normalizer_test.go:23,46,57,76,85,108,117,124,131,138,172
+//
+// Converts a raw GPU marketing name into a compact, searchable canonical form.
+// Steps: lowercase → strip driver versions → strip vendor prefixes →
+// remove trademark symbols → collapse marketing noise ("Graphics", "GPU") →
+// remove special characters → collapse whitespace.
+// Examples:
 //
 //	"NVIDIA GeForce RTX 4090"              → "rtx 4090"
 //	"AMD Radeon (TM) RX 7900 XTX"         → "rx 7900 xtx"

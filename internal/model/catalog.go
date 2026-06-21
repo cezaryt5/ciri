@@ -30,8 +30,10 @@ type Model struct {
 	Categories []Category `json:"-"`
 }
 
-// LoadCatalog reads hf_models.json and returns all models with their
-// categories pre-computed.
+// LoadCatalog — internal/model/catalog.go:35
+// Called from: cmd/ciri/main.go:44; model_test.go:31,56,67,83,213,225,241
+// Reads hf_models.json, unmarshals it into []Model, and pre-computes
+// Categories for each model via Categorize().
 func LoadCatalog(path string) ([]Model, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {

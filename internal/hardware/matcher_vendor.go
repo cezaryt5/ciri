@@ -9,6 +9,11 @@ import (
 // glxinfo) for the GPU marketing name and resolves it against the database.
 type VendorAPIMatcher struct{}
 
+// Detect — internal/hardware/matcher_vendor.go:12
+// Called from: detection.go:147 (via GPUMatcher interface)
+// Detects the GPU by querying vendor CLI tools (nvidia-smi for NVIDIA,
+// rocm-smi for AMD, system_profiler for macOS) and resolving the returned
+// name against the GPU database via resolveByName.
 func (m *VendorAPIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
 	pci := detectPCI(ctx)
 	name := detectVendorName(ctx, pci)
@@ -18,8 +23,11 @@ func (m *VendorAPIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float
 	return resolveByName(gpuDB, name, 0.95)
 }
 
-// resolveByName tries progressively less-reliable name lookups and
-// lowers the confidence at each step.
+// resolveByName — internal/hardware/matcher_vendor.go:23
+// Called from: matcher_vendor.go:18 (in VendorAPIMatcher.Detect); matcher_pci_test.go:101
+// Tries progressively less-reliable name lookups against the GPU DB with
+// decreasing confidence: exact marketing name → alias → canonical → fuzzy.
+// Base confidence (0.95) is decremented at each fallback stage.
 func resolveByName(db []GPU, name string, baseConf float64) (*GPU, float64, error) {
 	// Exact marketing name match (case-insensitive).
 	if gpu := findGPUByName(db, name); gpu != nil {
@@ -49,7 +57,9 @@ func resolveByName(db []GPU, name string, baseConf float64) (*GPU, float64, erro
 	return nil, 0, nil
 }
 
-// findGPUByName searches for an exact marketing name match (case-insensitive).
+// findGPUByName — internal/hardware/matcher_vendor.go:53
+// Called from: matcher_ghw.go:17; matcher_vendor.go:25 (in resolveByName)
+// Case-insensitive exact match of the marketing name against the GPU database.
 func findGPUByName(db []GPU, name string) *GPU {
 	lower := strings.ToLower(strings.TrimSpace(name))
 	for i := range db {
@@ -60,7 +70,10 @@ func findGPUByName(db []GPU, name string) *GPU {
 	return nil
 }
 
-// findGPUByAlias checks every GPU's alias list for a match.
+// findGPUByAlias — internal/hardware/matcher_vendor.go:64
+// Called from: matcher_ghw.go:22; matcher_vendor.go:30 (in resolveByName)
+// Case-insensitive match against each GPU's pre-computed alias list
+// (stripped vendor prefixes from deriveAliases).
 func findGPUByAlias(db []GPU, name string) *GPU {
 	lower := strings.ToLower(strings.TrimSpace(name))
 	for i := range db {
@@ -73,7 +86,10 @@ func findGPUByAlias(db []GPU, name string) *GPU {
 	return nil
 }
 
-// findGPUByCanonicalName matches the normalized form of a GPU name.
+// findGPUByCanonicalName — internal/hardware/matcher_vendor.go:77
+// Called from: matcher_ghw.go:28; matcher_vendor.go:36 (in resolveByName)
+// Matches a GPU by its canonical (normalized) name. Both the input and
+// stored canonical names are lowercased for comparison.
 func findGPUByCanonicalName(db []GPU, canonical string) *GPU {
 	lower := strings.ToLower(strings.TrimSpace(canonical))
 	for i := range db {
@@ -84,7 +100,11 @@ func findGPUByCanonicalName(db []GPU, canonical string) *GPU {
 	return nil
 }
 
-// fuzzyFindGPUs returns all GPUs whose canonical name contains the query string.
+// fuzzyFindGPUs — internal/hardware/matcher_vendor.go:88
+// Called from: matcher_ghw.go:33; matcher_vendor.go:41 (in resolveByName)
+// Returns all GPUs whose canonical or marketing name contains the query
+// string (case-insensitive). Prefix-matching entries are moved to the front
+// for preferred ordering.
 func fuzzyFindGPUs(db []GPU, query string) []*GPU {
 	q := strings.ToLower(strings.TrimSpace(query))
 	if q == "" {
@@ -111,8 +131,11 @@ func fuzzyFindGPUs(db []GPU, query string) []*GPU {
 	return results
 }
 
-// tokenOverlapScore counts shared tokens between two normalized GPU names.
-// Tokens shorter than 2 characters are ignored (e.g., "a" is too ambiguous).
+// tokenOverlapScore — internal/hardware/matcher_vendor.go:116
+// Called from: matcher_ghw.go:40,42; matcher_pci_test.go:139
+// Counts the number of shared tokens between two GPU names (both are
+// tokenized via tokenizeGPUName). Tokens shorter than 2 characters are
+// ignored. Used to rank fuzzy matches by lexical similarity.
 func tokenOverlapScore(a, b string) int {
 	aTokens := tokenizeGPUName(a)
 	bTokens := tokenizeGPUName(b)
@@ -136,6 +159,10 @@ func tokenOverlapScore(a, b string) int {
 	return score
 }
 
+// tokenizeGPUName — internal/hardware/matcher_vendor.go:139
+// Called from: matcher_vendor.go:117-118 (in tokenOverlapScore)
+// Normalizes a GPU name and splits it into tokens (whitespace-separated parts
+// with length ≥ 2). Used by tokenOverlapScore for fuzzy matching.
 func tokenizeGPUName(name string) []string {
 	normalized := NormalizeGPUName(name)
 	parts := strings.Fields(normalized)

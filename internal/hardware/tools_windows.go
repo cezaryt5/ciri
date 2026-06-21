@@ -11,7 +11,11 @@ import (
 	"time"
 )
 
-// detectPCI queries Windows PnP device IDs for the primary display adapter.
+// detectPCI — internal/hardware/tools_windows.go:15
+// Called from: matcher_pci.go:10, matcher_vendor.go:13
+// Queries Windows PnP device IDs via PowerShell (modern) or wmic (fallback)
+// for the primary display adapter. Extracts PCI vendor/device IDs from the
+// PNPDeviceID string.
 func detectPCI(ctx context.Context) *PCIInfo {
 	// Try PowerShell first (modern Windows).
 	out, err := execWithTimeout(ctx, 5*time.Second,
@@ -31,6 +35,10 @@ func detectPCI(ctx context.Context) *PCIInfo {
 	return parseWindowsPnP(out)
 }
 
+// parseWindowsPnP — internal/hardware/tools_windows.go:34
+// Called from: tools_windows.go:20,31 (in detectPCI)
+// Parses a Windows PnP device ID string (e.g. "PCI\VEN_10DE&DEV_2684") using
+// regex to extract the vendor and device IDs.
 func parseWindowsPnP(out []byte) *PCIInfo {
 	re := regexp.MustCompile(`VEN_([0-9A-Fa-f]{4})&DEV_([0-9A-Fa-f]{4})`)
 	lines := strings.Split(string(out), "\n")
@@ -50,8 +58,10 @@ func parseWindowsPnP(out []byte) *PCIInfo {
 	return nil
 }
 
-// detectVRAM on Windows is not implemented without WMI or vendor-specific
-// tooling. Return 0 — the PCI matcher will fall back to desktop preference.
+// detectVRAM — internal/hardware/tools_windows.go:55
+// Called from: matcher_pci.go:20
+// Windows VRAM detection. For NVIDIA GPUs, uses nvidia-smi. Returns 0 for
+// other vendors (the PCI matcher will fall back to desktop preference).
 func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 	if target == nil {
 		return 0
@@ -71,7 +81,10 @@ func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 	return 0
 }
 
-// execWithTimeout on Windows.
+// execWithTimeout — internal/hardware/tools_windows.go:75
+// Called from: tools_windows.go:17,26,62
+// Windows implementation of execWithTimeout. Runs a command with a context
+// deadline and returns stdout bytes on success.
 func execWithTimeout(ctx context.Context, timeout time.Duration, name string, args ...string) ([]byte, error) {
 	cmdCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()

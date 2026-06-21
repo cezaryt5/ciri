@@ -7,6 +7,11 @@ import "context"
 // strategy but always returns something if hardware is present.
 type GHWFuzzyMatcher struct{}
 
+// Detect — internal/hardware/matcher_ghw.go:10
+// Called from: detection.go:147 (via GPUMatcher interface)
+// Lowest-confidence matcher. Gets raw GPU name from ghw, then tries:
+// exact name → alias → canonical → fuzzy substring → token overlap scoring.
+// Returns a bare GPU with confidence 0.30 even if no DB match is found.
 func (m *GHWFuzzyMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
 	rawName := detectRawGPUName()
 	if rawName == "" || rawName == "None/Unsupported" || rawName == "Unknown" {

@@ -1,104 +1,114 @@
-# Can_I_Run_IT
+# ciri — Can I Run It?
 
+`ciri` is a terminal tool that answers one question: **which open-source LLMs can run on my machine, and how fast?**
 
+It detects your GPU, CPU, and RAM, then matches them against a catalog of 1,000+ models from Hugging Face. Instead of guessing whether an 8B model will fit in your VRAM, you get concrete numbers — estimated tokens per second, memory pressure, and whether the model fits comfortably or will spill into system RAM.
 
+## Installation
 
+**Go install** (requires Go 1.26+):
 
+```sh
+go install github.com/cezaryt5/Can_I_Run_IT/cmd/ciri@latest
+```
 
-State Machine Architecture
-Root Model (ciriModel)
-├── State: HOME (category menu)
-├── State: RESULTS (filtered models for selected category)
-├── State: DETAIL (single model full specs)
-└── State: BENCHMARKS (tok/s data from benchmark_cache.json)
-Each state is its own Bubble Tea Model with Update() and View(). The root model delegates to the current state. Navigation:
-HOME ──[Enter]──→ RESULTS ──[Enter]──→ DETAIL
-  ↑                  │                     │
-  │                  │──[B]────────────→ BENCHMARKS
-  │                  │                     │
-  └──[Esc]──────────┘──[Esc]──────────────┘
-Screen 1: HOME (Category Selection)
-Hardware: i7-7700HQ │ 7.2/15.6 GB RAM │ GTX 1070 8GB │ Ollama ✓ │ llama.cpp ✓
-───────────────────────────────────────────────────────────────────────────────
- What do you want to do?
+**Build from source:**
 
-   1. Coding          (42 models fit)
-   2. Chat             (38 models fit)
-   3. General          (27 models fit)
-   4. Vision           (15 models fit)
-   5. Translation      (8 models fit)
+```sh
+git clone https://github.com/cezaryt5/Can_I_Run_IT
+cd Can_I_Run_IT
+go build -o ciri ./cmd/ciri
+```
 
-↑↓ Select  / Search  q Quit
-- Hardware bar: single line, computed from terminal width
-- Menu: centered or left-aligned, no boxes, no borders
-- Footer: single line keybinding hints
+The binary looks for the `data/` directory alongside itself. If you move the binary, copy the `data/` folder with it.
 
+**Pre-built binary** is included in the repository (`ciri` in the project root).
 
+## Usage
 
-Screen 2: RESULTS (Per-Category)
-Hardware: i7-7700HQ │ 7.2/15.6 GB RAM │ GTX 1070 8GB
-Category: Coding                                           [Esc] Back
-──────────────────────────────────────────────────────────────────────
- RECOMMENDED (fits in 8GB VRAM)
+```sh
+ciri
+```
 
-   ✓ Qwen3-4B-Instruct       4B   Q4_K_M   42 tok/s
-   ✓ Phi-4-mini-instruct     4B   Q8_0     50 tok/s
-   ✓ Llama-3.2-3B-Instruct   3B   Q8_0     58 tok/s
-   ✓ Gemma-4-2B-it            2B   Q8_0     71 tok/s
+That's it. The tool starts an interactive terminal interface with four screens:
 
- ADVANCED (spills to RAM — will be slow)
+| Screen | What it shows |
+|--------|---------------|
+| **Home** | Category menu (Coding, Chat, General, Vision, Translation) with model counts |
+| **Results** | All models for a category, sorted by fit quality and estimated speed |
+| **Detail** | Full specs for a single model — parameters, quantization, RAM/VRAM/disk requirements, community stats |
+| **Benchmarks** | Real-world tok/s measurements from benchmark data, matched to the closest available GPU |
 
-   ⚠ Qwen3-8B-Instruct       8B   Q4_K_M   ~4 tok/s
-   ⚠ Llama-3.1-8B-Instruct   8B   Q4_K_M   ~6 tok/s
+### Keyboard controls
 
-↑↓ Navigate  Enter Details  B Benchmarks  Esc Back
-- No side panels. No charts. Just a clean vertical list with two section headers.
-- Scrollable via bubbles/viewport if list exceeds terminal height.
-- tok/s values: from benchmark_cache.json if available, otherwise estimated via (available_vram / model_vram_requirement) * base_tok_per_sec.
+| Key | Action |
+|-----|--------|
+| `↑` `↓` / `j` `k` | Navigate lists |
+| `Enter` / `Space` | Select / open |
+| `b` | Open benchmarks for selected model |
+| `Esc` | Go back |
+| `q` / `Ctrl+C` | Quit |
 
+## How it works
 
-Screen 3: DETAIL
-Hardware: i7-7700HQ │ 7.2/15.6 GB RAM │ GTX 1070 8GB
-Qwen3-4B-Instruct                                           [Esc] Back
-──────────────────────────────────────────────────────────────────────
- Provider        Alibaba
- Parameters      4B
- Quantization     Q4_K_M
- Format           GGUF
- Context Length   262k
- Architecture     qwen3
- Pipeline         chat
+### Hardware detection
 
- Resources
-   Min RAM        2.0 GB
-   Recommended    4.0 GB
-   Min VRAM       2.5 GB
-   Disk           2.4 GB
+On startup, `ciri` detects your hardware:
 
- Fit Assessment
-   Status         Perfect (fits in VRAM)
-   Est. Speed     42 tok/s
-   VRAM Usage     62%
+- **GPU** — identified through a three-tier matching strategy (PCI device ID → vendor API like nvidia-smi or rocm-smi → fuzzy name matching), cross-referenced against a database of 200+ GPUs with VRAM, bandwidth, and TFLOPS figures
+- **CPU** — model name and core count via `ghw`
+- **RAM** — total and available system memory
+- **Toolchain** — checks whether `ollama` and `llama.cpp` are in your `$PATH`
 
- Community
-   Downloads      14,320
-   Likes          432
+Apple Silicon Macs are handled with unified memory accounting.
 
- Esc Back  B Benchmarks
+### Model catalog
 
+1,000+ models sourced from Hugging Face, each with:
 
- 
-Screen 4: BENCHMARKS (from benchmark_cache.json)
-Hardware: i7-7700HQ │ 7.2/15.6 GB RAM │ GTX 1070 8GB
-Benchmarks: Qwen3-4B-Instruct                               [Esc] Back
-──────────────────────────────────────────────────────────────────────
- Benchmark Results (closest hardware match)
+- Parameter count, quantization format, context length
+- Min and recommended RAM/VRAM requirements
+- Architecture family and pipeline type
+- Community stats (downloads, likes)
 
- Engine          tok/s    VRAM     Context   Notes
- llama.cpp       42.1     3.2 GB   32k       Q4_K_M, CUDA
- vLLM            —        —        —         Not benchmarked on
-                                             comparable hardware
+Models are auto-categorized into Coding, Chat, General, Vision, and Translation based on their listed capabilities.
 
- * Estimated from nearest hardware preset: GTX 1070 class
+### Fit assessment
 
- Esc Back
+Every model is checked against your hardware:
+
+- **Recommended** — fits entirely in your VRAM (with a 10% buffer), will run at full speed
+- **Advanced** — needs more VRAM than you have but fits in system RAM; will run, but slowly
+- **Too heavy** — exceeds both VRAM *and* available system RAM; not shown
+
+### Speed estimation
+
+Estimated tokens per second comes from a three-tier cascade:
+
+1. **Benchmark** — exact match from the benchmark cache (real measurements on similar hardware)
+2. **Architecture scaling** — no exact match, but data exists for the same GPU architecture family
+3. **Heuristic** — memory-bandwidth-bound or compute-bound estimation using the GPU's raw specs
+
+If a model spills to system RAM, a 0.2x penalty is applied to the estimate.
+
+## Data files
+
+These live in `data/` and are required at runtime:
+
+| File | Contents |
+|------|----------|
+| `gpus.json` | 200+ GPU profiles (VRAM, bandwidth, TFLOPS, PCI IDs, architecture family) |
+| `hf_models.json` | 1,000+ model entries scraped from Hugging Face |
+| `benchmark_cache.json` | Real-world tok/s measurements indexed by GPU and model |
+
+## Platform support
+
+| Platform | GPU detection | Status |
+|----------|---------------|--------|
+| Linux | nvidia-smi, rocm-smi, sysfs | Full support |
+| macOS | system_profiler (Apple Silicon) | Full support |
+| Windows | PowerShell / wmic | Partial |
+
+## License
+
+MIT — see [LICENSE](./LICENSE).

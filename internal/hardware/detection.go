@@ -71,7 +71,11 @@ type PCIInfo struct {
 
 // ---- Main Entry Point ----
 
-// GetSpecs now returns an error. Do not swallow hardware access failures.
+// GetSpecs — internal/hardware/detection.go:75
+// Called from: cmd/ciri/main.go:36
+// Entry point for hardware detection. Orchestrates CPU, RAM, tool, and GPU
+// detection in order. Returns a DetectionResult containing the detected Specs,
+// best-guess GPU, and a DetectionStatus indicating confidence level.
 func GetSpecs(gpuDB []GPU) (DetectionResult, error) {
 	var res DetectionResult
 
@@ -92,6 +96,10 @@ func GetSpecs(gpuDB []GPU) (DetectionResult, error) {
 
 // ---- CPU / RAM / Tools Detection ----
 
+// DetectCPU — internal/hardware/detection.go:95
+// Called from: detection.go:78 (via GetSpecs)
+// Uses ghw to detect CPU model name and total core count. Falls back to
+// "Unknown" on error.
 func (s *Specs) DetectCPU() error {
 	cpu, err := ghw.CPU()
 	if err != nil || cpu == nil {
@@ -107,6 +115,10 @@ func (s *Specs) DetectCPU() error {
 	return nil
 }
 
+// DetectRAM — internal/hardware/detection.go:110
+// Called from: detection.go:81 (via GetSpecs)
+// Uses ghw to detect total and usable physical RAM. Stores both float (GB)
+// and uint64 (bytes) representations for display and offloading math.
 func (s *Specs) DetectRAM() error {
 	mem, err := ghw.Memory()
 	if err != nil || mem == nil {
@@ -122,6 +134,10 @@ func (s *Specs) DetectRAM() error {
 	return nil
 }
 
+// DetectOllamaCpp — internal/hardware/detection.go:125
+// Called from: detection.go:85 (via GetSpecs)
+// Checks whether the Ollama CLI and llama.cpp-related binaries (llama.cpp,
+// llama-cli, llama-server) are on PATH.
 func (s *Specs) DetectOllamaCpp() {
 	s.HasOllama = execLookPath("ollama") != ""
 	// Removed the "main" binary check.
@@ -132,6 +148,13 @@ func (s *Specs) DetectOllamaCpp() {
 
 // ---- GPU Detection Cascade ----
 
+// DetectGPU — internal/hardware/detection.go:135
+// Called from: detection.go:87 (via GetSpecs); detection_test.go:407,430
+// Cascades through three GPU matching strategies in order of confidence:
+// 1. PCIMatcher (PCI vendor/device ID — highest)
+// 2. VendorAPIMatcher (nvidia-smi / rocm-smi name — medium)
+// 3. GHWFuzzyMatcher (ghw library + fuzzy name — lowest)
+// Returns immediately if any strategy reaches ≥0.95 confidence.
 func (s *Specs) DetectGPU(gpuDB []GPU) (DetectionStatus, *GPU) {
 	// Requires implementations in your matcher_*.go files
 	strategies := []GPUMatcher{
@@ -191,6 +214,12 @@ type variant struct {
 	Description string   `json:"description"`
 }
 
+// LoadGPUDB — internal/hardware/detection.go:194
+// Called from: cmd/ciri/main.go:29; detection_test.go:47,97,108,141,181
+// Reads and parses gpus.json into a []GPU slice. For each entry it
+// normalizes the name via NormalizeGPUName, collects PCI IDs (deduplicated),
+// detects laptop variants from name/PCI variants, and generates aliases via
+// deriveAliases.
 func LoadGPUDB(path string) ([]GPU, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -260,6 +289,11 @@ func LoadGPUDB(path string) ([]GPU, error) {
 	return gpus, nil
 }
 
+// deriveAliases — internal/hardware/detection.go:263
+// Called from: detection.go:257 (in LoadGPUDB); detection_test.go:358
+// Strips vendor prefixes ("nvidia geforce rtx ", "amd radeon rx ", etc.)
+// from a GPU name to produce shorter alias strings used for fuzzy matching.
+// Stops after the first matching prefix.
 func deriveAliases(name string) []string {
 	lower := strings.ToLower(strings.TrimSpace(name))
 	var aliases []string
@@ -286,6 +320,11 @@ func deriveAliases(name string) []string {
 
 // ---- GPU Database Lookup Helpers ----
 
+// findGPUsByPCI — internal/hardware/detection.go:289
+// Called from: matcher_pci.go:15; detection_test.go:201,218,230,247; matcher_pci_test.go:62
+// Searches the GPU database for entries matching a given PCI vendor ID and
+// device ID combination. Returns all matching GPUs (there may be multiple
+// variants sharing the same PCI ID, e.g. desktop and laptop SKUs).
 func findGPUsByPCI(db []GPU, vendorID, deviceID string) []*GPU {
 	var matches []*GPU
 	for i := range db {
@@ -303,6 +342,12 @@ func findGPUsByPCI(db []GPU, vendorID, deviceID string) []*GPU {
 	return matches
 }
 
+// pickBestPCIMatch — internal/hardware/detection.go:306
+// Called from: matcher_pci.go:21; detection_test.go:261,268,280,285,298,311
+// When multiple GPUs share the same PCI ID, picks the best match:
+//   - If VRAM was detected, selects the match with VRAM closest to detected.
+//   - Otherwise prefers desktop variants over laptop.
+//   - Falls back to the first match.
 func pickBestPCIMatch(matches []*GPU, detectedVRAMGB float64) *GPU {
 	if len(matches) == 0 {
 		return nil
@@ -332,6 +377,9 @@ func pickBestPCIMatch(matches []*GPU, detectedVRAMGB float64) *GPU {
 	return matches[0]
 }
 
+// abs — internal/hardware/detection.go:335
+// Called from: detection.go:316,318 (in pickBestPCIMatch); detection_test.go:389
+// Float absolute value helper.
 func abs(f float64) float64 {
 	if f < 0 {
 		return -f

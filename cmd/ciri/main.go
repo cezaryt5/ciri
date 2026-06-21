@@ -13,6 +13,12 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// main — cmd/ciri/main.go:16
+// Called from: Go runtime (automatic)
+// Application entry point. Resolves the data directory, loads the GPU database
+// (gpus.json), detects hardware (CPU, RAM, GPU), loads the model catalog
+// (hf_models.json) and benchmark cache (benchmark_cache.json), creates a
+// Predictor, and launches the Bubble Tea TUI.
 func main() {
 	exe, _ := os.Executable()
 	baseDir := filepath.Dir(exe)

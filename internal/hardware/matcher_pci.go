@@ -6,6 +6,11 @@ import "context"
 // This is the highest-confidence strategy (0.98).
 type PCIMatcher struct{}
 
+// Detect — internal/hardware/matcher_pci.go:9
+// Called from: detection.go:147 (via GPUMatcher interface)
+// Matches GPU by PCI vendor/device IDs. Scans sysfs (Linux), WMI (Windows),
+// or returns nil (macOS). When multiple GPUs share the same PCI ID, uses
+// detected VRAM or desktop preference to disambiguate.
 func (p PCIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
 	pci := detectPCI(ctx)
 	if pci == nil {

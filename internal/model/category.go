@@ -13,7 +13,10 @@ const (
 	CategoryTranslation Category = "Translation"
 )
 
-// AllCategories returns the five top-level categories in display order.
+// AllCategories — internal/model/category.go:17
+// Called from: predictor.go:85 (in CountByCategory); home.go:25,29,45; model_test.go:197
+// Returns the five top-level categories (Coding, Chat, General, Vision,
+// Translation) in display order as used by the home screen menu.
 func AllCategories() []Category {
 	return []Category{
 		CategoryCoding,
@@ -24,9 +27,11 @@ func AllCategories() []Category {
 	}
 }
 
-// Categorize populates m.Categories based on the model's UseCase,
-// Capabilities and PipelineTag. A model may belong to more than one
-// category (e.g. a vision-capable chat model).
+// Categorize — internal/model/category.go:30
+// Called from: catalog.go:47 (in LoadCatalog); model_test.go:109,117,131,139,153,167,175,183
+// Populates m.Categories based on UseCase, Capabilities and PipelineTag.
+// A model may belong to multiple categories (e.g. vision + chat).
+// Falls back to CategoryGeneral if no specific category matches.
 func Categorize(m *Model) {
 	use := strings.ToLower(m.UseCase)
 	pipeline := strings.ToLower(m.PipelineTag)
@@ -52,6 +57,10 @@ func Categorize(m *Model) {
 	}
 }
 
+// hasCapability — internal/model/category.go:55
+// Called from: category.go:40 (in Categorize)
+// Checks whether a model's Capabilities list contains the given capability
+// string (case-insensitive).
 func hasCapability(m *Model, want string) bool {
 	for _, c := range m.Capabilities {
 		if strings.EqualFold(c, want) {

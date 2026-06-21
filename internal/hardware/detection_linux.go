@@ -17,7 +17,10 @@ import (
 
 // ---- PCI Detection ----
 
-// detectPCI scans sysfs directly. It is faster and safer than parsing lspci text.
+// detectPCI — internal/hardware/detection_linux.go:21
+// Called from: matcher_pci.go:10, matcher_vendor.go:13
+// Scans /sys/class/drm/card*/device for vendor/device IDs. Returns the first
+// discrete GPU found with priority NVIDIA > AMD > Intel (iGPU fallback).
 func detectPCI(ctx context.Context) *PCIInfo {
 	entries, err := filepath.Glob("/sys/class/drm/card*/device")
 	if err != nil || len(entries) == 0 {
@@ -65,6 +68,10 @@ func detectPCI(ctx context.Context) *PCIInfo {
 	return intel
 }
 
+// readHexFile — internal/hardware/detection_linux.go:68
+// Called from: detection_linux.go:31-32 (in detectPCI); detection_linux_test.go:49,54,66,78,85
+// Reads a hex value from a sysfs file. Strips "0x" prefix and whitespace.
+// Returns the lowercase hex string, or "" on error/missing file.
 func readHexFile(path string) string {
 	raw, err := os.ReadFile(path)
 	if err != nil {
@@ -77,7 +84,11 @@ func readHexFile(path string) string {
 
 // ---- VRAM Detection ----
 
-// detectVRAMLinux guarantees we read the VRAM of the specific PCI device we targeted.
+// detectVRAM — internal/hardware/detection_linux.go:81
+// Called from: matcher_pci.go:20; detection_linux_test.go:101
+// Detects VRAM of the targeted PCI device. For NVIDIA GPUs, uses nvidia-smi
+// for accuracy. Falls back to sysfs (mem_info_vram_total) for AMD/Intel.
+// Returns GiB, or 0 on failure.
 func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 	if target == nil {
 		return 0
@@ -110,6 +121,11 @@ func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 
 // ---- Vendor Name Detection ----
 
+// detectVendorName — internal/hardware/detection_linux.go:113
+// Called from: matcher_vendor.go:14
+// Queries the vendor-specific CLI tool (nvidia-smi for NVIDIA, rocm-smi for
+// AMD) to obtain the GPU marketing name. Returns "" if the tool is unavailable
+// or the vendor is not recognised.
 func detectVendorName(ctx context.Context, target *PCIInfo) string {
 	if target == nil {
 		return ""
@@ -130,6 +146,10 @@ func detectVendorName(ctx context.Context, target *PCIInfo) string {
 	return "" // Let your JSON matching handle the fallback based on VendorID + DeviceID
 }
 
+// nvidiaSMIQuery — internal/hardware/detection_linux.go:133
+// Called from: detection_linux.go:119 (in detectVendorName)
+// Executes nvidia-smi --query-gpu=name and returns the trimmed output, or ""
+// on error.
 func nvidiaSMIQuery(ctx context.Context) string {
 	out, err := execWithTimeout(ctx, 3*time.Second,
 		"nvidia-smi", "--query-gpu=name", "--format=csv,noheader")
@@ -139,6 +159,10 @@ func nvidiaSMIQuery(ctx context.Context) string {
 	return strings.TrimSpace(string(out))
 }
 
+// rocmSMIQuery — internal/hardware/detection_linux.go:142
+// Called from: detection_linux.go:125 (in detectVendorName)
+// Executes rocm-smi --showproductname --json and parses the JSON output for
+// "Card series" or "Card model" fields. Returns the GPU name, or "" on error.
 func rocmSMIQuery(ctx context.Context) string {
 	// Never parse AMD text output. It changes. Use JSON.
 	out, err := execWithTimeout(ctx, 3*time.Second, "rocm-smi", "--showproductname", "--json")
@@ -163,6 +187,11 @@ func rocmSMIQuery(ctx context.Context) string {
 	return ""
 }
 
+// detectRawGPUName — internal/hardware/detection_linux.go:166
+// Called from: matcher_ghw.go:11
+// Uses ghw to enumerate GPUs, filters out integrated graphics (Intel HD/UHD/Iris,
+// non-RX AMD Radeon), and returns the product name of the first discrete GPU.
+// Falls back to the first GPU's name if no discrete is identified.
 func detectRawGPUName() string {
 	gpuInfo, err := ghw.GPU()
 	if err != nil || gpuInfo == nil || len(gpuInfo.GraphicsCards) == 0 {
