@@ -7,6 +7,14 @@
     "pci_device_ids": [
       "7550"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -29,8 +37,34 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2b85",
     "pci_device_ids": [
-      "2b85"
+      "2b85",
+      "2b87",
+      "2b8c",
+      "2c18",
+      "2c58"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2b85"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2c18",
+          "2c58"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "2b87",
+          "2b8c"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 32.0,
     "memory_type": "GDDR7",
     "memory_bus": 512.0,
@@ -53,8 +87,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2f04",
     "pci_device_ids": [
+      "2d18",
+      "2d58",
       "2f04"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2f04"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d18",
+          "2d58"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR7",
     "memory_bus": 192.0,
@@ -79,6 +130,14 @@
     "pci_device_ids": [
       "7590"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7590"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -101,8 +160,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2c05",
     "pci_device_ids": [
-      "2c05"
+      "2c05",
+      "2f18",
+      "2f58"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2c05"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2f18",
+          "2f58"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR7",
     "memory_bus": 256.0,
@@ -125,8 +201,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2d05",
     "pci_device_ids": [
-      "2d05"
+      "2d05",
+      "2d19",
+      "2d59"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d05"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d19",
+          "2d59"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR7",
     "memory_bus": 128.0,
@@ -148,7 +241,17 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2d04",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2d04"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d04"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR7",
     "memory_bus": 128.0,
@@ -171,8 +274,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2c02",
     "pci_device_ids": [
-      "2c02"
+      "2c02",
+      "2c19",
+      "2c59"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2c02"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2c19",
+          "2c59"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR7",
     "memory_bus": 256.0,
@@ -195,8 +315,36 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2206",
     "pci_device_ids": [
-      "2206"
+      "2206",
+      "220a",
+      "2216",
+      "222f",
+      "249c",
+      "24dc"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2206"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "249c",
+          "24dc"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "220a",
+          "2216",
+          "222f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 10.0,
     "memory_type": "GDDR6X",
     "memory_bus": 320.0,
@@ -220,8 +368,44 @@
     "pci_device_id": "2484",
     "pci_device_ids": [
       "2484",
-      "248d"
+      "2488",
+      "248d",
+      "249d",
+      "24af",
+      "24bf",
+      "24c8",
+      "24dd"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2484",
+          "248d"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "249d",
+          "24dd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "24af",
+          "24bf"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2488",
+          "24c8"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -244,8 +428,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "67df",
     "pci_device_ids": [
-      "67df"
+      "67df",
+      "aaf0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -267,7 +461,56 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2501",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2487",
+      "24ad",
+      "24c7",
+      "2501",
+      "2503",
+      "2504",
+      "2509",
+      "2520",
+      "2521",
+      "252f",
+      "2544",
+      "2560",
+      "2561"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2487",
+          "2501",
+          "2503",
+          "2544"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2520",
+          "2521",
+          "2560",
+          "2561"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "24ad",
+          "252f"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "24c7",
+          "2504",
+          "2509"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -292,6 +535,14 @@
     "pci_device_ids": [
       "7480"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7480"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -314,8 +565,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2d83",
     "pci_device_ids": [
-      "2d83"
+      "2d83",
+      "2d98",
+      "2dd8"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d83"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2d98",
+          "2dd8"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -338,8 +606,32 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2684",
     "pci_device_ids": [
-      "2684"
+      "2684",
+      "2685",
+      "2717",
+      "2757"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2684"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2717",
+          "2757"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2685"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6X",
     "memory_bus": 384.0,
@@ -362,10 +654,29 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2486",
     "pci_device_ids": [
-      "248e",
       "2414",
-      "2486"
+      "2486",
+      "2489",
+      "248e",
+      "24c9"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2414",
+          "2486",
+          "248e"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "2489",
+          "24c9"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -388,8 +699,23 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1b06",
     "pci_device_ids": [
+      "1b01",
       "1b06"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b06"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "1b01"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 11.0,
     "memory_type": "GDDR5X",
     "memory_bus": 352.0,
@@ -414,6 +740,14 @@
     "pci_device_ids": [
       "7550"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -438,6 +772,14 @@
     "pci_device_ids": [
       "744c"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -460,9 +802,27 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2882",
     "pci_device_ids": [
+      "2808",
       "2882",
-      "2808"
+      "28a0",
+      "28e0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2808",
+          "2882"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "28a0",
+          "28e0"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -486,8 +846,26 @@
     "pci_device_id": "2786",
     "pci_device_ids": [
       "2709",
-      "2786"
+      "2786",
+      "2820",
+      "2860"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2709",
+          "2786"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "2820",
+          "2860"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6X",
     "memory_bus": 192.0,
@@ -510,8 +888,45 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1e89",
     "pci_device_ids": [
-      "1e89"
+      "1e89",
+      "1f03",
+      "1f08",
+      "1f11",
+      "1f12",
+      "1f15",
+      "1f51",
+      "1f55"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e89"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f11",
+          "1f15",
+          "1f51",
+          "1f55"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1f12"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "1f03",
+          "1f08"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -536,6 +951,14 @@
     "pci_device_ids": [
       "73df"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73df"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -560,6 +983,14 @@
     "pci_device_ids": [
       "7550"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7550"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -582,8 +1013,34 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1e04",
     "pci_device_ids": [
-      "1e04"
+      "1e03",
+      "1e04",
+      "1e07",
+      "1e2d",
+      "1e2e"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e04"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "engineering": {
+        "ids": [
+          "1e2d",
+          "1e2e"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "1e03",
+          "1e07"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 11.0,
     "memory_type": "GDDR6",
     "memory_bus": 352.0,
@@ -606,8 +1063,18 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "21c4",
     "pci_device_ids": [
+      "1f09",
       "21c4"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f09",
+          "21c4"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -630,8 +1097,32 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2208",
     "pci_device_ids": [
-      "2208"
+      "2205",
+      "2208",
+      "2420",
+      "2460"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2208"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2420",
+          "2460"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2205"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6X",
     "memory_bus": 384.0,
@@ -656,6 +1147,14 @@
     "pci_device_ids": [
       "73ff"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -678,8 +1177,23 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2204",
     "pci_device_ids": [
-      "2204"
+      "2204",
+      "222b"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2204"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "engineering": {
+        "ids": [
+          "222b"
+        ],
+        "description": "Engineering sample"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6X",
     "memory_bus": 384.0,
@@ -704,6 +1218,14 @@
     "pci_device_ids": [
       "e20b"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "e20b"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -728,6 +1250,20 @@
     "pci_device_ids": [
       "731f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -750,10 +1286,41 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1f82",
     "pci_device_ids": [
-      "2188",
       "1f0a",
-      "1f82"
+      "1f82",
+      "1f91",
+      "1f92",
+      "1f94",
+      "1f96",
+      "1f99",
+      "1f9d",
+      "1fd9",
+      "1fdd",
+      "2188"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f0a",
+          "1f82",
+          "2188"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f91",
+          "1f92",
+          "1f94",
+          "1f96",
+          "1f99",
+          "1f9d",
+          "1fd9",
+          "1fdd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -775,7 +1342,17 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2d04",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2d04"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2d04"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR7",
     "memory_bus": 128.0,
@@ -800,6 +1377,14 @@
     "pci_device_ids": [
       "747e"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "747e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -822,8 +1407,29 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2207",
     "pci_device_ids": [
-      "2207"
+      "2207",
+      "2482",
+      "248c",
+      "24a0",
+      "24e0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2207",
+          "2482",
+          "248c"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24a0",
+          "24e0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6X",
     "memory_bus": 256.0,
@@ -845,7 +1451,45 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "10f1",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "1b83",
+      "1b84",
+      "1c02",
+      "1c03",
+      "1c04",
+      "1c06",
+      "1c20",
+      "1c23",
+      "1c60",
+      "10f1"
+    ],
+    "pci_variants": {
+      "mobile": {
+        "ids": [
+          "1c20",
+          "1c23",
+          "1c60"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1b83",
+          "1b84",
+          "1c02",
+          "1c03",
+          "1c04",
+          "1c06"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      },
+      "desktop": {
+        "ids": [
+          "10f1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR5",
     "memory_bus": 192.0,
@@ -868,8 +1512,36 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1c82",
     "pci_device_ids": [
-      "1c82"
+      "1c21",
+      "1c61",
+      "1c82",
+      "1c8c",
+      "1c8f",
+      "1ccc"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1c82"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1c21",
+          "1c61",
+          "1c8c",
+          "1ccc"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1c8f"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -891,7 +1563,62 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2507",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2507",
+      "2508",
+      "2582",
+      "2583",
+      "2584",
+      "25a2",
+      "25a5",
+      "25ab",
+      "25ac",
+      "25af",
+      "25e2",
+      "25e5",
+      "25ec",
+      "2822",
+      "28a3",
+      "28e3"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2507"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25a2",
+          "25a5",
+          "25ab",
+          "25ac",
+          "25e2",
+          "25e5",
+          "25ec",
+          "2822",
+          "28a3",
+          "28e3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "25af"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2508",
+          "2582",
+          "2583",
+          "2584"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -916,6 +1643,14 @@
     "pci_device_ids": [
       "73bf"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73bf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -938,8 +1673,34 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1b81",
     "pci_device_ids": [
-      "1b81"
+      "1b81",
+      "1ba1",
+      "1ba2",
+      "1bad",
+      "1be1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1ba1",
+          "1ba2",
+          "1be1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "1bad"
+        ],
+        "description": "Engineering sample"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -962,10 +1723,20 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1f06",
     "pci_device_ids": [
-      "1f47",
       "1f06",
-      "1f42"
+      "1f42",
+      "1f47"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f06",
+          "1f42",
+          "1f47"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -988,8 +1759,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2704",
     "pci_device_ids": [
-      "2704"
+      "2704",
+      "27a0",
+      "27e0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2704"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "max_q": {
+        "ids": [
+          "27a0",
+          "27e0"
+        ],
+        "description": "Max-Q power-optimised variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6X",
     "memory_bus": 256.0,
@@ -1014,6 +1802,14 @@
     "pci_device_ids": [
       "2783"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2783"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6X",
     "memory_bus": 192.0,
@@ -1036,8 +1832,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1b80",
     "pci_device_ids": [
-      "1b80"
+      "1b80",
+      "1ba0",
+      "1be0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b80"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1ba0",
+          "1be0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR5X",
     "memory_bus": 256.0,
@@ -1060,8 +1873,18 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2689",
     "pci_device_ids": [
-      "2689"
+      "2689",
+      "2705"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2689",
+          "2705"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6X",
     "memory_bus": 256.0,
@@ -1087,6 +1910,15 @@
       "2702",
       "2703"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2702",
+          "2703"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6X",
     "memory_bus": 256.0,
@@ -1111,6 +1943,14 @@
     "pci_device_ids": [
       "2782"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2782"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6X",
     "memory_bus": 192.0,
@@ -1133,8 +1973,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "67df",
     "pci_device_ids": [
-      "67df"
+      "67df",
+      "aaf0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -1158,9 +2008,28 @@
     "pci_device_id": "1e84",
     "pci_device_ids": [
       "1e84",
+      "1e91",
       "1ec2",
-      "1ec7"
+      "1ec7",
+      "1ed1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e84",
+          "1ec2",
+          "1ec7"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e91",
+          "1ed1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1182,7 +2051,26 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2803",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2788",
+      "2803",
+      "2805"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2788",
+          "2803"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "2805"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1207,6 +2095,14 @@
     "pci_device_ids": [
       "73ff"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1231,6 +2127,14 @@
     "pci_device_ids": [
       "747e"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "747e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -1255,6 +2159,14 @@
     "pci_device_ids": [
       "2bb1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2bb1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 96.0,
     "memory_type": "GDDR7",
     "memory_bus": 512.0,
@@ -1279,6 +2191,14 @@
     "pci_device_ids": [
       "744c"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 20.0,
     "memory_type": "GDDR6",
     "memory_bus": 320.0,
@@ -1301,8 +2221,36 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1f02",
     "pci_device_ids": [
-      "1f02"
+      "1f02",
+      "1f07",
+      "1f10",
+      "1f14",
+      "1f50",
+      "1f54"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1f02"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1f10",
+          "1f14",
+          "1f50",
+          "1f54"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1f07"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1327,6 +2275,14 @@
     "pci_device_ids": [
       "73bf"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73bf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1351,6 +2307,14 @@
     "pci_device_ids": [
       "2203"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2203"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6X",
     "memory_bus": 384.0,
@@ -1373,8 +2337,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2182",
     "pci_device_ids": [
-      "2182"
+      "2182",
+      "2191",
+      "21d1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2182"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2191",
+          "21d1"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -1397,10 +2378,20 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1380",
     "pci_device_ids": [
-      "139d",
+      "11c7",
       "1380",
-      "11c7"
+      "139d"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "11c7",
+          "1380",
+          "139d"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -1423,8 +2414,32 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1e82",
     "pci_device_ids": [
-      "1e82"
+      "1e82",
+      "1e87",
+      "1e90",
+      "1ed0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e82"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e90",
+          "1ed0"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "1e87"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1449,6 +2464,14 @@
     "pci_device_ids": [
       "13c2"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "13c2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -1473,6 +2496,14 @@
     "pci_device_ids": [
       "73af"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73af"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1497,6 +2528,14 @@
     "pci_device_ids": [
       "2184"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2184"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR5",
     "memory_bus": 192.0,
@@ -1521,6 +2560,14 @@
     "pci_device_ids": [
       "73df"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73df"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -1543,8 +2590,27 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1401",
     "pci_device_ids": [
-      "1401"
+      "13d8",
+      "1401",
+      "1404",
+      "1406"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1401"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "13d8",
+          "1404",
+          "1406"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -1569,6 +2635,14 @@
     "pci_device_ids": [
       "743f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "743f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR6",
     "memory_bus": 64.0,
@@ -1593,6 +2667,14 @@
     "pci_device_ids": [
       "7340"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7340"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1618,6 +2700,15 @@
       "0fc5",
       "1d01"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0fc5",
+          "1d01"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 64.0,
@@ -1642,6 +2733,14 @@
     "pci_device_ids": [
       "6fdf"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6fdf"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -1663,7 +2762,64 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "2291",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "2507",
+      "2508",
+      "2582",
+      "2583",
+      "2584",
+      "25a2",
+      "25a5",
+      "25ab",
+      "25ac",
+      "25af",
+      "25e2",
+      "25e5",
+      "25ec",
+      "2822",
+      "28a3",
+      "28e3",
+      "2291"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2507",
+          "2291"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25a2",
+          "25a5",
+          "25ab",
+          "25ac",
+          "25e2",
+          "25e5",
+          "25ec",
+          "2822",
+          "28a3",
+          "28e3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "25af"
+        ],
+        "description": "Engineering sample"
+      },
+      "other": {
+        "ids": [
+          "2508",
+          "2582",
+          "2583",
+          "2584"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR6",
     "memory_bus": 96.0,
@@ -1688,6 +2844,14 @@
     "pci_device_ids": [
       "7480"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7480"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1712,6 +2876,20 @@
     "pci_device_ids": [
       "731f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -1733,7 +2911,17 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "1002",
     "pci_device_id": "6981",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "6981"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6981"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -1758,6 +2946,14 @@
     "pci_device_ids": [
       "7590"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "7590"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1780,8 +2976,25 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1e81",
     "pci_device_ids": [
-      "1e81"
+      "1e81",
+      "1e93",
+      "1ed3"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1e81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1e93",
+          "1ed3"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1806,6 +3019,14 @@
     "pci_device_ids": [
       "73ff"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73ff"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -1830,6 +3051,7 @@
     "pci_device_ids": [
       "15bf"
     ],
+    "pci_variants": {},
     "vram_gb": null,
     "memory_type": "System Shared",
     "memory_bus": null,
@@ -1854,6 +3076,14 @@
     "pci_device_ids": [
       "744c"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "744c"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1876,8 +3106,45 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "1c81",
     "pci_device_ids": [
-      "1c81"
+      "1c22",
+      "1c62",
+      "1c81",
+      "1c83",
+      "1c8d",
+      "1c91",
+      "1c92",
+      "1ccd"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1c81"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "1c22",
+          "1c62",
+          "1c8d",
+          "1c92",
+          "1ccd"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "max_q": {
+        "ids": [
+          "1c91"
+        ],
+        "description": "Max-Q power-optimised variant"
+      },
+      "other": {
+        "ids": [
+          "1c83"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -1900,8 +3167,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "67df",
     "pci_device_ids": [
-      "67df"
+      "67df",
+      "aaf0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -1926,6 +3203,14 @@
     "pci_device_ids": [
       "17c8"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "17c8"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 6.0,
     "memory_type": "GDDR5",
     "memory_bus": 384.0,
@@ -1951,6 +3236,15 @@
       "0a23",
       "0a65"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0a23",
+          "0a65"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 0.5,
     "memory_type": "DDR3",
     "memory_bus": 64.0,
@@ -1975,6 +3269,20 @@
     "pci_device_ids": [
       "731f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "731f"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -1999,6 +3307,14 @@
     "pci_device_ids": [
       "1b82"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1b82"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -2023,6 +3339,14 @@
     "pci_device_ids": [
       "2187"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2187"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR6",
     "memory_bus": 128.0,
@@ -2047,6 +3371,14 @@
     "pci_device_ids": [
       "73af"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "73af"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -2069,6 +3401,7 @@
     "pci_vendor_id": "10de",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 16.0,
     "memory_type": "GDDR7",
     "memory_bus": 256.0,
@@ -2090,7 +3423,24 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "1002",
     "pci_device_id": "6860",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "6860",
+      "686c"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "6860"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "686c"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "HBM2",
     "memory_bus": 2048.0,
@@ -2113,8 +3463,32 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "13c0",
     "pci_device_ids": [
-      "13c0"
+      "13c0",
+      "13da",
+      "13e7",
+      "161a"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "13c0"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "13da",
+          "161a"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "engineering": {
+        "ids": [
+          "13e7"
+        ],
+        "description": "Engineering sample"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -2139,6 +3513,7 @@
     "pci_device_ids": [
       "2e12"
     ],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "LPDDR5X",
     "memory_bus": 256.0,
@@ -2161,11 +3536,22 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "0f02",
     "pci_device_ids": [
-      "0fc9",
-      "1287",
       "0f02",
-      "0f06"
+      "0f06",
+      "0fc9",
+      "1287"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "0f02",
+          "0f06",
+          "0fc9",
+          "1287"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "DDR3",
     "memory_bus": 128.0,
@@ -2188,9 +3574,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "66af",
     "pci_device_ids": [
-      "ab20",
-      "66af"
+      "66af",
+      "ab20"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "66af",
+          "ab20"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "HBM2",
     "memory_bus": 4096.0,
@@ -2213,9 +3608,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "67df",
     "pci_device_ids": [
-      "aaf0",
-      "67df"
+      "67df",
+      "aaf0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "67df",
+          "aaf0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR5",
     "memory_bus": 256.0,
@@ -2237,7 +3641,17 @@
     "category": "discrete_gpu",
     "pci_vendor_id": "10de",
     "pci_device_id": "22eb",
-    "pci_device_ids": [],
+    "pci_device_ids": [
+      "22eb"
+    ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "22eb"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR7",
     "memory_bus": 128.0,
@@ -2262,6 +3676,14 @@
     "pci_device_ids": [
       "1402"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1402"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 2.0,
     "memory_type": "GDDR5",
     "memory_bus": 128.0,
@@ -2286,6 +3708,14 @@
     "pci_device_ids": [
       "66a1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "66a1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "HBM2",
     "memory_bus": 4096.0,
@@ -2310,6 +3740,7 @@
     "pci_device_ids": [
       "2e12"
     ],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "LPDDR5X",
     "memory_bus": 256.0,
@@ -2334,6 +3765,14 @@
     "pci_device_ids": [
       "687f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "687f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "HBM2",
     "memory_bus": 2048.0,
@@ -2358,6 +3797,14 @@
     "pci_device_ids": [
       "743f"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "743f"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 4.0,
     "memory_type": "GDDR6",
     "memory_bus": 64.0,
@@ -2382,6 +3829,14 @@
     "pci_device_ids": [
       "2330"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2330"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 80.0,
     "memory_type": "HBM3",
     "memory_bus": 5120.0,
@@ -2406,6 +3861,14 @@
     "pci_device_ids": [
       "2331"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2331"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 80.0,
     "memory_type": "HBM2e",
     "memory_bus": 5120.0,
@@ -2430,6 +3893,14 @@
     "pci_device_ids": [
       "233b"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "233b"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 94.0,
     "memory_type": "HBM3",
     "memory_bus": 5120.0,
@@ -2454,6 +3925,14 @@
     "pci_device_ids": [
       "2335"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2335"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 141.0,
     "memory_type": "HBM3e",
     "memory_bus": 5120.0,
@@ -2478,6 +3957,14 @@
     "pci_device_ids": [
       "20b2"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 80.0,
     "memory_type": "HBM2e",
     "memory_bus": 5120.0,
@@ -2502,6 +3989,14 @@
     "pci_device_ids": [
       "20b5"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b5"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 80.0,
     "memory_type": "HBM2e",
     "memory_bus": 5120.0,
@@ -2524,8 +4019,18 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "20b1",
     "pci_device_ids": [
-      "20b1"
+      "20b1",
+      "20f1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "20b1",
+          "20f1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 40.0,
     "memory_type": "HBM2e",
     "memory_bus": 5120.0,
@@ -2550,6 +4055,7 @@
     "pci_device_ids": [
       "26b9"
     ],
+    "pci_variants": {},
     "vram_gb": 48.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2574,6 +4080,7 @@
     "pci_device_ids": [
       "26b5"
     ],
+    "pci_variants": {},
     "vram_gb": 48.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2598,6 +4105,7 @@
     "pci_device_ids": [
       "27b8"
     ],
+    "pci_variants": {},
     "vram_gb": 24.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -2622,6 +4130,7 @@
     "pci_device_ids": [
       "2235"
     ],
+    "pci_variants": {},
     "vram_gb": 48.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2646,6 +4155,7 @@
     "pci_device_ids": [
       "2237"
     ],
+    "pci_variants": {},
     "vram_gb": 24.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2670,6 +4180,14 @@
     "pci_device_ids": [
       "74a0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 192.0,
     "memory_type": "HBM3",
     "memory_bus": 8192.0,
@@ -2694,6 +4212,14 @@
     "pci_device_ids": [
       "74a0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 128.0,
     "memory_type": "HBM3",
     "memory_bus": 8192.0,
@@ -2716,8 +4242,23 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "74a5",
     "pci_device_ids": [
-      "74a5"
+      "74a5",
+      "74b9"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a5"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "other": {
+        "ids": [
+          "74b9"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 256.0,
     "memory_type": "HBM3e",
     "memory_bus": 8192.0,
@@ -2742,6 +4283,14 @@
     "pci_device_ids": [
       "74a2"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "74a2"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 128.0,
     "memory_type": "HBM2e",
     "memory_bus": 8192.0,
@@ -2766,6 +4315,7 @@
     "pci_device_ids": [
       "74a4"
     ],
+    "pci_variants": {},
     "vram_gb": 64.0,
     "memory_type": "HBM2e",
     "memory_bus": 4096.0,
@@ -2788,8 +4338,18 @@
     "pci_vendor_id": "1002",
     "pci_device_id": "738c",
     "pci_device_ids": [
-      "738c"
+      "738c",
+      "738e"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "738c",
+          "738e"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 32.0,
     "memory_type": "HBM2",
     "memory_bus": 4096.0,
@@ -2814,6 +4374,14 @@
     "pci_device_ids": [
       "1db5"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1db5"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 32.0,
     "memory_type": "HBM2",
     "memory_bus": 4096.0,
@@ -2838,6 +4406,14 @@
     "pci_device_ids": [
       "1db6"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "1db6"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 32.0,
     "memory_type": "HBM2",
     "memory_bus": 4096.0,
@@ -2862,6 +4438,14 @@
     "pci_device_ids": [
       "26b1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "26b1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 48.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2884,8 +4468,30 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "26b2",
     "pci_device_ids": [
-      "26b2"
+      "26b2",
+      "2730",
+      "2770"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "26b2"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "2730"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2770"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 32.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -2910,6 +4516,14 @@
     "pci_device_ids": [
       "27b1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "27b1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -2932,8 +4546,30 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "27b2",
     "pci_device_ids": [
-      "27b2"
+      "27b2",
+      "27ba",
+      "27fa"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "27b2"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "27ba"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "27fa"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 20.0,
     "memory_type": "GDDR6",
     "memory_bus": 160.0,
@@ -2958,6 +4594,14 @@
     "pci_device_ids": [
       "2230"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2230"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 48.0,
     "memory_type": "GDDR6",
     "memory_bus": 384.0,
@@ -2980,8 +4624,23 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2231",
     "pci_device_ids": [
-      "2231"
+      "2231",
+      "24b6"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2231"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24b6"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 24.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -3004,8 +4663,23 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "24b0",
     "pci_device_ids": [
-      "24b0"
+      "24b0",
+      "24b7"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "24b0"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "24b7"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -3028,8 +4702,34 @@
     "pci_vendor_id": "10de",
     "pci_device_id": "2531",
     "pci_device_ids": [
-      "2531"
+      "2531",
+      "2571",
+      "25b8",
+      "25ba",
+      "25fa"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "2531"
+        ],
+        "description": "Desktop / reference variant"
+      },
+      "mobile": {
+        "ids": [
+          "25b8",
+          "25ba"
+        ],
+        "description": "Mobile / laptop variant (reduced TDP)"
+      },
+      "other": {
+        "ids": [
+          "2571",
+          "25fa"
+        ],
+        "description": "Other variant (OEM, hash-rate, VRAM-only, etc.)"
+      }
+    },
     "vram_gb": 12.0,
     "memory_type": "GDDR6",
     "memory_bus": 192.0,
@@ -3054,6 +4754,7 @@
     "pci_device_ids": [
       "1060"
     ],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "HBM2e",
     "memory_bus": 4096.0,
@@ -3078,6 +4779,7 @@
     "pci_device_ids": [
       "1020"
     ],
+    "pci_variants": {},
     "vram_gb": 96.0,
     "memory_type": "HBM2e",
     "memory_bus": 4096.0,
@@ -3102,6 +4804,14 @@
     "pci_device_ids": [
       "56a0"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "56a0"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 16.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -3126,6 +4836,14 @@
     "pci_device_ids": [
       "56a1"
     ],
+    "pci_variants": {
+      "desktop": {
+        "ids": [
+          "56a1"
+        ],
+        "description": "Desktop / reference variant"
+      }
+    },
     "vram_gb": 8.0,
     "memory_type": "GDDR6",
     "memory_bus": 256.0,
@@ -3148,6 +4866,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 192.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3170,6 +4889,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3192,6 +4912,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 48.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3214,6 +4935,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 32.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3236,6 +4958,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 192.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3258,6 +4981,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3280,6 +5004,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 36.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3302,6 +5027,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 24.0,
     "memory_type": "LPDDR5X",
     "memory_bus": null,
@@ -3324,6 +5050,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 192.0,
     "memory_type": "LPDDR5",
     "memory_bus": null,
@@ -3346,6 +5073,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 96.0,
     "memory_type": "LPDDR5",
     "memory_bus": null,
@@ -3368,6 +5096,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 32.0,
     "memory_type": "LPDDR5",
     "memory_bus": null,
@@ -3390,6 +5119,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 24.0,
     "memory_type": "LPDDR5",
     "memory_bus": null,
@@ -3412,6 +5142,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 128.0,
     "memory_type": "LPDDR4X",
     "memory_bus": null,
@@ -3434,6 +5165,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 64.0,
     "memory_type": "LPDDR4X",
     "memory_bus": null,
@@ -3456,6 +5188,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 32.0,
     "memory_type": "LPDDR4X",
     "memory_bus": null,
@@ -3478,6 +5211,7 @@
     "pci_vendor_id": "106b",
     "pci_device_id": null,
     "pci_device_ids": [],
+    "pci_variants": {},
     "vram_gb": 16.0,
     "memory_type": "LPDDR4X",
     "memory_bus": null,

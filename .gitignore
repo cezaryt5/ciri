@@ -9,6 +9,7 @@ pci.ids
 Apple_Silicon_GPUs.csv
 GPUs.csv
 merge_gpus.py
+internal/hardware/example.go
 
 # agents
 .kilo
