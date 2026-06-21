@@ -46,11 +46,6 @@ type App struct {
 	counts   map[model.Category]int
 }
 
-// NewApp — internal/tui/app.go:49
-// Called from: cmd/ciri/main.go:60
-// Creates the root Bubble Tea App model. Initialises the home screen and
-// pre-computes category counts from the Predictor. The home screen is shown
-// first (screenHome).
 func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred *predictor.Predictor, benchDB *predictor.BenchmarkDB) *App {
 	counts := pred.CountByCategory()
 	return &App{
@@ -65,18 +60,10 @@ func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred 
 	}
 }
 
-// Init — internal/tui/app.go:63
-// Called from: Bubble Tea runtime (tea.NewProgram)
-// Bubble Tea lifecycle method. Returns nil — no initial command needed.
 func (a *App) Init() tea.Cmd {
 	return nil
 }
 
-// Update — internal/tui/app.go:67
-// Called from: Bubble Tea runtime
-// Routes messages to the active screen's update handler. Handles global
-// keybindings (ctrl+q, q to quit), window resize events, and navigation
-// messages (navigateMsg) that switch between screens.
 func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -123,11 +110,6 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return a, nil
 }
 
-// View — internal/tui/app.go:113
-// Called from: Bubble Tea runtime
-// Renders the complete UI: hardware bar at the top inside a titled box,
-// then the active screen's content (home, results, detail, or benchmarks),
-// plus a preview line and footer for the results screen.
 func (a *App) View() string {
 	var sb strings.Builder
 
@@ -167,19 +149,12 @@ func (a *App) View() string {
 	return lipgloss.NewStyle().Width(a.width).Height(contentHeight).Render(sb.String())
 }
 
-// isTextInput — internal/tui/app.go:154
-// Called from: app.go:93 (in Update)
-// Reports whether the active screen is capturing free text input. When true,
-// global single-key shortcuts (e.g. "q" for quit) are suppressed so the
-// input field receives them instead.
+// isTextInput reports whether a screen is currently capturing free text, so
+// global single-key shortcuts like "q" should be treated as input instead.
 func (a *App) isTextInput() bool {
 	return a.screen == screenResults && a.results != nil && a.results.searching
 }
 
-// label — internal/tui/app.go:158
-// Called from: app.go:124,130,135,141 (in View)
-// Returns the title string for the currently active screen's box. For
-// detail and benchmarks screens, includes the model name (truncated).
 func (a *App) label() string {
 	switch a.screen {
 	case screenHome:
@@ -200,10 +175,6 @@ func (a *App) label() string {
 	return ""
 }
 
-// renderToolAvail — internal/tui/app.go:178
-// Called from: app.go:116 (in View)
-// Renders a compact line showing checkmarks (✓) or crosses (✗) for Ollama
-// and llama.cpp availability.
 func renderToolAvail(specs hardware.Specs) string {
 	var parts []string
 	if specs.HasOllama {

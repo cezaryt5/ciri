@@ -13,11 +13,6 @@ type homeModel struct {
 	cursor int
 }
 
-// homeUpdate — internal/tui/home.go:16
-// Called from: app.go:97 (in App.Update)
-// Handles keyboard navigation on the home screen: up/down to move cursor,
-// enter/space to select a category (navigates to results screen), q/ctrl+c
-// to quit.
 func (h *homeModel) homeUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	switch msg.String() {
 	case "q", "ctrl+c":
@@ -42,11 +37,6 @@ func (h *homeModel) homeUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	return nil
 }
 
-// homeView — internal/tui/home.go:40
-// Called from: app.go:130 (in App.View)
-// Renders the home screen: a menu of categories with "(N models fit)"
-// counts. The currently selected category is highlighted with a triangle
-// and reverse-video style.
 func (h *homeModel) homeView(a *App) string {
 	var b strings.Builder
 

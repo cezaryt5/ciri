@@ -29,6 +29,7 @@ func TestCheckFit_Advanced(t *testing.T) {
 	m := &model.Model{MinVRAMGB: 12, MinRAMGB: 16}
 	status := CheckFit(m, gpu, 30, false)
 	if status != Advanced {
+
 		t.Errorf("expected Advanced, got %v", status)
 	}
 }

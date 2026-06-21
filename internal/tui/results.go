@@ -50,10 +50,6 @@ type resultsModel struct {
 	sort        sortMode
 }
 
-// newResultsModel — internal/tui/results.go:53
-// Called from: app.go:122 (in App.View)
-// Creates a new resultsModel by running Predict for the given category and
-// applying initial search/filter/sort defaults.
 func newResultsModel(pred *predictor.Predictor, cat model.Category, specs hardware.Specs, gpu *hardware.GPU) *resultsModel {
 	r := &resultsModel{
 		allPredictions: pred.Predict(cat),
@@ -65,10 +61,8 @@ func newResultsModel(pred *predictor.Predictor, cat model.Category, specs hardwa
 	return r
 }
 
-// applyFilters — internal/tui/results.go:66
-// Called from: results.go:60 (in newResultsModel), 135,139,143,146,160,168,171 (in resultsUpdate)
-// Filters r.allPredictions by fit status and search query, then sorts by
-// the active sort mode. Clamps cursor and scroll offset to valid bounds.
+// applyFilters rebuilds r.predictions from r.allPredictions using the active
+// search query, fit filter and sort mode, then clamps the cursor/scroll.
 func (r *resultsModel) applyFilters() {
 	q := strings.ToLower(strings.TrimSpace(r.searchQuery))
 
@@ -129,12 +123,6 @@ func (r *resultsModel) applyFilters() {
 	}
 }
 
-// resultsUpdate — internal/tui/results.go:126
-// Called from: app.go:100 (in App.Update)
-// Handles all keyboard input on the results screen:
-//   - Search mode: captures typing, backspace, enter/esc
-//   - Normal mode: navigation (↑↓), search (/), fit filter (f), sort (s),
-//     enter detail (enter), benchmarks (b), clear filters then go home (esc)
 func (r *resultsModel) resultsUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	// Search input mode captures all typing until Enter/Esc.
 	if r.searching {
@@ -227,11 +215,6 @@ func (r *resultsModel) resultsUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	return nil
 }
 
-// resultsView — internal/tui/results.go:218
-// Called from: app.go:124 (in App.View)
-// Renders the results table: search/filter bar, column headers, divider,
-// scroll-up indicator, visible data rows, scroll-down indicator. Only
-// renders rows within the visible viewport.
 func (r *resultsModel) resultsView(a *App) string {
 	w := columnWidths(a.width)
 
@@ -284,11 +267,6 @@ func (r *resultsModel) resultsView(a *App) string {
 // searchBar renders compact llmfit-style boxed controls left-to-right. Keep
 // controls fixed-width instead of letting Search expand and push Sort/Fit to
 // the far right; llmfit places filters immediately after Search.
-// searchBar — internal/tui/results.go:270
-// Called from: results.go:224 (in resultsView)
-// Renders a compact control bar with four mini-boxes: Search ([/] key),
-// Sort ([s] key), Fit filter ([f] key), and count ("Shown"). Active
-// controls are highlighted.
 func (r *resultsModel) searchBar(innerWidth int) string {
 	query := r.searchQuery
 	if query == "" {
@@ -314,11 +292,7 @@ func (r *resultsModel) searchBar(innerWidth int) string {
 	return line
 }
 
-// renderMiniBox — internal/tui/results.go:296
-// Called from: results.go:282-286 (in searchBar)
-// Draws a one-line rounded control box with title and value. Uses unicode
-// box-drawing characters (╭─╮). Active state is highlighted with a bold
-// cyan style.
+// renderMiniBox draws a one-line rounded control. totalWidth includes borders.
 func renderMiniBox(title, value string, totalWidth int, active bool) string {
 	if totalWidth < 10 {
 		totalWidth = 10
@@ -336,10 +310,6 @@ func renderMiniBox(title, value string, totalWidth int, active bool) string {
 	return SearchBar.Render(box)
 }
 
-// fitFilterLabel — internal/tui/results.go:313
-// Called from: results.go:285 (in searchBar)
-// Returns the display label for the current fit filter state: All, Perfect,
-// Good, or Slow.
 func fitFilterLabel(f fitFilter) string {
 	switch f {
 	case fitRecommended:
@@ -353,10 +323,6 @@ func fitFilterLabel(f fitFilter) string {
 	}
 }
 
-// sortModeLabel — internal/tui/results.go:326
-// Called from: results.go:284 (in searchBar)
-// Returns the display label for the current sort mode: Default, Speed,
-// Size, or Name.
 func sortModeLabel(s sortMode) string {
 	switch s {
 	case sortSpeed:
@@ -370,10 +336,6 @@ func sortModeLabel(s sortMode) string {
 	}
 }
 
-// resultsPreview — internal/tui/results.go:339
-// Called from: app.go:126 (in App.View)
-// Renders a preview bar showing the currently selected model's name,
-// parameter count, and provider.
 func (r *resultsModel) resultsPreview() string {
 	selected := r.predictions[r.cursor]
 	return PreviewBar.Render(fmt.Sprintf("  ▶ %s  %s  %s",
@@ -382,10 +344,6 @@ func (r *resultsModel) resultsPreview() string {
 		selected.Model.Provider))
 }
 
-// resultsFooter — internal/tui/results.go:347
-// Called from: app.go:128 (in App.View)
-// Renders the footer with keyboard shortcuts. Shows search instructions
-// when in search mode, or full navigation help otherwise.
 func (r *resultsModel) resultsFooter() string {
 	if r.searching {
 		return Footer.Render("  Type to search  Enter Apply  Esc Clear")
@@ -393,10 +351,6 @@ func (r *resultsModel) resultsFooter() string {
 	return Footer.Render("  ↑↓ Navigate  / Search  F Fit  S Sort  Enter Details  B Benchmarks  Esc Back")
 }
 
-// visibleRows — internal/tui/results.go:354
-// Called from: results.go:183,236 (in resultsUpdate and resultsView)
-// Computes the number of table rows that fit in the terminal (accounting
-// for control bar, header, divider, scroll indicators, and borders).
 func visibleRows(a *App) int {
 	// Account for the compact control bar, table header, divider and the two
 	// always-reserved scroll-indicator lines.
@@ -421,11 +375,6 @@ type colWidths struct {
 	fit      int
 }
 
-// columnWidths — internal/tui/results.go:378
-// Called from: results.go:219 (in resultsView)
-// Computes dynamic column widths for the results table based on terminal
-// width. Ensures the model name column gets remaining space after fixed
-// columns. Clamps provider and model width to minimums.
 func columnWidths(termWidth int) colWidths {
 	innerWidth := termWidth - 2
 	dot := 4
@@ -447,11 +396,6 @@ func columnWidths(termWidth int) colWidths {
 	return colWidths{modelW, provider, params, toks, quant, disk, mode, mem, ctx, date, fit}
 }
 
-// renderTableHeader — internal/tui/results.go:399
-// Called from: results.go:227 (in resultsView)
-// Renders the column header row of the results table with padded labels
-// (●, Model, Provider, Params, tok/s, Quant, Disk, Mode, Mem%, Ctx, Date,
-// Fit). Uses the TableHeader bold style.
 func renderTableHeader(w colWidths) string {
 	return TableHeader.Render(
 		padCell("  ●", 4) +
@@ -469,11 +413,6 @@ func renderTableHeader(w colWidths) string {
 	)
 }
 
-// renderTableRow — internal/tui/results.go:416
-// Called from: results.go:253 (in resultsView)
-// Renders a single prediction row with all columns. Selected rows use
-// reverse video. Memory percentage is color-coded (green < 50 %, yellow
-// ≤ 80 %, red > 80 %). Fit status is shown with colored dots and labels.
 func renderTableRow(p predictor.ModelPrediction, gpu *hardware.GPU, w colWidths, selected bool, termWidth int) string {
 	speed := fmt.Sprintf("%.0f", p.EstTokPerSec)
 	if p.FitStatus == predictor.Advanced {
@@ -519,7 +458,7 @@ func renderTableRow(p predictor.ModelPrediction, gpu *hardware.GPU, w colWidths,
 		{truncate(p.Model.Name, w.model), w.model},
 		{truncate(p.Model.Provider, w.provider), w.provider},
 		{truncate(p.Model.ParameterCount, w.params), w.params},
-		{speed, w.tokS},
+		{truncate(speed, w.tokS), w.tokS},
 		{truncate(p.Model.Quantization, w.quant), w.quant},
 		{truncate(formatDiskGB(&p.Model), w.disk), w.disk},
 		{truncate(formatMode(p.FitStatus), w.mode), w.mode},
@@ -542,10 +481,6 @@ func renderTableRow(p predictor.ModelPrediction, gpu *hardware.GPU, w colWidths,
 	return line
 }
 
-// padCell — internal/tui/results.go:484
-// Called from: results.go:401-412 (in renderTableHeader)
-// Pads text to a fixed width using lipgloss style. If width ≤ 0, returns
-// the text unchanged.
 func padCell(text string, width int) string {
 	if width <= 0 {
 		return text
@@ -553,10 +488,6 @@ func padCell(text string, width int) string {
 	return lipgloss.NewStyle().Width(width).Render(text)
 }
 
-// fitDotStr — internal/tui/results.go:491
-// Called from: results.go:439 (in renderTableRow)
-// Returns a colored dot symbol (●) for the fit status: green for
-// Recommended, yellow for Advanced, uncolored for TooHeavy.
 func fitDotStr(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
@@ -568,10 +499,6 @@ func fitDotStr(fit predictor.FitStatus) string {
 	}
 }
 
-// fitLabel — internal/tui/results.go:502
-// Called from: results.go:440 (in renderTableRow)
-// Returns a colored text label for the fit status: green "Perfect",
-// yellow "Good", or uncolored "Slow".
 func fitLabel(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
@@ -583,10 +510,6 @@ func fitLabel(fit predictor.FitStatus) string {
 	}
 }
 
-// fitLabelPlain — internal/tui/results.go:513
-// Called from: results.go:443 (in renderTableRow, selected row)
-// Returns an uncolored text label for fit status (Perfect / Good / Slow).
-// Used on the selected row to keep the reverse-video highlight clean.
 func fitLabelPlain(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
@@ -598,10 +521,6 @@ func fitLabelPlain(fit predictor.FitStatus) string {
 	}
 }
 
-// formatMemPctRaw — internal/tui/results.go:524
-// Called from: results.go:422 (in renderTableRow)
-// Calculates the percentage of GPU VRAM that the model's MinVRAMGB
-// consumes. Caps at 100 %. Returns "—" if GPU or VRAM data is unavailable.
 func formatMemPctRaw(m *model.Model, gpu *hardware.GPU) string {
 	if gpu == nil || gpu.VRAMGB <= 0 || m.MinVRAMGB <= 0 {
 		return "\u2014"
@@ -613,10 +532,6 @@ func formatMemPctRaw(m *model.Model, gpu *hardware.GPU) string {
 	return fmt.Sprintf("%.0f%%", pct)
 }
 
-// formatDiskGB — internal/tui/results.go:535
-// Called from: results.go:463 (in renderTableRow)
-// Estimates the model's disk footprint: params × bytesPerParam. Returns
-// a string like "7.5G" or "0.08G". Returns "—" if params are unknown.
 func formatDiskGB(m *model.Model) string {
 	if m.ParametersRaw <= 0 {
 		return "\u2014"
@@ -629,10 +544,6 @@ func formatDiskGB(m *model.Model) string {
 	return fmt.Sprintf("%.1fG", diskGB)
 }
 
-// formatMode — internal/tui/results.go:547
-// Called from: results.go:464 (in renderTableRow)
-// Returns "GPU" for Recommended fit (fits in VRAM) or "CPU" for Advanced
-// fit (spills to system RAM).
 func formatMode(fit predictor.FitStatus) string {
 	if fit == predictor.Recommended {
 		return "GPU"
@@ -640,10 +551,6 @@ func formatMode(fit predictor.FitStatus) string {
 	return "CPU"
 }
 
-// formatDate — internal/tui/results.go:554
-// Called from: results.go:467 (in renderTableRow)
-// Formats a release date string to "YYYY-MM" (first 7 chars). Returns
-// "—" if the date is empty or too short.
 func formatDate(date string) string {
 	if date == "" || len(date) < 7 {
 		return "\u2014"
@@ -651,10 +558,6 @@ func formatDate(date string) string {
 	return date[:7]
 }
 
-// truncate — internal/tui/results.go:561
-// Called from: app.go:166,171; results.go:458-467; styles.go:112; benchmarks.go:70,120; detail.go:43
-// Truncates a string to max characters, appending "…" if truncated.
-// Returns "" if max ≤ 0.
 func truncate(s string, max int) string {
 	if max <= 0 {
 		return ""

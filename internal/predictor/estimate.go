@@ -77,12 +77,7 @@ type BenchmarkDB struct {
 	byArchHfID map[string][]BenchmarkRow // key: "architecture|hfId"
 }
 
-// LoadBenchmarks — internal/predictor/estimate.go:81
-// Called from: cmd/ciri/main.go:51; predictor_test.go:198,214
-// Reads benchmark_cache.json and builds two indices:
-//   - byNameHfID: keyed by "gpuName|hfId" for exact GPU matches
-//   - byArchHfID: keyed by "architecture|hfId" for arch-family fallback
-// Skips rows where TokSOut is nil.
+// LoadBenchmarks reads benchmark_cache.json and builds indices.
 func LoadBenchmarks(path string, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -148,18 +143,13 @@ func LoadBenchmarks(path string, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
 	return db, nil
 }
 
-// ByNameHfID — internal/predictor/estimate.go:147
-// Called from: benchmarks.go:31 (in newBenchmarksModel)
-// Returns the raw byNameHfID benchmark index map for external querying
-// (used by the benchmarks TUI screen).
+// ByNameHfID returns the benchmark index by (gpuName, hfId).
 func (db *BenchmarkDB) ByNameHfID() map[string][]BenchmarkRow {
 	return db.byNameHfID
 }
 
-// extractGPUName — internal/predictor/estimate.go:153
-// Called from: estimate.go:105 (in LoadBenchmarks); predictor_test.go:106
-// Strips the VRAM suffix from a benchmark preset name for indexing.
-// E.g. "RTX 5090 (32 GB)" → "RTX 5090", "Apple M4 Max (128 GB)" → "Apple M4 Max"
+// extractGPUName strips the VRAM suffix from a benchmark preset name.
+// "RTX 5090 (32 GB)" → "RTX 5090" / "Apple M4 Max (128 GB)" → "Apple M4 Max"
 func extractGPUName(presetName string) string {
 	name := strings.TrimSpace(presetName)
 	if idx := strings.LastIndex(name, " ("); idx > 0 {
@@ -267,13 +257,9 @@ var archFactors = map[string]float64{
 	"gaudi 2":    1.5,
 }
 
-// EstimateSpeed — internal/predictor/estimate.go:263
-// Called from: predictor.go:61 (in Predict); predictor_test.go:226,250,270
-// Three-tier speed estimation for a model on a GPU:
-//   Tier A: exact benchmark match by GPU name → returns median tok/s (ConfBenchmark)
-//   Tier B: architecture-family scaling → returns scaled median (ConfEstimate)
-//   Tier C: roofline heuristic (memory-bound vs compute-bound) → returns min (ConfHeuristic)
-// Applies a 20 % spill penalty if model does not fit in VRAM.
+// EstimateSpeed returns (tokSOut, confidenceLabel) for a model on the given
+// GPU. It tries benchmarks first, then architecture-family scaling, then a
+// memory-bandwidth-aware heuristic.
 func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64, string) {
 	if gpu == nil {
 		return 0, ConfHeuristic
@@ -335,10 +321,7 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 	return math.Round(tokS*10) / 10, ConfHeuristic
 }
 
-// BytesPerParam — internal/predictor/estimate.go:325
-// Called from: estimate.go:295,354 (in EstimateSpeed and applySpillPenalty); results.go:539 (as predictor.BytesPerParam)
-// Returns bytes-per-parameter for a given quantization tag (e.g., "Q4_K_M" → 0.625).
-// Falls back to 2.0 (FP16) if the quantization is not in the lookup table.
+// BytesPerParam returns bytes-per-parameter for a quantization tag.
 func BytesPerParam(quant string) float64 {
 	if b, ok := quantBytesPerParam[quant]; ok {
 		return b
@@ -355,11 +338,8 @@ const flopsPerParamPerToken = 2.0
 // effective compute utilization is low.
 const modelFLOPUtilization = 0.20
 
-// computeBoundEstimate — internal/predictor/estimate.go:343
-// Called from: estimate.go:302 (in EstimateSpeed)
-// Caps tok/s by raw arithmetic throughput: (peak FLOP/s × utilization) /
-// (FLOPs per token = 2 × parameters). Returns 0 if TFLOPS or params are
-// unknown.
+// computeBoundEstimate caps tok/s by raw arithmetic throughput:
+// (peak FLOP/s * utilization) / (FLOPs needed per token).
 func computeBoundEstimate(gpu *hardware.GPU, m *model.Model) float64 {
 	if gpu.TFLOPS <= 0 || m.ParametersRaw <= 0 {
 		return 0
@@ -369,10 +349,7 @@ func computeBoundEstimate(gpu *hardware.GPU, m *model.Model) float64 {
 	return peakFLOPs / flopsPerToken
 }
 
-// applySpillPenalty — internal/predictor/estimate.go:353
-// Called from: estimate.go:286 (in EstimateSpeed)
-// Reduces estimated tok/s by 80 % when the model's size (params × bytes-per-param)
-// exceeds available GPU VRAM, simulating the penalty of CPU-offloaded inference.
+// applySpillPenalty reduces tok/s when a model does not fit in VRAM.
 func applySpillPenalty(tokS float64, gpu *hardware.GPU, m *model.Model) float64 {
 	bytesPerParam := BytesPerParam(m.Quantization)
 	modelSzGB := float64(m.ParametersRaw) / 1e9 * bytesPerParam
@@ -382,10 +359,6 @@ func applySpillPenalty(tokS float64, gpu *hardware.GPU, m *model.Model) float64 
 	return tokS
 }
 
-// lookupMedian — internal/predictor/estimate.go:362
-// Called from: estimate.go:274,277 (in EstimateSpeed)
-// Looks up benchmark rows by "gpuName|hfID" key and returns the median tok/s.
-// Returns (0, false) if no rows are found or all have zero tok/s.
 func lookupMedian(index map[string][]BenchmarkRow, gpuName, hfID string) (float64, bool) {
 	key := gpuName + "|" + hfID
 	rows, ok := index[key]
@@ -404,11 +377,6 @@ func lookupMedian(index map[string][]BenchmarkRow, gpuName, hfID string) (float6
 	return median(vals), true
 }
 
-// archScaledEstimate — internal/predictor/estimate.go:380
-// Called from: estimate.go:285 (in EstimateSpeed)
-// Looks up benchmark rows by architecture family key ("arch|hfID") and returns
-// the median tok/s. The targetTFLOPs parameter is reserved for future scaling
-// but currently the raw median is returned.
 func archScaledEstimate(arch, hfID string, targetTFLOPs float64, db *BenchmarkDB) (float64, bool) {
 	key := arch + "|" + hfID
 	rows, ok := db.byArchHfID[key]
@@ -438,10 +406,6 @@ func archScaledEstimate(arch, hfID string, targetTFLOPs float64, db *BenchmarkDB
 	return math.Round(med*10) / 10, true
 }
 
-// median — internal/predictor/estimate.go:409
-// Called from: estimate.go:377,397 (in lookupMedian and archScaledEstimate); predictor_test.go:156
-// Computes the median of a float64 slice. Returns 0 for an empty slice.
-// Sorts a copy of the input to avoid mutation.
 func median(vals []float64) float64 {
 	n := len(vals)
 	if n == 0 {
@@ -456,10 +420,6 @@ func median(vals []float64) float64 {
 	return (sorted[n/2-1] + sorted[n/2]) / 2
 }
 
-// sortFloat64 — internal/predictor/estimate.go:423
-// Called from: estimate.go:416 (in median)
-// In-place insertion sort for float64 slices. Used by median() for small
-// benchmark result sets.
 func sortFloat64(a []float64) {
 	for i := 1; i < len(a); i++ {
 		for j := i; j > 0 && a[j] < a[j-1]; j-- {
@@ -468,11 +428,6 @@ func sortFloat64(a []float64) {
 	}
 }
 
-// archFactor — internal/predictor/estimate.go:431
-// Called from: predictor_test.go:133
-// Returns the tok/s-per-TFLOP factor for a given architecture string.
-// Matches against the archFactors map, trying exact match then substring
-// containment. Defaults to 1.0 if no match is found.
 func archFactor(arch string) float64 {
 	arch = strings.ToLower(strings.TrimSpace(arch))
 	if arch == "" {

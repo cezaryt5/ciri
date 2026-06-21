@@ -20,11 +20,6 @@ type benchmarksModel struct {
 	scroll    int
 }
 
-// newBenchmarksModel — internal/tui/benchmarks.go:23
-// Called from: app.go:83,138 (in Update and View)
-// Creates a benchmarksModel for a selected model. Looks up benchmark rows
-// by GPU canonical name + model hfID from the benchmark database. Sets
-// closestHW to the matched GPU name if rows are found.
 func newBenchmarksModel(selected predictor.ModelPrediction, gpu *hardware.GPU, benchDB *predictor.BenchmarkDB, specs hardware.Specs) *benchmarksModel {
 	var rows []predictor.BenchmarkRow
 	closest := ""
@@ -49,10 +44,6 @@ func newBenchmarksModel(selected predictor.ModelPrediction, gpu *hardware.GPU, b
 	}
 }
 
-// benchUpdate — internal/tui/benchmarks.go:47
-// Called from: app.go:106 (in App.Update)
-// Handles keyboard input on the benchmarks screen: Esc to return to the
-// origin screen (results or detail), up/down to scroll the benchmark list.
 func (bm *benchmarksModel) benchUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	switch msg.String() {
 	case "esc":
@@ -73,11 +64,6 @@ func (bm *benchmarksModel) benchUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	return nil
 }
 
-// benchView — internal/tui/benchmarks.go:67
-// Called from: app.go:141 (in App.View)
-// Renders the benchmarks screen: model name, closest hardware match info,
-// a scrollable table of benchmark rows (Engine, tok/s, VRAM, Context, Notes),
-// or a "no benchmarks" message with a fallback architecture hint.
 func (bm *benchmarksModel) benchView(a *App) string {
 	var b strings.Builder
 
@@ -152,10 +138,6 @@ func (bm *benchmarksModel) benchView(a *App) string {
 	return b.String()
 }
 
-// bmVisibleRows — internal/tui/benchmarks.go:141
-// Called from: benchmarks.go:85 (in benchView)
-// Computes the number of visible benchmark rows based on terminal height
-// (subtracting borders, header, and footer space).
 func bmVisibleRows(a *App) int {
 	n := a.height - 14
 	if n < 1 {

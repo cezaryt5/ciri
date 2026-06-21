@@ -80,10 +80,6 @@ var (
 	MemPctBad  = lipgloss.NewStyle().Foreground(red)
 )
 
-// RenderLabeledLine — internal/tui/styles.go:83
-// Called from: (defined, currently uncalled)
-// Renders a section divider with a label in the middle (e.g. "── label ──").
-// Pads with "─" to the specified width.
 func RenderLabeledLine(label string, width int) string {
 	if width <= 0 {
 		width = 80
@@ -96,10 +92,6 @@ func RenderLabeledLine(label string, width int) string {
 	return prefix + repeat("─", pad)
 }
 
-// RenderDivider — internal/tui/styles.go:95
-// Called from: results.go:228 (in resultsView); benchmarks.go:98 (in benchView)
-// Renders a horizontal divider line composed of "─" characters to the
-// specified width.
 func RenderDivider(width int) string {
 	if width <= 0 {
 		width = 80
@@ -107,11 +99,6 @@ func RenderDivider(width int) string {
 	return repeat("─", width)
 }
 
-// RenderBox — internal/tui/styles.go:102
-// Called from: app.go:117,124,130,135,141 (in App.View)
-// Renders a bordered box with a top title bar (e.g. "── title ──┐") around
-// the given content. Each content line is padded to innerWidth. Bottom
-// border closes the box. Minimum width is 4.
 func RenderBox(title string, content string, width int) string {
 	if width < 4 {
 		width = 4
@@ -146,10 +133,6 @@ func RenderBox(title string, content string, width int) string {
 	return b.String()
 }
 
-// repeat — internal/tui/styles.go:136
-// Called from: styles.go:89,92,99,119,130 (in RenderLabeledLine, RenderDivider, RenderBox); results.go:290 (in searchBar)
-// Returns a string consisting of s repeated n times. Used for generating
-// border lines and padding.
 func repeat(s string, n int) string {
 	result := ""
 	for i := 0; i < n; i++ {
