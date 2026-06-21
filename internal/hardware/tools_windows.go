@@ -81,7 +81,35 @@ func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 	return 0
 }
 
-// execWithTimeout — internal/hardware/tools_windows.go:75
+// detectVendorName — internal/hardware/tools_windows.go:84
+// Called from: matcher_vendor.go:19
+// Windows stub — returns "" so the PCI matcher handles identification
+// based on vendor/device IDs alone.
+func detectVendorName(ctx context.Context, target *PCIInfo) string {
+	return ""
+}
+
+// detectRawGPUName — internal/hardware/tools_windows.go:91
+// Called from: matcher_ghw.go:16
+// Windows stub — returns "" so the GHW fuzzy matcher returns nil,
+// relying on the PCI matcher instead.
+func detectRawGPUName() string {
+	return ""
+}
+
+// execLookPath — internal/hardware/tools_windows.go:97
+// Called from: detection.go:142,144,145,146 (in DetectOllamaCpp)
+// Returns the absolute path of an executable via exec.LookPath, or ""
+// if not found on PATH.
+func execLookPath(name string) string {
+	path, err := exec.LookPath(name)
+	if err != nil {
+		return ""
+	}
+	return path
+}
+
+// execWithTimeout — internal/hardware/tools_windows.go:108
 // Called from: tools_windows.go:17,26,62
 // Windows implementation of execWithTimeout. Runs a command with a context
 // deadline and returns stdout bytes on success.

@@ -13,3 +13,14 @@ internal/hardware/example.go
 
 # goreleaser output
 dist/
+
+# built binary
+ciri
+
+# asciinema recordings
+*.cast
+# built binary
+ciri
+
+# asciinema recording
+.cast
