@@ -1,9 +1,5 @@
 version: 2
 
-before:
-  hooks:
-    - go mod tidy
-
 builds:
   - id: ciri
     main: ./cmd/ciri
@@ -22,9 +18,6 @@ builds:
     ignore:
       - goos: windows
         goarch: arm64
-      - goos: darwin
-        goarch: arm64
-        goamd64: v1
 
 archives:
   - id: default
