@@ -14,3 +14,6 @@ internal/hardware/example.go
 # agents
 .kilo
 .opencode
+
+# goreleaser output
+dist/

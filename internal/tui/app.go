@@ -44,9 +44,10 @@ type App struct {
 	benchDB  *predictor.BenchmarkDB
 	category model.Category
 	counts   map[model.Category]int
+	version  string
 }
 
-func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred *predictor.Predictor, benchDB *predictor.BenchmarkDB) *App {
+func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred *predictor.Predictor, benchDB *predictor.BenchmarkDB, version string) *App {
 	counts := pred.CountByCategory()
 	return &App{
 		screen:  screenHome,
@@ -57,6 +58,7 @@ func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred 
 		pred:    pred,
 		benchDB: benchDB,
 		counts:  counts,
+		version: version,
 	}
 }
 
@@ -113,8 +115,12 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (a *App) View() string {
 	var sb strings.Builder
 
+	title := "CIRI"
+	if a.version != "" {
+		title = "CIRI v" + a.version
+	}
 	headerContent := RenderHardwareBar(a.specs, a.gpu, a.width) + "\n" + renderToolAvail(a.specs)
-	sb.WriteString(RenderBox("CIRI", headerContent, a.width) + "\n")
+	sb.WriteString(RenderBox(title, headerContent, a.width) + "\n")
 
 	switch a.screen {
 	case screenResults:

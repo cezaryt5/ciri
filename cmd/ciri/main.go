@@ -63,7 +63,7 @@ func main() {
 	pred := predictor.NewPredictor(gpu, specs.RamAvailGB, models, benchDB)
 
 	// 6. Start TUI
-	app := tui.NewApp(specs, gpu, models, pred, benchDB)
+	app := tui.NewApp(specs, gpu, models, pred, benchDB, Version)
 	program := tea.NewProgram(app, tea.WithAltScreen())
 
 	if _, err := program.Run(); err != nil {
