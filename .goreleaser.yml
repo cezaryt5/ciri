@@ -28,7 +28,6 @@ archives:
     files:
       - README.md
       - LICENSE
-      - data/*.json
 
 checksum:
   name_template: "checksums.txt"

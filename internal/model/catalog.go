@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"os"
 )
 
 // Model represents a single LLM entry from hf_models.json.
@@ -34,12 +33,7 @@ type Model struct {
 // Called from: cmd/ciri/main.go:44; model_test.go:31,56,67,83,213,225,241
 // Reads hf_models.json, unmarshals it into []Model, and pre-computes
 // Categories for each model via Categorize().
-func LoadCatalog(path string) ([]Model, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
+func LoadCatalog(data []byte) ([]Model, error) {
 	var models []Model
 	if err := json.Unmarshal(data, &models); err != nil {
 		return nil, err

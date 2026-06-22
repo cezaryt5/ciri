@@ -2,8 +2,6 @@ package predictor
 
 import (
 	"encoding/json"
-	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -166,9 +164,6 @@ func TestMedian(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestLoadBenchmarks_Valid(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "benchmark_cache.json")
-
 	cache := benchmarkCacheFile{
 		Presets: map[string]presetData{
 			"RTX 5090 (32 GB)": {
@@ -190,13 +185,12 @@ func TestLoadBenchmarks_Valid(t *testing.T) {
 		},
 	}
 	raw, _ := json.Marshal(cache)
-	os.WriteFile(path, raw, 0644)
 
 	gpuDB := []hardware.GPU{
 		{Name: "NVIDIA GeForce RTX 5090", CanonicalName: "5090", Architecture: "GB202"},
 	}
 
-	db, err := LoadBenchmarks(path, gpuDB)
+	db, err := LoadBenchmarks(raw, gpuDB)
 	if err != nil {
 		t.Fatalf("LoadBenchmarks: %v", err)
 	}
@@ -211,8 +205,8 @@ func TestLoadBenchmarks_Valid(t *testing.T) {
 	}
 }
 
-func TestLoadBenchmarks_Missing(t *testing.T) {
-	_, err := LoadBenchmarks("/nonexistent/bench.json", nil)
+func TestLoadBenchmarks_InvalidJSON(t *testing.T) {
+	_, err := LoadBenchmarks([]byte("not json{{{"), nil)
 	if err == nil {
 		t.Fatal("expected error")
 	}

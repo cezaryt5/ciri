@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/jaypipes/ghw"
@@ -220,12 +219,7 @@ type variant struct {
 // normalizes the name via NormalizeGPUName, collects PCI IDs (deduplicated),
 // detects laptop variants from name/PCI variants, and generates aliases via
 // deriveAliases.
-func LoadGPUDB(path string) ([]GPU, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
+func LoadGPUDB(data []byte) ([]GPU, error) {
 	var raw []gpuJSON
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return nil, err

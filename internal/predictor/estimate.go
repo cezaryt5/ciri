@@ -3,7 +3,6 @@ package predictor
 import (
 	"encoding/json"
 	"math"
-	"os"
 	"strings"
 
 	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
@@ -78,12 +77,7 @@ type BenchmarkDB struct {
 }
 
 // LoadBenchmarks reads benchmark_cache.json and builds indices.
-func LoadBenchmarks(path string, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
+func LoadBenchmarks(data []byte, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
 	var cache benchmarkCacheFile
 	if err := json.Unmarshal(data, &cache); err != nil {
 		return nil, err

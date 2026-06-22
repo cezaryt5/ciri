@@ -378,8 +378,8 @@ type colWidths struct {
 func columnWidths(termWidth int) colWidths {
 	innerWidth := termWidth - 2
 	dot := 4
-	provider := 20
-	params, toks, quant, disk, mode, mem, ctx, date, fit := 7, 7, 8, 6, 5, 5, 6, 8, 8
+	provider := 25
+	params, toks, quant, disk, mode, mem, ctx, date, fit := 7, 7, 10, 6, 5, 5, 6, 8, 8
 	fixedOther := params + toks + quant + disk + mode + mem + ctx + date + fit
 
 	modelW := innerWidth - dot - provider - fixedOther

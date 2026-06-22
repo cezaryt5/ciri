@@ -2,8 +2,6 @@ package hardware
 
 import (
 	"encoding/json"
-	"os"
-	"path/filepath"
 	"testing"
 )
 
@@ -12,9 +10,6 @@ import (
 // ---------------------------------------------------------------------------
 
 func TestLoadGPUDB_ValidFile(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "gpus.json")
-
 	input := []map[string]interface{}{
 		{
 			"name":             "NVIDIA GeForce RTX 4090",
@@ -42,9 +37,7 @@ func TestLoadGPUDB_ValidFile(t *testing.T) {
 	}
 
 	raw, _ := json.Marshal(input)
-	os.WriteFile(path, raw, 0644)
-
-	gpus, err := LoadGPUDB(path)
+	gpus, err := LoadGPUDB(raw)
 	if err != nil {
 		t.Fatalf("LoadGPUDB failed: %v", err)
 	}
@@ -93,28 +86,14 @@ func TestLoadGPUDB_ValidFile(t *testing.T) {
 	}
 }
 
-func TestLoadGPUDB_MissingFile(t *testing.T) {
-	_, err := LoadGPUDB("/nonexistent/path/gpus.json")
-	if err == nil {
-		t.Fatal("expected error for missing file")
-	}
-}
-
 func TestLoadGPUDB_InvalidJSON(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "bad.json")
-	os.WriteFile(path, []byte("not json{{{"), 0644)
-
-	_, err := LoadGPUDB(path)
+	_, err := LoadGPUDB([]byte("not json{{{"))
 	if err == nil {
 		t.Fatal("expected error for invalid JSON")
 	}
 }
 
 func TestLoadGPUDB_LaptopVariants(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "gpus.json")
-
 	input := []map[string]interface{}{
 		{
 			"name":           "NVIDIA GeForce GTX 1070",
@@ -136,9 +115,7 @@ func TestLoadGPUDB_LaptopVariants(t *testing.T) {
 	}
 
 	raw, _ := json.Marshal(input)
-	os.WriteFile(path, raw, 0644)
-
-	gpus, err := LoadGPUDB(path)
+	gpus, err := LoadGPUDB(raw)
 	if err != nil {
 		t.Fatalf("LoadGPUDB failed: %v", err)
 	}
@@ -161,9 +138,6 @@ func TestLoadGPUDB_LaptopVariants(t *testing.T) {
 }
 
 func TestLoadGPUDB_InferredLaptopName(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "gpus.json")
-
 	input := []map[string]interface{}{
 		{
 			"name":           "NVIDIA GeForce RTX 5070 Mobile",
@@ -176,9 +150,7 @@ func TestLoadGPUDB_InferredLaptopName(t *testing.T) {
 	}
 
 	raw, _ := json.Marshal(input)
-	os.WriteFile(path, raw, 0644)
-
-	gpus, err := LoadGPUDB(path)
+	gpus, err := LoadGPUDB(raw)
 	if err != nil {
 		t.Fatalf("LoadGPUDB failed: %v", err)
 	}
