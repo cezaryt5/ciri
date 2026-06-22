@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/predictor"
+	"github.com/cezaryt5/ciri/internal/hardware"
+	"github.com/cezaryt5/ciri/internal/predictor"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

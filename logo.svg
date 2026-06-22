@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <style>
+      .gopher { fill: #00ADD8; }
+      .eye { fill: #FFFFFF; }
+      .pupil { fill: #000000; }
+      .chip-base { fill: #1E293B; stroke: #38BDF8; stroke-width: 3; }
+      .chip-core { fill: #0F172A; }
+      .pin { stroke: #38BDF8; stroke-width: 2; stroke-linecap: round; }
+      .glass-lens { fill: #38BDF8; fill-opacity: 0.2; stroke: #38BDF8; stroke-width: 4; }
+      .glass-handle { stroke: #94A3B8; stroke-width: 8; stroke-linecap: round; }
+      .scar { fill: transparent; stroke: #EF4444; stroke-width: 3; stroke-linecap: round; opacity: 0.85; }
+      .text-title { font-family: monospace; font-size: 48px; font-weight: bold; fill: #00ADD8; text-anchor: middle; }
+      .text-sub { font-family: monospace; font-size: 16px; fill: #64748B; text-anchor: middle; letter-spacing: 2px; }
+    </style>
+  </defs>
+
+  <circle cx="130" cy="120" r="22" class="gopher" />
+  <circle cx="270" cy="120" r="22" class="gopher" />
+
+  <ellipse cx="200" cy="190" rx="85" ry="110" class="gopher" />
+
+  <circle cx="165" cy="145" r="18" class="eye" />
+  <circle cx="235" cy="145" r="18" class="eye" />
+
+  <circle cx="170" cy="152" r="6" class="pupil" />
+  <circle cx="230" cy="152" r="6" class="pupil" />
+
+  <ellipse cx="200" cy="168" rx="10" ry="6" class="pupil" />
+  <rect x="192" y="174" width="7" height="10" rx="2" class="eye" />
+  <rect x="201" y="174" width="7" height="10" rx="2" class="eye" />
+
+  <line x1="175" y1="225" x2="175" y2="215" class="pin" />
+  <line x1="190" y1="225" x2="190" y2="215" class="pin" />
+  <line x1="205" y1="225" x2="205" y2="215" class="pin" />
+  <line x1="220" y1="225" x2="220" y2="215" class="pin" />
+  <line x1="165" y1="235" x2="155" y2="235" class="pin" />
+  <line x1="165" y1="250" x2="155" y2="250" class="pin" />
+  <line x1="165" y1="265" x2="155" y2="265" class="pin" />
+  <line x1="165" y1="280" x2="155" y2="280" class="pin" />
+  <line x1="235" y1="235" x2="245" y2="235" class="pin" />
+  <line x1="235" y1="250" x2="245" y2="250" class="pin" />
+  <line x1="235" y1="265" x2="245" y2="265" class="pin" />
+  <line x1="235" y1="280" x2="245" y2="280" class="pin" />
+  <line x1="175" y1="290" x2="175" y2="300" class="pin" />
+  <line x1="190" y1="290" x2="190" y2="300" class="pin" />
+  <line x1="205" y1="290" x2="205" y2="300" class="pin" />
+  <line x1="220" y1="290" x2="220" y2="300" class="pin" />
+
+  <rect x="165" y="225" width="70" height="70" rx="6" class="chip-base" />
+  <rect x="180" y="240" width="40" height="40" rx="4" class="chip-core" />
+
+  <circle cx="155" cy="260" r="14" class="gopher" />
+  
+  <line x1="230" y1="265" x2="265" y2="305" class="glass-handle" />
+  <circle cx="215" cy="250" r="24" class="glass-lens" />
+  
+  <circle cx="255" cy="295" r="14" class="gopher" />
+
+  <text x="200" y="360" class="text-title">CIRI</text>
+  <text x="200" y="385" class="text-sub">HARDWARE INSPECTOR</text>
+</svg>

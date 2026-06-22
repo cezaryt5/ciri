@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	base = lipgloss.NewStyle()
+	//base = lipgloss.NewStyle()
 
 	// Use terminal ANSI palette colors so the app matches the user's
 	// terminal theme (like llmfit) instead of forcing fixed hex values.

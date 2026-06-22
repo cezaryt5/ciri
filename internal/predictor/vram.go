@@ -1,8 +1,8 @@
 package predictor
 
 import (
-	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/model"
+	"github.com/cezaryt5/ciri/internal/hardware"
+	"github.com/cezaryt5/ciri/internal/model"
 )
 
 // FitStatus describes whether a model fits in available hardware resources.

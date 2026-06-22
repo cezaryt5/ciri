@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
+	"github.com/cezaryt5/ciri/internal/hardware"
 )
 
 // RenderHardwareBar — internal/tui/hardware_bar.go:11

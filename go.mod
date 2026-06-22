@@ -1,4 +1,4 @@
-module github.com/cezaryt5/Can_I_Run_IT
+module github.com/cezaryt5/ciri
 
 go 1.26.3
 

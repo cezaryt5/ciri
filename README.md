@@ -1,6 +1,12 @@
-# ciri — Can I Run It?
+<p align="center">
+  <img src="logo.svg" alt="CIRI logo" width="200">
+</p>
 
-`ciri` is a terminal tool that answers one question: **which open-source LLMs can run on my machine, and how fast?**
+<h1 align="center">ciri — Can I Run It?</h1>
+
+<p align="center">
+  A terminal tool that answers: <strong>which open-source LLMs can run on my machine, and how fast?</strong>
+</p>
 
 It detects your GPU, CPU, and RAM, then matches them against a catalog of 1,000+ models from Hugging Face. Instead of guessing whether an 8B model will fit in your VRAM, you get concrete numbers — estimated tokens per second, memory pressure, and whether the model fits comfortably or will spill into system RAM.
 
@@ -9,18 +15,18 @@ It detects your GPU, CPU, and RAM, then matches them against a catalog of 1,000+
 **Go install** (requires Go 1.26+):
 
 ```sh
-go install github.com/cezaryt5/Can_I_Run_IT/cmd/ciri@latest
+go install github.com/cezaryt5/ciri/cmd/ciri@latest
 ```
 
 **Build from source:**
 
 ```sh
-git clone https://github.com/cezaryt5/Can_I_Run_IT
-cd Can_I_Run_IT
+git clone https://github.com/cezaryt5/ciri
+cd ciri
 go build -o ciri ./cmd/ciri
 ```
 
-The binary looks for the `data/` directory alongside itself. If you move the binary, copy the `data/` folder with it.
+All data files are embedded in the binary — no external files needed at runtime.
 
 **Pre-built binary** is included in the repository (`ciri` in the project root).
 
@@ -51,11 +57,13 @@ That's it. The tool starts an interactive terminal interface with four screens:
 
 ## How it works
 
+> For a deep dive into the system architecture, data flows, and every module, see [**docs/DOCUMENTAION.md**](docs/DOCUMENTAION.md).
+
 ### Hardware detection
 
 On startup, `ciri` detects your hardware:
 
-- **GPU** — identified through a three-tier matching strategy (PCI device ID → vendor API like nvidia-smi or rocm-smi → fuzzy name matching), cross-referenced against a database of 200+ GPUs with VRAM, bandwidth, and TFLOPS figures
+- **GPU** — identified through a three-tier matching strategy ([PCI device ID → vendor API like nvidia-smi or rocm-smi → fuzzy name matching](docs/DOCUMENTAION.md#5-gpu-matching-strategies)), cross-referenced against a database of 200+ GPUs with VRAM, bandwidth, and TFLOPS figures
 - **CPU** — model name and core count via `ghw`
 - **RAM** — total and available system memory
 - **Toolchain** — checks whether `ollama` and `llama.cpp` are in your `$PATH`
@@ -71,7 +79,7 @@ Apple Silicon Macs are handled with unified memory accounting.
 - Architecture family and pipeline type
 - Community stats (downloads, likes)
 
-Models are auto-categorized into Coding, Chat, General, Vision, and Translation based on their listed capabilities.
+Models are [auto-categorized](docs/DOCUMENTAION.md#6-model-catalog--categorization) into Coding, Chat, General, Vision, and Translation based on their listed capabilities.
 
 ### Fit assessment
 
@@ -81,9 +89,11 @@ Every model is checked against your hardware:
 - **Advanced** — needs more VRAM than you have but fits in system RAM; will run, but slowly
 - **Too heavy** — exceeds both VRAM *and* available system RAM; not shown
 
+See [VRAM fit checking](docs/DOCUMENTAION.md#7-prediction-engine) for the exact logic.
+
 ### Speed estimation
 
-Estimated tokens per second comes from a three-tier cascade:
+Estimated tokens per second comes from a [three-tier cascade](docs/DOCUMENTAION.md#8-speed-estimation):
 
 1. **Benchmark** — exact match from the benchmark cache (real measurements on similar hardware)
 2. **Architecture scaling** — no exact match, but data exists for the same GPU architecture family
@@ -93,13 +103,15 @@ If a model spills to system RAM, a 0.2x penalty is applied to the estimate.
 
 ## Data files
 
-These live in `data/` and are required at runtime:
+All data files are embedded in the binary at build time:
 
-| File | Contents |
+| Data | Contents |
 |------|----------|
-| `gpus.json` | 200+ GPU profiles (VRAM, bandwidth, TFLOPS, PCI IDs, architecture family) |
-| `hf_models.json` | 1,000+ model entries scraped from Hugging Face |
-| `benchmark_cache.json` | Real-world tok/s measurements indexed by GPU and model |
+| GPU database | 200+ GPU profiles (VRAM, bandwidth, TFLOPS, PCI IDs, architecture family) |
+| Model catalog | 1,000+ model entries scraped from Hugging Face |
+| Benchmark cache | Real-world tok/s measurements indexed by GPU and model |
+
+See [Data Files & Relationships](docs/DOCUMENTAION.md#2-data-files--relationships) for the full schema and how they connect.
 
 ## Platform support
 

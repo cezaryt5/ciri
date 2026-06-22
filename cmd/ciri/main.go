@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cezaryt5/Can_I_Run_IT/data"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/model"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/predictor"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/tui"
+	"github.com/cezaryt5/ciri/data"
+	"github.com/cezaryt5/ciri/internal/hardware"
+	"github.com/cezaryt5/ciri/internal/model"
+	"github.com/cezaryt5/ciri/internal/predictor"
+	"github.com/cezaryt5/ciri/internal/tui"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

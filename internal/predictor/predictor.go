@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cezaryt5/Can_I_Run_IT/internal/hardware"
-	"github.com/cezaryt5/Can_I_Run_IT/internal/model"
+	"github.com/cezaryt5/ciri/internal/hardware"
+	"github.com/cezaryt5/ciri/internal/model"
 )
 
 // Predictor ties hardware, model catalog and benchmarks together and
