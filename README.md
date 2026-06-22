@@ -15,7 +15,7 @@ It detects your GPU, CPU, and RAM, then matches them against a catalog of 1,000+
 **Go install** (requires Go 1.26+):
 
 ```sh
-go install github.com/cezaryt5/ciri/cmd/ciri@latest
+go install github.com/cezaryt5/ciri/cmd/ciri@v1.0.0
 ```
 
 **Build from source:**
