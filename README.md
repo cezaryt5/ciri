@@ -5,7 +5,18 @@
 <h1 align="center">ciri — Can I Run It?</h1>
 
 <p align="center">
+  <a href="https://github.com/cezaryt5/ciri/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow" alt="License"></a>
+  <a href="https://go.dev"><img src="https://img.shields.io/badge/Go-1.26%2B-00ADD8?logo=go&logoColor=white" alt="Go Version"></a>
+  <a href="https://github.com/cezaryt5/ciri/stargazers"><img src="https://img.shields.io/github/stars/cezaryt5/ciri?style=default" alt="Stars"></a>
+  <a href="https://discord.gg/ruyzNveUE"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
+</p>
+
+<p align="center">
   A terminal tool that answers: <strong>which open-source LLMs can run on my machine, and how fast?</strong>
+</p>
+
+<p align="center">
+  <img src="docs/ciri.gif" alt="CIRI demo" width="800">
 </p>
 
 It detects your GPU, CPU, and RAM, then matches them against a catalog of 1,000+ models from Hugging Face. Instead of guessing whether an 8B model will fit in your VRAM, you get concrete numbers — estimated tokens per second, memory pressure, and whether the model fits comfortably or will spill into system RAM.
