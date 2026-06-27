@@ -25,13 +25,13 @@
 
 The system is organised into four packages:
 
-| Package | Path | Responsibility |
-|---------|------|----------------|
-| `main` | `cmd/ciri/` | Entry point, dependency wiring |
-| `hardware` | `internal/hardware/` | GPU/CPU/RAM detection, GPU DB loading, GPU name matching |
-| `model` | `internal/model/` | HF model catalog loading, category assignment |
-| `predictor` | `internal/predictor/` | VRAM fit checking, speed estimation, prediction orchestration |
-| `tui` | `internal/tui/` | Bubble Tea terminal UI (4 screens) |
+ | Package | Path | Responsibility |
+ |---------|------|----------------|
+ | `main` | `cmd/ciri/` | Entry point, dependency wiring |
+ | `hardware` | `internal/hardware/` | GPU/CPU/RAM detection, GPU DB loading, GPU name matching |
+ | `model` | `internal/model/` | HF model catalog loading, category assignment |
+ | `predictor` | `internal/predictor/` | VRAM fit checking, speed estimation, prediction orchestration |
+ | `tui` | `internal/tui/` | Bubble Tea terminal UI (7 screens) |
 
 ### Startup sequence (`cmd/ciri/main.go`)
 
@@ -47,7 +47,7 @@ main()
   ├── LoadCatalog("hf_models.json")    → []model.Model
   ├── LoadBenchmarks("benchmarks.json")→ *predictor.BenchmarkDB
   ├── NewPredictor(gpu, RAM, models, db) → *predictor.Predictor
-  └── NewApp(specs, gpu, models, pred, db) → tea.Program (TUI)
+  └── NewApp(specs, gpu, models, pred, db, version) → tea.Program (TUI)
 ```
 
 ---
@@ -307,7 +307,7 @@ Creates a `Predictor` bound to the detected GPU, available system RAM, model cat
 
 ### `Predict()` — `predictor.go:47`
 
-**Callers:** `results.go:55`, tests
+**Callers:** `predictor.go:54,83` (via PredictAll/Predict), tests
 
 The main prediction loop:
 
@@ -325,23 +325,25 @@ Predict(category)
 
 ### `CountByCategory()` — `predictor.go:83`
 
-**Callers:** `app.go:50`, tests
+**Callers:** internal to `predictor` package, tests
 
-Counts fitting models (Recommended + Advanced) per category for the home screen menu display.
+Counts fitting models per category. Used by `AllCategories` but no longer by the TUI directly — the home screen uses a fixed 4-item menu instead.
 
 ### `CheckFit()` — `internal/predictor/vram.go:36`
 
-**Callers:** `predictor.go:56,91`, tests
+**Callers:** `predictor.go:54,83,120` (via PredictAll, Predict, CountByCategory), tests
 
 Determines whether a model fits:
 
 | Condition | Result |
 |-----------|--------|
-| Apple Silicon: `MinVRAMGB × 1.1 ≤ (sysRAM - 4GB)` | Recommended |
+| Apple Silicon: `ModelVRAMRequirement(m) × 1.1 ≤ (sysRAM - 4GB)` | Recommended |
 | Apple Silicon: otherwise | TooHeavy |
-| dGPU: `MinVRAMGB × 1.1 ≤ GPU.VRAMGB` | Recommended |
+| dGPU: `ModelVRAMRequirement(m) × 1.1 ≤ GPU.VRAMGB` | Recommended |
 | dGPU: `MinRAMGB ≤ sysRAMAvail` | Advanced (spills to RAM) |
 | dGPU: otherwise | TooHeavy |
+
+`ModelVRAMRequirement(m)` returns `max(MinVRAMGB, weightSize)` where `weightSize` is the model's actual on-disk weight footprint (`parameters_raw / 1e9 × BytesPerParam(quantization)`). This prevents the catalog's curated `min_vram_gb` from understating the VRAM needed.
 
 ---
 
@@ -411,45 +413,125 @@ Computes median of benchmark values using an insertion sort (small N).
 
 The terminal UI uses [Bubble Tea](https://github.com/charmbracelet/bubbletea) (the Go Elm architecture) with [Lipgloss](https://github.com/charmbracelet/lipgloss) for styling.
 
-### Root model: `App` — `internal/tui/app.go:30`
+### Root model: `App` — `internal/tui/app.go:31`
 
-Manages four screens via a `screen` enum:
+Manages seven screens via a `screen` enum:
 
 | Screen | Model | File | Purpose |
 |--------|-------|------|---------|
-| `screenHome` | `homeModel` | `home.go` | Category menu with model counts |
-| `screenResults` | `resultsModel` | `results.go` | Filterable/sortable model table |
+| `screenHome` | `homeModel` | `home.go` | 4-option menu (Explore, Download, Local LLMs, Settings) |
+| `screenExplore` | `exploreModel` | `explore.go` | Full model catalog browser with search, sort & filters |
 | `screenDetail` | `detailModel` | `detail.go` | Full model specs & fit assessment |
 | `screenBenchmarks` | `benchmarksModel` | `benchmarks.go` | Benchmark rows for selected model |
+| `screenDownload` | `downloadModel` | `download.go` | Coming-soon placeholder |
+| `screenLocal` | `localModel` | `local.go` | Coming-soon placeholder |
+| `screenSettings` | `settingsModel` | `settings.go` | Hardware info display |
 
 ### Screen flow
 
 ```
-Home ──Enter──► Results ──Enter──► Detail ──b──► Benchmarks
-  ▲               │                                  │
-  └─────Esc───────┘               ◄──────Esc─────────┘
+Home ──Enter──► Explore ──Enter──► Detail ──b──► Benchmarks
+  ▲                │                                   │
+  ├──Esc───────────┘              ◄───────Esc──────────┘
+  │
+  ├──► Download     (Esc → Home)
+  ├──► Local        (Esc → Home)
+  └──► Settings     (Esc → Home)
 ```
+
+### CIRI logo + hardware header
+
+When on the home screen, the 6-line CIRI ASCII art is rendered side-by-side with system info (GPU name, VRAM, RAM, CPU, Ollama/llama.cpp status) above all boxes. Only shown on the home screen to avoid visual clutter on other pages.
 
 ### Hardware bar — `hardware_bar.go:11`
 
-Always-visible status line showing: `CPU | RAM avail/total | GPU name + VRAM`
+Always-visible status line at the top (in the title box) showing: `CPU | RAM avail/total | GPU name + VRAM`
 
-### Results screen features
+### Home screen (`home.go`)
 
-- **Search:** press `/` to filter models by name/provider/quant/params
-- **Fit filter:** press `F` to cycle All → Perfect → Good → Slow
-- **Sort:** press `S` to cycle Default → Speed → Size → Name
-- **Scroll indicators:** "↑ N above" / "↓ N more"
-- **Colored cells:** memory percentage (green < 50%, yellow ≤ 80%, red > 80%)
-- **Fit dots:** green ● = Recommended, yellow ● = Advanced
+A menu with four items:
+
+1. **Explore Models** → `screenExplore`
+2. **Download Models** → `screenDownload`
+3. **Manage Local LLMs** → `screenLocal`
+4. **Settings / Hardware Configs** → `screenSettings`
+
+Navigated with ↑/↓, selected with Enter/Space.
+
+### Explore screen (`explore.go`)
+
+Replaces the old results screen. Displays all models in the catalog (with `parameters_raw ≥ 500M`) in a single table.
+
+#### Search/filter bar
+
+Compact llmfit-style bar with five boxed controls:
+
+| Control | Key | Values |
+|---------|-----|--------|
+| **Search** | `/` | Type to filter by name, quant, or parameter count |
+| **Sort** | `s` / `A` / `D` | Name, Params, Speed, Disk, Date, Fit — direction toggled by `A` (asc) / `D` (desc) |
+| **Type** | `t` | All, Coding, Chat, Vision, Translation, General |
+| **Fit** | `f` | All, Perfect, Good, Slow |
+| **Shown** | — | `N/M` (filtered / total) |
+
+Search highlights the box in bold cyan when active. Sort, Type, and Fit boxes are highlighted when the selection deviates from the default.
+
+#### Table columns (no Provider column)
+
+| Column | Content |
+|--------|---------|
+| `●` | Fit indicator (green = Perfect, yellow = Good, grey = Slow) + ▶ for selected row |
+| **Model** | Shows `provider/model-name` (e.g. `meta-llama/Llama-3.2-3B-Instruct`); gets all freed width from removed Provider column |
+| **Params** | Parameter count string (e.g. `7B`, `70B`) |
+| **tok/s** | Estimated tokens/sec, prefixed with `~` for spill models |
+| **Quant** | Quantization format (e.g. `Q4_K_M`, `FP16`) |
+| **Disk** | Model weight footprint — **dynamic units**: `<1GB` → `320MB`, `>=1GB` → `8.2G` |
+| **Mode** | `GPU` (Recommended) / `CPU` (spills) |
+| **Mem%** | VRAM usage % with color: green `<50%`, yellow `≤80%`, red `>80%`, em-dash if no GPU |
+| **Ctx** | Context length (k/M suffix) |
+| **Date** | Release date (YYYY-MM) |
+| **Fit** | Perfect, Good, or Slow — colored text matches fit status |
+
+#### Dynamic disk formatting
+
+The `formatDiskSize()` helper (`explore.go`) switches formatting at the 1 GB boundary:
+
+```go
+weightGB := ModelWeightSizeGB(m)
+if weightGB < 1.0 {
+    return fmt.Sprintf("%.0fMB", weightGB*1024)  // e.g. "320MB"
+}
+return fmt.Sprintf("%.1fG", weightGB)             // e.g. "8.2G"
+```
+
+#### Colored memory percentage
+
+When `mem% < 50` the cell is green, between 50 and 80 it's yellow, above 80 it's red. This helps users instantly see how close a model is to filling VRAM.
+
+#### Fit dots
+
+- Green ● = fits in VRAM (Recommended)
+- Yellow ● = spills to RAM (Advanced)
+- Grey ● = too heavy
 
 ### Detail screen
 
-Shows: model name, provider, parameters, quantization, format, context length, architecture, pipeline, resource requirements (min RAM, recommended RAM, min VRAM), fit assessment with colored status, estimated speed, VRAM usage %, and community stats (downloads, likes).
+Shows: model name, provider, parameters, quantization, format, context length, architecture, pipeline, resource requirements (min RAM, recommended RAM, min VRAM), fit assessment with colored status, estimated speed, VRAM usage % (uses `ModelVRAMRequirement` — the larger of `min_vram_gb` and actual weight size), and community stats (downloads, likes).
 
 ### Benchmarks screen
 
 Shows real-world tok/s measurements from the benchmark database for the closest hardware match. Each row displays engine name, tok/s, peak VRAM, context length, and notes.
+
+### Settings screen
+
+Shows hardware configuration:
+- GPU name and VRAM
+- RAM (available / total)
+- CPU model and core count
+- Ollama ✓/× status
+- llama.cpp ✓/× status
+
+Used as a replacement for the info that was previously displayed alongside the CIRI logo on the home screen.
 
 ---
 
@@ -549,7 +631,7 @@ Every function with its file location, callers, and purpose is documented as a G
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
 | `LoadCatalog` | 35 | `main.go:44` | Loads hf_models.json and categorises |
-| `AllCategories` | 17 | `predictor.go:85`, `home.go:25,29,45` | Returns 5 categories in display order |
+| `AllCategories` | 17 | `predictor.go:122`, `explore.go:385` | Returns 5 categories in display order |
 | `Categorize` | 30 | `catalog.go:47` | Assigns categories from UseCase/Capabilities |
 | `hasCapability` | 55 | `category.go:40` | Checks if model has a capability |
 
@@ -560,8 +642,8 @@ Every function with its file location, callers, and purpose is documented as a G
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
 | `NewPredictor` | 30 | `main.go:57` | Creates Predictor, detects Apple Silicon |
-| `Predict` | 47 | `results.go:55` | Returns sorted model predictions for category |
-| `CountByCategory` | 83 | `app.go:50` | Counts fitting models per category |
+| `Predict` | 47 | `explore.go:55` (via PredictAll), tests | Returns sorted model predictions for category |
+| `CountByCategory` | 112 | internal | Counts fitting models per category |
 | `hasCategory` | 100 | `predictor.go:52,88` | Checks model category membership |
 
 #### `vram.go`
@@ -569,7 +651,7 @@ Every function with its file location, callers, and purpose is documented as a G
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
 | `FitStatus.String` | 17 | fmt.Stringer | Human-readable fit status |
-| `CheckFit` | 36 | `predictor.go:56,91` | Determines Recommended/Advanced/TooHeavy |
+| `CheckFit` | 44 | `predictor.go:54,83,120` | Determines Recommended/Advanced/TooHeavy |
 
 #### `estimate.go`
 
@@ -579,14 +661,13 @@ Every function with its file location, callers, and purpose is documented as a G
 | `ByNameHfID` | 147 | `benchmarks.go:31` | Returns byNameHfID index |
 | `extractGPUName` | 153 | `estimate.go:105` | Strips VRAM suffix from preset name |
 | `EstimateSpeed` | 263 | `predictor.go:61` | 3-tier speed estimation |
-| `BytesPerParam` | 325 | `estimate.go:295,354`, `results.go:539` | Returns bytes/param for quant |
+| `BytesPerParam` | 325 | `estimate.go:307,371`, `explore.go:89,132` | Returns bytes/param for quant |
+| `ModelWeightSizeGB` | 339 | `explore.go:132`, `helpers.go:54` | Computes model weight footprint from params × bytes/param |
+| `ModelVRAMRequirement` | 350 | `vram.go:42`, `detail.go:77` | Returns max(MinVRAMGB, weightSize) for honest VRAM check |
 | `computeBoundEstimate` | 343 | `estimate.go:302` | Arithmetic throughput cap |
-| `applySpillPenalty` | 353 | `estimate.go:286` | ×0.2 penalty if model > VRAM |
 | `lookupMedian` | 362 | `estimate.go:274,277` | Median benchmark lookups |
 | `archScaledEstimate` | 380 | `estimate.go:285` | Architecture-family median |
 | `median` | 409 | `estimate.go:377,397` | Float64 median |
-| `sortFloat64` | 423 | `estimate.go:416` | Insertion sort |
-| `archFactor` | 431 | test | tok/s-per-TFLOP factor lookup |
 
 ### Package `tui` — `internal/tui/`
 
@@ -594,80 +675,108 @@ Every function with its file location, callers, and purpose is documented as a G
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `NewApp` | 49 | `main.go:60` | Creates root App model |
-| `Init` | 63 | Bubble Tea | Lifecycle — returns nil |
-| `Update` | 67 | Bubble Tea | Routes messages to active screen |
-| `View` | 113 | Bubble Tea | Renders hardware bar + screen content |
-| `isTextInput` | 154 | `app.go:93` | True if capturing search text |
-| `label` | 158 | `app.go:124,130,135,141` | Current screen title |
-| `renderToolAvail` | 178 | `app.go:116` | Renders ollama/llama.cpp checkmarks |
+| `NewApp` | 52 | `main.go:60` | Creates root App model |
+| `Init` | 66 | Bubble Tea | Lifecycle — returns nil |
+| `Update` | 69 | Bubble Tea | Routes messages to active screen |
+| `View` | 119 | Bubble Tea | Renders logo (home only) + title box + screen content |
+| `isTextInput` | 177 | `app.go:93` | True if capturing search text |
+| `label` | 181 | `app.go:131-164` | Current screen title for box |
+| `renderLogoHeader` | 228 | `app.go:122` | CIRI ASCII art + HW info (home screen only) |
+| `hardwareInfoLines` | 242 | `app.go:229` | System info lines for logo side-by-side |
 
 #### `home.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `homeUpdate` | 16 | `app.go:97` | Category navigation & selection |
-| `homeView` | 40 | `app.go:130` | Renders category menu with counts |
+| `homeUpdate` | 32 | `app.go:95` | 4-item menu navigation & selection |
+| `homeView` | 56 | `app.go:141` | Renders menu (Explore, Download, Local, Settings) |
 
-#### `results.go`
+#### `explore.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `newResultsModel` | 53 | `app.go:122` | Creates results model |
-| `applyFilters` | 66 | `results.go:60,135,139,143,146,160,168,171` | Filters and sorts predictions |
-| `resultsUpdate` | 126 | `app.go:100` | Keyboard input handling |
-| `resultsView` | 218 | `app.go:124` | Renders results table |
-| `searchBar` | 270 | `results.go:224` | Renders search/filter controls |
-| `renderMiniBox` | 296 | `results.go:282-286` | Rounded control box |
-| `fitFilterLabel` | 313 | `results.go:285` | Fit filter display name |
-| `sortModeLabel` | 326 | `results.go:284` | Sort mode display name |
-| `resultsPreview` | 339 | `app.go:126` | Selected model preview bar |
-| `resultsFooter` | 347 | `app.go:128` | Keyboard shortcut help |
-| `visibleRows` | 354 | `results.go:183,236` | Visible table rows count |
-| `columnWidths` | 378 | `results.go:219` | Dynamic column widths |
-| `renderTableHeader` | 399 | `results.go:227` | Column headers |
-| `renderTableRow` | 416 | `results.go:253` | Single prediction row |
-| `padCell` | 484 | `results.go:401-412` | Fixed-width cell padding |
-| `fitDotStr` | 491 | `results.go:439` | Colored fit status dot |
-| `fitLabel` | 502 | `results.go:440` | Colored fit status text |
-| `fitLabelPlain` | 513 | `results.go:443` | Uncolored fit status text |
-| `formatMemPctRaw` | 524 | `results.go:422` | VRAM usage percentage |
-| `formatDiskGB` | 535 | `results.go:463` | Model disk footprint |
-| `formatMode` | 547 | `results.go:464` | "GPU" vs "CPU" label |
-| `formatDate` | 554 | `results.go:467` | Date to YYYY-MM |
-| `truncate` | 561 | `app.go:166,171`, `results.go:458-467`, `styles.go:112`, `benchmarks.go:70,120`, `detail.go:43` | String truncation with ellipsis |
+| `newExploreModel` | 86 | `app.go:132` | Creates explore model with all predictions (≥500M params) |
+| `applyFilters` | 99 | `explore.go:93` | Filters by search/fit/type, sorts by column & direction |
+| `exploreUpdate` | 179 | `app.go:97` | Keyboard: / f s A D t ↑↓ Enter b Esc |
+| `exploreView` | 261 | `app.go:135` | Renders search bar, table, scroll indicators |
+| `exploreSearchBar` | 301 | `explore.go:265` | 5-box search/sort/type/fit/shown bar |
+| `explorePreview` | 359 | `app.go:137` | Selected model preview bar at bottom |
+| `exploreFooter` | 368 | `app.go:140` | Keyboard shortcut help |
+| `emVisibleRows` | 377 | `explore.go:274,291` | Visible rows count |
+| `cycleTypeFilter` | 383 | `explore.go:260` | Cycles nil → Coding → Chat → Vision → Translation → General → nil |
+| `hasTypeCategory` | 398 | `explore.go:119` | Checks if model belongs to a type filter category |
+| `exploreColWidths` | 416 | `explore.go:262` | Dynamic column widths (no provider column) |
+| `renderExploreHeader` | 431 | `explore.go:267` | Column headers (Model, Params, tok/s, Quant, Disk, Mode, Mem%, Ctx, Date, Fit) |
+| `renderExploreRow` | 442 | `explore.go:283` | Single prediction row with provider/name model column |
+| `formatDiskSize` | 497 | `explore.go:289` | Dynamic disk formatting (MB <1GB, G >=1GB) |
+
+#### `helpers.go`
+
+| Function | Line | Callers | Purpose |
+|----------|------|---------|---------|
+| `truncate` | 21 | Various | String truncation with ellipsis |
+| `formatDate` | 31 | `explore.go` | Date to YYYY-MM |
+| `formatMode` | 41 | `explore.go` | "GPU" vs "CPU" label |
+| `formatMemPctRaw` | 48 | `explore.go` | VRAM usage percentage via ModelVRAMRequirement |
+| `fitDotStr` | 65 | `explore.go` | Colored fit status dot |
+| `fitLabel` | 77 | `explore.go` | Colored fit status text |
+| `fitLabelPlain` | 88 | `explore.go` | Uncolored fit status text |
+| `padCell` | 99 | `explore.go` | Fixed-width cell padding |
+| `renderMiniBox` | 109 | `explore.go` | Rounded control box for search bar |
+| `fitFilterLabel` | 124 | `explore.go` | Fit filter display name |
 
 #### `detail.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `newDetailModel` | 21 | `app.go:133` | Creates detail model |
-| `detailUpdate` | 29 | `app.go:103` | Esc/B key handling |
-| `detailView` | 39 | `app.go:135` | Full model detail rendering |
-| `detailRow` | 83 | `detail.go:47-77` | Label-value row |
-| `formatContext` | 87 | `detail.go:52`, `benchmarks.go:113`, `results.go:466` | Context length formatting |
-| `formatNum` | 97 | `detail.go:76-77` | Large number formatting |
+| `newDetailModel` | 25 | `app.go:143` | Creates detail model |
+| `detailUpdate` | 33 | `app.go:100` | Esc→Explore / B→Benchmarks |
+| `detailView` | 43 | `app.go:146` | Full model detail rendering |
+| `detailRow` | 99 | `detail.go:60-90` | Label-value row |
+| `formatContext` | 106 | `detail.go:64`, `benchmarks.go:113`, `explore.go:295` | Context length formatting |
+| `formatNum` | 116 | `detail.go:88-89` | Large number formatting |
 
 #### `benchmarks.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `newBenchmarksModel` | 23 | `app.go:83,138` | Creates benchmarks model |
-| `benchUpdate` | 47 | `app.go:106` | Scroll and back navigation |
-| `benchView` | 67 | `app.go:141` | Benchmark table rendering |
+| `newBenchmarksModel` | 23 | `app.go:83,149` | Creates benchmarks model |
+| `benchUpdate` | 47 | `app.go:104` | Scroll and back navigation |
+| `benchView` | 67 | `app.go:152` | Benchmark table rendering |
 | `bmVisibleRows` | 141 | `benchmarks.go:85` | Visible benchmark rows count |
+
+#### `download.go`
+
+| Function | Line | Callers | Purpose |
+|----------|------|---------|---------|
+| `downloadUpdate` | 10 | `app.go:106` | Esc→Home |
+| `downloadView` | 17 | `app.go:158` | "Coming soon" placeholder |
+
+#### `local.go`
+
+| Function | Line | Callers | Purpose |
+|----------|------|---------|---------|
+| `localUpdate` | 10 | `app.go:110` | Esc→Home |
+| `localView` | 17 | `app.go:162` | "Coming soon" placeholder |
+
+#### `settings.go`
+
+| Function | Line | Callers | Purpose |
+|----------|------|---------|---------|
+| `settingsUpdate` | 18 | `app.go:114` | Esc→Home |
+| `settingsView` | 24 | `app.go:167` | Hardware info display |
 
 #### `hardware_bar.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
-| `RenderHardwareBar` | 11 | `app.go:116` | CPU/RAM/GPU status bar |
+| `RenderHardwareBar` | 11 | `app.go:127` | CPU/RAM/GPU status bar |
 
 #### `styles.go`
 
 | Function | Line | Callers | Purpose |
 |----------|------|---------|---------|
 | `RenderLabeledLine` | 83 | (uncalled) | Section divider with label |
-| `RenderDivider` | 95 | `results.go:228`, `benchmarks.go:98` | Horizontal divider |
-| `RenderBox` | 102 | `app.go:117,124,130,135,141` | Bordered box with title |
-| `repeat` | 136 | `styles.go:89,92,99,119,130`, `results.go:290` | String repetition |
+| `RenderDivider` | 95 | `explore.go:269`, `benchmarks.go:98` | Horizontal divider |
+| `RenderBox` | 102 | `app.go:128-167` | Bordered box with title |
+| `repeat` | 136 | Various | String repetition |

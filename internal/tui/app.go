@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/cezaryt5/ciri/internal/hardware"
@@ -11,53 +12,67 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// screen identifies which substate is active.
 type screen int
 
 const (
 	screenHome screen = iota
-	screenResults
+	screenExplore
 	screenDetail
 	screenBenchmarks
+	screenDownload
+	screenLocal
+	screenSettings
 )
 
-// navigateMsg signals the root model to switch to a different screen.
 type navigateMsg struct {
 	target screen
 }
 
-// App is the root Bubble Tea model — it delegates to the current substate.
 type App struct {
 	width, height int
 
 	screen      screen
 	benchOrigin screen
 	home        *homeModel
-	results     *resultsModel
+	explore     *exploreModel
 	detail      *detailModel
 	bench       *benchmarksModel
+	download    *downloadModel
+	local       *localModel
+	settings    *settingsModel
 
-	specs    hardware.Specs
-	gpu      *hardware.GPU
-	models   []model.Model
-	pred     *predictor.Predictor
-	benchDB  *predictor.BenchmarkDB
-	category model.Category
-	counts   map[model.Category]int
-	version  string
+	specs   hardware.Specs
+	gpu     *hardware.GPU
+	models  []model.Model
+	pred    *predictor.Predictor
+	benchDB *predictor.BenchmarkDB
+	version string
 }
 
+var ciriLogo = []string{
+	`   ██████╗ ██╗██████╗ ██╗`,
+	`  ██╔════╝ ██║██╔══██╗██║`,
+	`  ██║      ██║██████╔╝██║`,
+	`  ██║      ██║██╔══██╗██║`,
+	`  ╚██████╗ ██║██║  ██║██║`,
+	`   ╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝`,
+}
+
+var (
+	arrowStyle = lipgloss.NewStyle().Foreground(cyan)
+	checkStyle = lipgloss.NewStyle().Foreground(green)
+	crossStyle = lipgloss.NewStyle().Foreground(red)
+)
+
 func NewApp(specs hardware.Specs, gpu *hardware.GPU, models []model.Model, pred *predictor.Predictor, benchDB *predictor.BenchmarkDB, version string) *App {
-	counts := pred.CountByCategory()
 	return &App{
 		screen:  screenHome,
-		home:    &homeModel{},
+		home:    newHomeModel(),
 		specs:   specs,
 		gpu:     gpu,
 		models:  models,
 		pred:    pred,
 		benchDB: benchDB,
-		counts:  counts,
 		version: version,
 	}
 }
@@ -74,21 +89,16 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return a, nil
 
 	case navigateMsg:
-		// Remember where a benchmarks view was opened from so Esc returns there.
 		if msg.target == screenBenchmarks {
 			a.benchOrigin = a.screen
 		}
 		a.screen = msg.target
-		// We only instantiate if it requires fresh data passing not handled elsewhere.
-		// screenDetail is purposely omitted here because results.go sets it up directly.
 		if a.screen == screenBenchmarks && a.detail != nil {
 			a.bench = newBenchmarksModel(a.detail.selected, a.gpu, a.benchDB, a.specs)
 		}
 		return a, nil
 
 	case tea.KeyMsg:
-		// Global quit works on every page. ctrl+c always quits; "q" quits
-		// unless the user is typing into a text input (e.g. results search).
 		if msg.String() == "ctrl+c" {
 			return a, tea.Quit
 		}
@@ -98,14 +108,23 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if a.screen == screenHome {
 			return a, a.home.homeUpdate(a, msg)
 		}
-		if a.screen == screenResults && a.results != nil {
-			return a, a.results.resultsUpdate(a, msg)
+		if a.screen == screenExplore && a.explore != nil {
+			return a, a.explore.exploreUpdate(a, msg)
 		}
 		if a.screen == screenDetail && a.detail != nil {
 			return a, a.detail.detailUpdate(a, msg)
 		}
 		if a.screen == screenBenchmarks && a.bench != nil {
 			return a, a.bench.benchUpdate(a, msg)
+		}
+		if a.screen == screenDownload && a.download != nil {
+			return a, a.download.downloadUpdate(a, msg)
+		}
+		if a.screen == screenLocal && a.local != nil {
+			return a, a.local.localUpdate(a, msg)
+		}
+		if a.screen == screenSettings && a.settings != nil {
+			return a, a.settings.settingsUpdate(a, msg)
 		}
 	}
 
@@ -115,28 +134,32 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (a *App) View() string {
 	var sb strings.Builder
 
+	if a.screen == screenHome {
+		sb.WriteString(renderLogoHeader(a) + "\n")
+	}
+
 	title := "CIRI"
 	if a.version != "" {
 		title = "CIRI v" + a.version
 	}
-	headerContent := RenderHardwareBar(a.specs, a.gpu, a.width) + "\n" + renderToolAvail(a.specs)
+	headerContent := RenderHardwareBar(a.specs, a.gpu, a.width)
 	sb.WriteString(RenderBox(title, headerContent, a.width) + "\n")
 
 	switch a.screen {
-	case screenResults:
-		if a.results == nil {
-			a.results = newResultsModel(a.pred, a.category, a.specs, a.gpu)
+	case screenExplore:
+		if a.explore == nil {
+			a.explore = newExploreModel(a.pred, a.specs, a.gpu)
 		}
-		sb.WriteString(RenderBox(a.label(), a.results.resultsView(a), a.width) + "\n")
-		if len(a.results.predictions) > 0 {
-			sb.WriteString(a.results.resultsPreview() + "\n")
+		sb.WriteString(RenderBox(a.label(), a.explore.exploreView(a), a.width) + "\n")
+		if len(a.explore.predictions) > 0 {
+			sb.WriteString(a.explore.explorePreview() + "\n")
 		}
-		sb.WriteString(a.results.resultsFooter())
+		sb.WriteString(a.explore.exploreFooter())
 	case screenHome:
 		sb.WriteString(RenderBox(a.label(), a.home.homeView(a), a.width))
 	case screenDetail:
 		if a.detail == nil {
-			a.detail = newDetailModel(a.pred, a.category, a.specs, a.gpu)
+			a.detail = newDetailModel(a.pred, a.specs, a.gpu)
 		}
 		sb.WriteString(RenderBox(a.label(), a.detail.detailView(a), a.width))
 	case screenBenchmarks:
@@ -146,6 +169,21 @@ func (a *App) View() string {
 		if a.bench != nil {
 			sb.WriteString(RenderBox(a.label(), a.bench.benchView(a), a.width))
 		}
+	case screenDownload:
+		if a.download == nil {
+			a.download = &downloadModel{}
+		}
+		sb.WriteString(RenderBox(a.label(), a.download.downloadView(a), a.width))
+	case screenLocal:
+		if a.local == nil {
+			a.local = &localModel{}
+		}
+		sb.WriteString(RenderBox(a.label(), a.local.localView(a), a.width))
+	case screenSettings:
+		if a.settings == nil {
+			a.settings = &settingsModel{specs: a.specs, gpu: a.gpu}
+		}
+		sb.WriteString(RenderBox(a.label(), a.settings.settingsView(a), a.width))
 	}
 
 	contentHeight := a.height - 5
@@ -155,18 +193,19 @@ func (a *App) View() string {
 	return lipgloss.NewStyle().Width(a.width).Height(contentHeight).Render(sb.String())
 }
 
-// isTextInput reports whether a screen is currently capturing free text, so
-// global single-key shortcuts like "q" should be treated as input instead.
 func (a *App) isTextInput() bool {
-	return a.screen == screenResults && a.results != nil && a.results.searching
+	if a.screen == screenExplore && a.explore != nil {
+		return a.explore.searching
+	}
+	return false
 }
 
 func (a *App) label() string {
 	switch a.screen {
 	case screenHome:
 		return "Home"
-	case screenResults:
-		return string(a.category)
+	case screenExplore:
+		return "Explore Models"
 	case screenDetail:
 		if a.detail != nil {
 			return truncate(a.detail.selected.Model.Name, 40)
@@ -177,21 +216,63 @@ func (a *App) label() string {
 			return "Benchmarks: " + truncate(a.bench.selected.Model.Name, 30)
 		}
 		return "Benchmarks"
+	case screenDownload:
+		return "Download Models"
+	case screenLocal:
+		return "Manage Local LLMs"
+	case screenSettings:
+		return "Settings"
 	}
 	return ""
 }
 
-func renderToolAvail(specs hardware.Specs) string {
-	var parts []string
-	if specs.HasOllama {
-		parts = append(parts, "Ollama: \u2713")
-	} else {
-		parts = append(parts, "Ollama: \u00d7")
+func renderLogoHeader(a *App) string {
+	info := hardwareInfoLines(a)
+	var b strings.Builder
+	for i, logoLine := range ciriLogo {
+		b.WriteString(logoLine)
+		b.WriteString("   ")
+		b.WriteString(info[i])
+		if i < len(ciriLogo)-1 {
+			b.WriteString("\n")
+		}
 	}
-	if specs.HasLlamaCPP {
-		parts = append(parts, "llama.cpp: \u2713")
-	} else {
-		parts = append(parts, "llama.cpp: \u00d7")
-	}
-	return " " + strings.Join(parts, " \u2502 ") + " "
+	return b.String()
 }
+
+func hardwareInfoLines(a *App) []string {
+	gpuName := "Unknown"
+	vramGB := 0.0
+	if a.gpu != nil {
+		gpuName = a.gpu.Name
+		vramGB = a.gpu.VRAMGB
+	}
+
+	cpuModel := a.specs.CpuModel
+	if cpuModel == "" {
+		cpuModel = "Unknown"
+	}
+
+	arrow := arrowStyle.Render(">")
+	check := checkStyle.Render("\u2713")
+	cross := crossStyle.Render("\u00d7")
+
+	ollamaStr := cross
+	if a.specs.HasOllama {
+		ollamaStr = check
+	}
+	llamaStr := cross
+	if a.specs.HasLlamaCPP {
+		llamaStr = check
+	}
+
+	return []string{
+		fmt.Sprintf("%s GPU:    %s", arrow, gpuName),
+		fmt.Sprintf("%s VRAM:   %.1f GB", arrow, vramGB),
+		fmt.Sprintf("%s RAM:    %.1f / %.1f GB", arrow, a.specs.RamAvailGB, a.specs.RamTotalGB),
+		fmt.Sprintf("%s CPU:    %s (%dc)", arrow, cpuModel, a.specs.CpuCores),
+		fmt.Sprintf("%s Ollama: %s", arrow, ollamaStr),
+		fmt.Sprintf("%s llama.cpp: %s", arrow, llamaStr),
+	}
+}
+

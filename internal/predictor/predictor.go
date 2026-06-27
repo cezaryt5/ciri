@@ -44,6 +44,31 @@ func NewPredictor(gpu *hardware.GPU, sysRAMAvailGB float64, models []model.Model
 	return p
 }
 
+// PredictAll returns fit/speed estimates for every model in the catalog
+// (including TooHeavy). Used by the explore-all screen. Sorted:
+// Recommended first, then by tok/s.
+func (p *Predictor) PredictAll() []ModelPrediction {
+	var results []ModelPrediction
+	for i := range p.models {
+		m := &p.models[i]
+		fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
+		tokPerSec, confidence := EstimateSpeed(m, p.gpu, p.benchmarks)
+		results = append(results, ModelPrediction{
+			Model:        m,
+			FitStatus:    fit,
+			EstTokPerSec: tokPerSec,
+			Confidence:   confidence,
+		})
+	}
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].FitStatus != results[j].FitStatus {
+			return results[i].FitStatus < results[j].FitStatus
+		}
+		return results[i].EstTokPerSec > results[j].EstTokPerSec
+	})
+	return results
+}
+
 // Predict returns all models in the given category with fit and speed estimates.
 // Excludes TooHeavy models. Results are sorted: Recommended first, then by tok/s.
 func (p *Predictor) Predict(category model.Category) []ModelPrediction {
