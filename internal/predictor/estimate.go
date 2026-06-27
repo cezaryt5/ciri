@@ -3,6 +3,7 @@ package predictor
 import (
 	"encoding/json"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/cezaryt5/ciri/internal/hardware"
@@ -73,11 +74,10 @@ type BenchmarkRow struct {
 // BenchmarkDB indexes benchmark rows by (gpuName, hfId) for quick lookups.
 type BenchmarkDB struct {
 	byNameHfID map[string][]BenchmarkRow // key: "gpuName|hfId"
-	byArchHfID map[string][]BenchmarkRow // key: "architecture|hfId"
 }
 
-// LoadBenchmarks reads benchmark_cache.json and builds indices.
-func LoadBenchmarks(data []byte, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
+// LoadBenchmarks reads benchmark_cache.json and builds the exact-match index.
+func LoadBenchmarks(data []byte) (*BenchmarkDB, error) {
 	var cache benchmarkCacheFile
 	if err := json.Unmarshal(data, &cache); err != nil {
 		return nil, err
@@ -85,18 +85,11 @@ func LoadBenchmarks(data []byte, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
 
 	db := &BenchmarkDB{
 		byNameHfID: make(map[string][]BenchmarkRow),
-		byArchHfID: make(map[string][]BenchmarkRow),
-	}
-
-	// Build gpu name → architecture lookup
-	nameArch := make(map[string]string)
-	for i := range gpuDB {
-		nameArch[strings.ToLower(gpuDB[i].Name)] = strings.ToLower(gpuDB[i].Architecture)
-		nameArch[strings.ToLower(gpuDB[i].CanonicalName)] = strings.ToLower(gpuDB[i].Architecture)
 	}
 
 	for presetName, preset := range cache.Presets {
 		presetGPUName := extractGPUName(presetName)
+		presetCanonical := hardware.NormalizeGPUName(presetGPUName)
 
 		for _, r := range preset.Rows {
 			if r.TokSOut == nil {
@@ -121,15 +114,34 @@ func LoadBenchmarks(data []byte, gpuDB []hardware.GPU) (*BenchmarkDB, error) {
 				row.Notes = *r.Notes
 			}
 
-			// Index by preset GPU name (e.g., "RTX 3090")
+			// Index by preset GPU name (e.g., "RTX 5090")
 			key := strings.ToLower(presetGPUName + "|" + row.HfID)
 			db.byNameHfID[key] = append(db.byNameHfID[key], row)
 
-			// Index by architecture (for fallback estimation)
-			arch := nameArch[strings.ToLower(presetGPUName)]
-			if arch != "" {
-				archKey := arch + "|" + strings.ToLower(row.HfID)
-				db.byArchHfID[archKey] = append(db.byArchHfID[archKey], row)
+			// Also index by canonical form (e.g., "5090") — matches
+			// gpu.CanonicalName lookup in EstimateSpeed. Skip if same as preset key.
+			if presetCanonical != "" {
+				canonKey := strings.ToLower(presetCanonical + "|" + row.HfID)
+				if canonKey != key {
+					db.byNameHfID[canonKey] = append(db.byNameHfID[canonKey], row)
+				}
+			}
+
+			// Index by the row's own GPU name and its canonical form if available.
+			if r.Hardware.GpuName != nil {
+				gpuName := *r.Hardware.GpuName
+				gpuKey := strings.ToLower(gpuName + "|" + row.HfID)
+				if gpuKey != key {
+					db.byNameHfID[gpuKey] = append(db.byNameHfID[gpuKey], row)
+				}
+
+				gpuCanon := hardware.NormalizeGPUName(gpuName)
+				if gpuCanon != "" {
+					gpuCanonKey := strings.ToLower(gpuCanon + "|" + row.HfID)
+					if gpuCanonKey != key && gpuCanonKey != gpuKey {
+						db.byNameHfID[gpuCanonKey] = append(db.byNameHfID[gpuCanonKey], row)
+					}
+				}
 			}
 		}
 	}
@@ -156,12 +168,13 @@ func extractGPUName(presetName string) string {
 // Speed estimation
 // ---------------------------------------------------------------------------
 
-// confidence labels.
 const (
 	ConfBenchmark = "Benchmark"
-	ConfEstimate  = "Estimate"
 	ConfHeuristic = "Heuristic"
 )
+
+// Overhead to account for CUDA context and KV cache sizing
+const vramOverheadGB = 1.5
 
 // memoryEfficiencyByArch maps architecture families to realistic sustained
 // bandwidth utilization. No GPU hits 100% of spec-sheet bandwidth in practice;
@@ -198,19 +211,90 @@ var memoryEfficiencyByArch = map[string]float64{
 	"gaudi 2":    0.75,
 }
 
-// GetMemoryEfficiency returns the bandwidth scaling factor for a given
-// GPU architecture. Unrecognized architectures get a conservative baseline.
+// Ordered slice to ensure deterministic substring fallbacks
+var memoryEfficiencyKeys = []string{
+	"ada lovelace", "ampere", "turing", "hopper", "volta", "pascal", "maxwell", "kepler",
+	"rdna 3", "rdna 2", "rdna 1", "cdna 3", "cdna 2", "cdna 1", "vega", "polaris",
+	"apple m4", "apple m3", "apple m2", "apple m1",
+	"alchemist", "battlemage", "gaudi 3", "gaudi 2",
+}
+
+// computeEfficiencyByArch maps architecture families to realistic compute
+// utilization for single-stream decode. While decode is memory-bound for most
+// models, small models on fast GPUs can become compute-bound.
+var computeEfficiencyByArch = map[string]float64{
+	// NVIDIA — later Tensor Core generations sustain higher fractions
+	"ada lovelace": 0.30,
+	"ampere":       0.25,
+	"turing":       0.20,
+	"hopper":       0.35,
+	"volta":        0.20,
+	"pascal":       0.15,
+	"maxwell":      0.12,
+	"kepler":       0.10,
+	// AMD
+	"rdna 3":  0.22,
+	"rdna 2":  0.20,
+	"rdna 1":  0.15,
+	"cdna 3":  0.35,
+	"cdna 2":  0.28,
+	"cdna 1":  0.22,
+	"vega":    0.12,
+	"polaris": 0.10,
+	// Apple
+	"apple m4": 0.35,
+	"apple m3": 0.30,
+	"apple m2": 0.25,
+	"apple m1": 0.20,
+	// Intel
+	"alchemist":  0.12,
+	"battlemage": 0.15,
+	"gaudi 3":    0.30,
+	"gaudi 2":    0.25,
+}
+
+var computeEfficiencyKeys = []string{
+	"ada lovelace", "ampere", "turing", "hopper", "volta", "pascal", "maxwell", "kepler",
+	"rdna 3", "rdna 2", "rdna 1", "cdna 3", "cdna 2", "cdna 1", "vega", "polaris",
+	"apple m4", "apple m3", "apple m2", "apple m1",
+	"alchemist", "battlemage", "gaudi 3", "gaudi 2",
+}
+
+// GetComputeEfficiency returns the compute utilization factor for a given
+// GPU architecture. Unrecognized architectures get 0.20 (conservative baseline).
+func GetComputeEfficiency(arch string) float64 {
+	arch = strings.ToLower(strings.TrimSpace(arch))
+	if arch == "" {
+		return 0.20
+	}
+	if eff, ok := computeEfficiencyByArch[arch]; ok {
+		return eff
+	}
+	for _, family := range computeEfficiencyKeys {
+		if strings.Contains(arch, family) || strings.Contains(family, arch) {
+			return computeEfficiencyByArch[family]
+		}
+	}
+	return 0.20
+}
+
+// GetMemoryEfficiency returns the bandwidth scaling factor for a given GPU architecture.
 func GetMemoryEfficiency(arch string) float64 {
 	arch = strings.ToLower(strings.TrimSpace(arch))
+	if arch == "" {
+		return 0.60
+	}
 	if eff, ok := memoryEfficiencyByArch[arch]; ok {
 		return eff
 	}
-	// Fuzzy fallback: check if the arch string contains a known family name.
-	for family, eff := range memoryEfficiencyByArch {
+
+	// Deterministic fuzzy fallback
+	for _, family := range memoryEfficiencyKeys {
 		if strings.Contains(arch, family) || strings.Contains(family, arch) {
-			return eff
+			return memoryEfficiencyByArch[family]
 		}
 	}
+
 	// System RAM / DDR fallback — no dedicated VRAM to optimize.
 	if strings.Contains(arch, "ddr") || strings.Contains(arch, "system") {
 		return 0.45
@@ -219,9 +303,6 @@ func GetMemoryEfficiency(arch string) float64 {
 }
 
 // quantBytesPerParam maps exact quantization tags to bytes per parameter.
-// Derivation: bits-per-weight / 8. GGUF bitrates are not flat; e.g. Q4_0
-// is 4.50 bpw (0.5625 B), Q4_K_M is 4.80 bpw (0.60 B). Using rounded 4-bit
-// arithmetic would under‑estimate VRAM by 3+ GB for a 32B model.
 var quantBytesPerParam = map[string]float64{
 	// GGUF / llama.cpp
 	"Q2_K":    0.320,
@@ -232,11 +313,13 @@ var quantBytesPerParam = map[string]float64{
 	"Q3_K_L":  0.531,
 	"Q4_0":    0.563,
 	"Q4_1":    0.563,
+	"Q4_K":    0.625, // Fallback common tag
 	"Q4_K_S":  0.573,
 	"Q4_K_M":  0.625,
 	"Q4_K_L":  0.625,
 	"Q5_0":    0.688,
 	"Q5_1":    0.688,
+	"Q5_K":    0.710, // Fallback common tag
 	"Q5_K_S":  0.667,
 	"Q5_K_M":  0.710,
 	"Q6_K":    0.824,
@@ -254,58 +337,23 @@ var quantBytesPerParam = map[string]float64{
 	"IQ4_XS":  0.531,
 	"IQ4_NL":  0.563,
 
-	// Non‑GGUF
+	// Non‑GGUF (keys uppercase for ToUpper lookup)
+	"BF16":           2.0,
 	"F16":            2.0,
 	"FP16":           2.0,
 	"F32":            4.0,
 	"FP32":           4.0,
-	"AWQ-4bit":       0.563,
-	"AWQ-8bit":       1.0,
-	"GPTQ-Int2":      0.313,
-	"GPTQ-Int4":      0.563,
-	"GPTQ-Int8":      1.0,
-	"AutoRound-4bit": 0.563,
-	"AutoRound-8bit": 1.0,
+	"AWQ-4BIT":       0.563,
+	"AWQ-8BIT":       1.0,
+	"GPTQ-INT2":      0.313,
+	"GPTQ-INT4":      0.563,
+	"GPTQ-INT8":      1.0,
+	"AUTOROUND-4BIT": 0.563,
+	"AUTOROUND-8BIT": 1.0,
 }
 
-// archFactors maps architecture families to approximate tok/s per TFLOP.
-// Roughly calibrated — these are conservative defaults that get superseded
-// by real benchmark data when available.
-var archFactors = map[string]float64{
-	// NVIDIA
-	"ada lovelace": 1.8,
-	"ampere":       1.5,
-	"turing":       1.2,
-	"hopper":       2.5,
-	"volta":        1.2,
-	"pascal":       1.0,
-	"maxwell":      0.7,
-	"kepler":       0.5,
-	// AMD
-	"rdna 3":  1.3,
-	"rdna 2":  1.0,
-	"rdna 1":  0.8,
-	"cdna 3":  2.2,
-	"cdna 2":  1.8,
-	"cdna 1":  1.5,
-	"vega":    0.7,
-	"polaris": 0.5,
-	"navi":    0.9,
-	// Apple
-	"apple m4": 2.5,
-	"apple m3": 2.0,
-	"apple m2": 1.5,
-	"apple m1": 1.0,
-	// Intel
-	"alchemist":  0.8,
-	"battlemage": 1.0,
-	"gaudi 3":    2.0,
-	"gaudi 2":    1.5,
-}
-
-// EstimateSpeed returns (tokSOut, confidenceLabel) for a model on the given
-// GPU. It tries benchmarks first, then architecture-family scaling, then a
-// memory-bandwidth-aware heuristic.
+// EstimateSpeed returns (tokSOut, confidenceLabel) for a model on the given GPU.
+// It tries exact benchmarks first, then a memory-bandwidth/compute aware heuristic.
 func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64, string) {
 	if gpu == nil {
 		return 0, ConfHeuristic
@@ -325,28 +373,23 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 		}
 	}
 
-	// ---- Tier B: architecture-family match ----
-	arch := strings.ToLower(gpu.Architecture)
-	if arch != "" && db != nil {
-		if scaled, ok := archScaledEstimate(arch, hfID, gpu.TFLOPS, db); ok {
-			return applySpillPenalty(scaled, gpu, m), ConfEstimate
-		}
-	}
-
-	// ---- Tier C: roofline heuristic ----
-	// Single-stream (batch=1) decode streams the entire weight set from
-	// memory once per token, so throughput is dominated by memory bandwidth.
-	// Compute only binds for very large models on bandwidth-rich GPUs, so we
-	// take the lower of the memory-bound and compute-bound estimates.
+	// ---- Tier B: roofline heuristic ----
 	bytesPerParam := BytesPerParam(m.Quantization)
-	modelSzGB := float64(m.ParametersRaw) / 1e9 * bytesPerParam
+	totalModelSzGB := float64(m.ParametersRaw) / 1e9 * bytesPerParam
+
+	// Mixture of Experts logic: Decode streaming and compute only scales on active parameters
+	activeParams := m.ActiveParameters
+	if activeParams <= 0 {
+		activeParams = m.ParametersRaw // Fallback for dense models
+	}
+	activeModelSzGB := float64(activeParams) / 1e9 * bytesPerParam
 
 	memoryBound := 0.0
-	if gpu.Bandwidth > 0 && modelSzGB > 0 {
+	if gpu.Bandwidth > 0 && activeModelSzGB > 0 {
 		efficiency := GetMemoryEfficiency(gpu.Architecture)
-		memoryBound = (gpu.Bandwidth * efficiency) / modelSzGB
+		memoryBound = (gpu.Bandwidth * efficiency) / activeModelSzGB
 	}
-	computeBound := computeBoundEstimate(gpu, m)
+	computeBound := computeBoundEstimate(gpu, int(activeParams))
 
 	var tokS float64
 	switch {
@@ -358,7 +401,8 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 		tokS = computeBound
 	}
 
-	if gpu.VRAMGB > 0 && modelSzGB > gpu.VRAMGB {
+	// Apply VRAM spill penalty if total weights + context overhead exceeds GPU VRAM
+	if gpu.VRAMGB > 0 && (totalModelSzGB+vramOverheadGB) > gpu.VRAMGB {
 		tokS *= 0.2
 	}
 
@@ -368,42 +412,48 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 	return math.Round(tokS*10) / 10, ConfHeuristic
 }
 
+// ModelWeightSizeGB returns the on-disk weight size of a model in GB.
+// This is the theoretical minimum VRAM needed for the weights alone (no KV cache, no CUDA overhead).
+func ModelWeightSizeGB(m *model.Model) float64 {
+	if m == nil || m.ParametersRaw <= 0 {
+		return 0
+	}
+	return float64(m.ParametersRaw) / 1e9 * BytesPerParam(m.Quantization)
+}
+
+// ModelVRAMRequirement returns the honest VRAM requirement for a model: the
+// larger of the curated MinVRAMGB and the computed weight size. This prevents
+// cases where the catalog's MinVRAMGB is set lower than the actual weight
+// footprint, causing misleading "Recommended" fit for models that spill.
+func ModelVRAMRequirement(m *model.Model) float64 {
+	if m == nil {
+		return 0
+	}
+	weightGB := ModelWeightSizeGB(m)
+	return max(m.MinVRAMGB, weightGB)
+}
+
 // BytesPerParam returns bytes-per-parameter for a quantization tag.
 func BytesPerParam(quant string) float64 {
-	if b, ok := quantBytesPerParam[quant]; ok {
+	if b, ok := quantBytesPerParam[strings.ToUpper(quant)]; ok {
 		return b
 	}
-	return 2.0
+	return 2.0 // Fallback to FP16
 }
 
 // flopsPerParamPerToken is the cost of a single-token forward pass: roughly
 // two FLOPs per parameter (one multiply-add).
 const flopsPerParamPerToken = 2.0
 
-// modelFLOPUtilization is the fraction of a GPU's peak FP16 throughput that a
-// single-stream decode realistically sustains. Decode is memory bound, so the
-// effective compute utilization is low.
-const modelFLOPUtilization = 0.20
-
-// computeBoundEstimate caps tok/s by raw arithmetic throughput:
-// (peak FLOP/s * utilization) / (FLOPs needed per token).
-func computeBoundEstimate(gpu *hardware.GPU, m *model.Model) float64 {
-	if gpu.TFLOPS <= 0 || m.ParametersRaw <= 0 {
+// computeBoundEstimate caps tok/s by raw arithmetic throughput.
+func computeBoundEstimate(gpu *hardware.GPU, activeParams int) float64 {
+	if gpu.TFLOPS <= 0 || activeParams <= 0 {
 		return 0
 	}
-	flopsPerToken := flopsPerParamPerToken * float64(m.ParametersRaw)
-	peakFLOPs := gpu.TFLOPS * 1e12 * modelFLOPUtilization
+	flopsPerToken := flopsPerParamPerToken * float64(activeParams)
+	utilization := GetComputeEfficiency(gpu.Architecture)
+	peakFLOPs := gpu.TFLOPS * 1e12 * utilization
 	return peakFLOPs / flopsPerToken
-}
-
-// applySpillPenalty reduces tok/s when a model does not fit in VRAM.
-func applySpillPenalty(tokS float64, gpu *hardware.GPU, m *model.Model) float64 {
-	bytesPerParam := BytesPerParam(m.Quantization)
-	modelSzGB := float64(m.ParametersRaw) / 1e9 * bytesPerParam
-	if gpu.VRAMGB > 0 && modelSzGB > gpu.VRAMGB {
-		return tokS * 0.2
-	}
-	return tokS
 }
 
 func lookupMedian(index map[string][]BenchmarkRow, gpuName, hfID string) (float64, bool) {
@@ -424,35 +474,6 @@ func lookupMedian(index map[string][]BenchmarkRow, gpuName, hfID string) (float6
 	return median(vals), true
 }
 
-func archScaledEstimate(arch, hfID string, targetTFLOPs float64, db *BenchmarkDB) (float64, bool) {
-	key := arch + "|" + hfID
-	rows, ok := db.byArchHfID[key]
-	if !ok || len(rows) == 0 {
-		return 0, false
-	}
-
-	vals := make([]float64, 0, len(rows))
-	for _, r := range rows {
-		if r.TokSOut > 0 {
-			vals = append(vals, r.TokSOut)
-		}
-	}
-	if len(vals) == 0 {
-		return 0, false
-	}
-
-	med := median(vals)
-	if targetTFLOPs <= 0 {
-		return med, true
-	}
-
-	// We need the TFLOPs of the benchmarked GPU for scaling.
-	// The architecture index doesn't store that — as a simple heuristic
-	// we return the raw median. The caller can scale by TFLOPS ratio
-	// externally if needed.
-	return math.Round(med*10) / 10, true
-}
-
 func median(vals []float64) float64 {
 	n := len(vals)
 	if n == 0 {
@@ -460,33 +481,9 @@ func median(vals []float64) float64 {
 	}
 	sorted := make([]float64, n)
 	copy(sorted, vals)
-	sortFloat64(sorted)
+	slices.Sort(sorted)
 	if n%2 == 1 {
 		return sorted[n/2]
 	}
 	return (sorted[n/2-1] + sorted[n/2]) / 2
-}
-
-func sortFloat64(a []float64) {
-	for i := 1; i < len(a); i++ {
-		for j := i; j > 0 && a[j] < a[j-1]; j-- {
-			a[j], a[j-1] = a[j-1], a[j]
-		}
-	}
-}
-
-func archFactor(arch string) float64 {
-	arch = strings.ToLower(strings.TrimSpace(arch))
-	if arch == "" {
-		return 1.0
-	}
-	if f, ok := archFactors[arch]; ok {
-		return f
-	}
-	for key, f := range archFactors {
-		if strings.Contains(arch, key) || strings.Contains(key, arch) {
-			return f
-		}
-	}
-	return 1.0
 }

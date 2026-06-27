@@ -110,34 +110,174 @@ func TestExtractGPUName(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// archFactor
+// GetMemoryEfficiency
 // ---------------------------------------------------------------------------
 
-func TestArchFactor(t *testing.T) {
+func TestGetMemoryEfficiency(t *testing.T) {
 	tests := []struct {
 		arch     string
 		expected float64
 	}{
-		{"Ada Lovelace", 1.8},
-		{"AD102", 1.0}, // fallback
-		{"ampere", 1.5},
-		{"rdna 3", 1.3},
-		{"apple m4", 2.5},
-		{"apple m1", 1.0},
-
-		{"nonexistent", 1.0},
-		{"", 1.0},
+		// Exact matches
+		{"ada lovelace", 0.80},
+		{"ampere", 0.75},
+		{"rdna 3", 0.70},
+		{"apple m4", 0.75},
+		// Case-insensitive
+		{"Ada Lovelace", 0.80},
+		// Fuzzy (contains)
+		{"Ada Lovelace AD102", 0.80},
+		{"Apple M4", 0.75},
+		// GPU die names don't fuzzy-match architecture names
+		{"AD102", 0.60},
+		{"GA102", 0.60},
+		// DDR / System RAM fallback
+		{"ddr5", 0.45},
+		{"system memory", 0.45},
+		// Unknown
+		{"nonexistent", 0.60},
+		{"", 0.60},
 	}
 	for _, tc := range tests {
-		got := archFactor(tc.arch)
-		if got != tc.expected {
-			t.Errorf("archFactor(%q) = %f, want %f", tc.arch, got, tc.expected)
-		}
+		t.Run(tc.arch, func(t *testing.T) {
+			got := GetMemoryEfficiency(tc.arch)
+			if got != tc.expected {
+				t.Errorf("GetMemoryEfficiency(%q) = %f, want %f", tc.arch, got, tc.expected)
+			}
+		})
 	}
 }
 
 // ---------------------------------------------------------------------------
-// median / sortFloat64
+// GetComputeEfficiency
+// ---------------------------------------------------------------------------
+
+func TestGetComputeEfficiency(t *testing.T) {
+	tests := []struct {
+		arch     string
+		expected float64
+	}{
+		// Exact matches
+		{"ada lovelace", 0.30},
+		{"hopper", 0.35},
+		{"apple m4", 0.35},
+		// Case-insensitive
+		{"Ada Lovelace", 0.30},
+		// Fuzzy (contains)
+		{"Ada Lovelace GPU", 0.30},
+		{"Apple M4", 0.35},
+		// Unknown
+		{"nonexistent", 0.20},
+		{"", 0.20},
+	}
+	for _, tc := range tests {
+		t.Run(tc.arch, func(t *testing.T) {
+			got := GetComputeEfficiency(tc.arch)
+			if got != tc.expected {
+				t.Errorf("GetComputeEfficiency(%q) = %f, want %f", tc.arch, got, tc.expected)
+			}
+		})
+	}
+}
+
+// ---------------------------------------------------------------------------
+// BytesPerParam
+// ---------------------------------------------------------------------------
+
+func TestBytesPerParam(t *testing.T) {
+	tests := []struct {
+		quant    string
+		expected float64
+	}{
+		// GGUF exact
+		{"Q4_K_M", 0.625},
+		{"Q8_0", 1.063},
+		{"F16", 2.0},
+		{"F32", 4.0},
+		// Case-insensitive
+		{"q4_k_m", 0.625},
+		{"q8_0", 1.063},
+		// Non-GGUF
+		{"AWQ-4bit", 0.563},
+		{"BF16", 2.0},
+		// Unknown → fallback to FP16
+		{"nonexistent", 2.0},
+		{"", 2.0},
+	}
+	for _, tc := range tests {
+		t.Run(tc.quant, func(t *testing.T) {
+			got := BytesPerParam(tc.quant)
+			if got != tc.expected {
+				t.Errorf("BytesPerParam(%q) = %f, want %f", tc.quant, got, tc.expected)
+			}
+		})
+	}
+}
+
+// ---------------------------------------------------------------------------
+// computeBoundEstimate
+// ---------------------------------------------------------------------------
+
+func TestComputeBoundEstimate(t *testing.T) {
+	tests := []struct {
+		name      string
+		gpu       *hardware.GPU
+		params    int
+		expectGT  float64
+	}{
+		{"RTX 4090 + 7B", &hardware.GPU{TFLOPS: 165.2, Architecture: "ada lovelace"}, 7000000000, 0},
+		{"zero TFLOPS", &hardware.GPU{TFLOPS: 0, Architecture: "ada lovelace"}, 7000000000, 0},
+		{"zero params", &hardware.GPU{TFLOPS: 165.2, Architecture: "ada lovelace"}, 0, 0},
+
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := computeBoundEstimate(tc.gpu, tc.params)
+			if got < tc.expectGT {
+				t.Errorf("computeBoundEstimate() = %f, want >= %f", got, tc.expectGT)
+			}
+		})
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Efficiency keys consistency
+// ---------------------------------------------------------------------------
+
+func TestEfficiencyKeysConsistency(t *testing.T) {
+	t.Run("memory keys match map", func(t *testing.T) {
+		for k := range memoryEfficiencyByArch {
+			found := false
+			for _, key := range memoryEfficiencyKeys {
+				if k == key {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("memoryEfficiencyByArch key %q missing from memoryEfficiencyKeys", k)
+			}
+		}
+	})
+
+	t.Run("compute keys match map", func(t *testing.T) {
+		for k := range computeEfficiencyByArch {
+			found := false
+			for _, key := range computeEfficiencyKeys {
+				if k == key {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Errorf("computeEfficiencyByArch key %q missing from computeEfficiencyKeys", k)
+			}
+		}
+	})
+}
+
+// ---------------------------------------------------------------------------
+// median
 // ---------------------------------------------------------------------------
 
 func TestMedian(t *testing.T) {
@@ -170,13 +310,13 @@ func TestLoadBenchmarks_Valid(t *testing.T) {
 				Rows: []benchmarkRowJSON{
 					{
 						Model:    benchmarkModelJSON{HfID: "qwen/qwen3-35b", DisplayName: "Qwen3-35B", Params: 35},
-						Hardware: benchmarkHardwareJSON{HwClass: "DISCRETE_GPU", GpuName: strPtr("RTX 5090"), VRAMGB: f64Ptr(32)},
+						Hardware: benchmarkHardwareJSON{HwClass: "DISCRETE_GPU", GpuName: strPtr("NVIDIA GeForce RTX 5090"), VRAMGB: f64Ptr(32)},
 						Engine:   benchmarkEngineJSON{EngineName: "llama.cpp", Quantization: "Q4_K_M"},
 						TokSOut:  f64Ptr(230.73),
 					},
 					{
 						Model:    benchmarkModelJSON{HfID: "qwen/qwen3-35b", DisplayName: "Qwen3-35B", Params: 35},
-						Hardware: benchmarkHardwareJSON{HwClass: "DISCRETE_GPU", GpuName: strPtr("RTX 5090"), VRAMGB: f64Ptr(32)},
+						Hardware: benchmarkHardwareJSON{HwClass: "DISCRETE_GPU", GpuName: strPtr("NVIDIA GeForce RTX 5090"), VRAMGB: f64Ptr(32)},
 						Engine:   benchmarkEngineJSON{EngineName: "vllm", Quantization: "NVFP4"},
 						TokSOut:  f64Ptr(240.9),
 					},
@@ -186,27 +326,83 @@ func TestLoadBenchmarks_Valid(t *testing.T) {
 	}
 	raw, _ := json.Marshal(cache)
 
-	gpuDB := []hardware.GPU{
-		{Name: "NVIDIA GeForce RTX 5090", CanonicalName: "5090", Architecture: "GB202"},
-	}
-
-	db, err := LoadBenchmarks(raw, gpuDB)
+	db, err := LoadBenchmarks(raw)
 	if err != nil {
 		t.Fatalf("LoadBenchmarks: %v", err)
 	}
 
+	// Verified by preset name (e.g., "RTX 5090")
 	key := strings.ToLower("RTX 5090" + "|" + "qwen/qwen3-35b")
 	rows := db.byNameHfID[key]
 	if len(rows) != 2 {
-		t.Fatalf("expected 2 benchmark rows, got %d", len(rows))
+		t.Fatalf("expected 2 benchmark rows by preset name, got %d", len(rows))
 	}
 	if rows[0].TokSOut != 230.73 {
 		t.Errorf("tok/s = %f, want 230.73", rows[0].TokSOut)
 	}
+
+	// Verified by canonical name from Hardware.GpuName:
+	// NormalizeGPUName("NVIDIA GeForce RTX 5090") → "5090"
+	canonKey := strings.ToLower("5090" + "|" + "qwen/qwen3-35b")
+	canonRows := db.byNameHfID[canonKey]
+	if len(canonRows) != 2 {
+		t.Fatalf("expected 2 benchmark rows by canonical name, got %d", len(canonRows))
+	}
+
+	// Verified by the full GPU name:
+	// "nvidia geforce rtx 5090|qwen/qwen3-35b"
+	fullKey := strings.ToLower("NVIDIA GeForce RTX 5090" + "|" + "qwen/qwen3-35b")
+	fullRows := db.byNameHfID[fullKey]
+	if len(fullRows) != 2 {
+		t.Fatalf("expected 2 benchmark rows by full GPU name, got %d", len(fullRows))
+	}
+}
+
+// TestLoadBenchmarks_NoHardwareName verifies fallback indexing when
+// Hardware.GpuName is nil — only the preset key and its canonical form are created.
+func TestLoadBenchmarks_NoHardwareName(t *testing.T) {
+	cache := benchmarkCacheFile{
+		Presets: map[string]presetData{
+			"RTX 5090 (32 GB)": {
+				Rows: []benchmarkRowJSON{
+					{
+						Model:    benchmarkModelJSON{HfID: "qwen/qwen3-35b", DisplayName: "Qwen3-35B", Params: 35},
+						Hardware: benchmarkHardwareJSON{HwClass: "DISCRETE_GPU"},
+						Engine:   benchmarkEngineJSON{EngineName: "llama.cpp", Quantization: "Q4_K_M"},
+						TokSOut:  f64Ptr(100.0),
+					},
+				},
+			},
+		},
+	}
+	raw, _ := json.Marshal(cache)
+
+	db, err := LoadBenchmarks(raw)
+	if err != nil {
+		t.Fatalf("LoadBenchmarks: %v", err)
+	}
+
+	// Preset key always exists
+	presetKey := strings.ToLower("RTX 5090" + "|" + "qwen/qwen3-35b")
+	if len(db.byNameHfID[presetKey]) != 1 {
+		t.Errorf("expected 1 row by preset name, got %d", len(db.byNameHfID[presetKey]))
+	}
+
+	// Canonical of preset: NormalizeGPUName("RTX 5090") = "rtx 5090"
+	canonKey := strings.ToLower("rtx 5090" + "|" + "qwen/qwen3-35b")
+	if len(db.byNameHfID[canonKey]) != 1 {
+		t.Errorf("expected 1 row by canonical preset name, got %d", len(db.byNameHfID[canonKey]))
+	}
+
+	// No full-name key (Hardware.GpuName was nil)
+	fullKey := strings.ToLower("NVIDIA GeForce RTX 5090" + "|" + "qwen/qwen3-35b")
+	if len(db.byNameHfID[fullKey]) != 0 {
+		t.Errorf("expected 0 rows by full name (no Hardware.GpuName), got %d", len(db.byNameHfID[fullKey]))
+	}
 }
 
 func TestLoadBenchmarks_InvalidJSON(t *testing.T) {
-	_, err := LoadBenchmarks([]byte("not json{{{"), nil)
+	_, err := LoadBenchmarks([]byte("not json{{{"))
 	if err == nil {
 		t.Fatal("expected error")
 	}
@@ -373,12 +569,44 @@ func TestCountByCategory(t *testing.T) {
 	}
 }
 
+func TestCheckFit_WeightSizeOvershadowsMinVRAM(t *testing.T) {
+	// Model with MinVRAMGB=6 but actual weight size=8GB (12B params × 0.625 Q4_K_M = 7.5GB)
+	// On an 8GB GPU: 8*1.1=11 > 8 → fails VRAM check → falls to Advanced via sysRAM
+	gpu := &hardware.GPU{VRAMGB: 8}
+	m := &model.Model{
+		MinVRAMGB:     6,
+		MinRAMGB:      16,
+		ParametersRaw: 12000000000,
+		Quantization:  "Q4_K_M",
+	}
+	status := CheckFit(m, gpu, 32, false)
+	if status != Advanced {
+		t.Errorf("expected Advanced (weight 7.5GB > VRAM 8GB with buffer), got %v", status)
+	}
+}
+
+func TestCheckFit_WeightSizeWithinVRAM(t *testing.T) {
+	// Model with MinVRAMGB=6 and weight size=7.5GB (12B × 0.625)
+	// On 12GB GPU: 7.5*1.1=8.25 ≤ 12 → Recommended
+	gpu := &hardware.GPU{VRAMGB: 12}
+	m := &model.Model{
+		MinVRAMGB:     6,
+		MinRAMGB:      16,
+		ParametersRaw: 12000000000,
+		Quantization:  "Q4_K_M",
+	}
+	status := CheckFit(m, gpu, 32, false)
+	if status != Recommended {
+		t.Errorf("expected Recommended (weight 7.5GB fits 12GB GPU), got %v", status)
+	}
+}
+
 func TestPredict_AppleSilicon(t *testing.T) {
 	models := []model.Model{
 		{Name: "apple-ok", MinVRAMGB: 20, MinRAMGB: 32, Categories: []model.Category{model.CategoryChat},
-			ParametersRaw: 30000000000, UseCase: "Instruction following"},
+			ParametersRaw: 30000000000, Quantization: "Q4_K_M", UseCase: "Instruction following"},
 		{Name: "apple-heavy", MinVRAMGB: 40, MinRAMGB: 64, Categories: []model.Category{model.CategoryChat},
-			ParametersRaw: 70000000000, UseCase: "Instruction following"},
+			ParametersRaw: 70000000000, Quantization: "Q4_K_M", UseCase: "Instruction following"},
 	}
 	gpu := &hardware.GPU{
 		Name: "Apple M4 Max (GPU)", Architecture: "Apple M4",
@@ -392,8 +620,8 @@ func TestPredict_AppleSilicon(t *testing.T) {
 	}
 
 	results := p.Predict(model.CategoryChat)
-	// apple-ok: 20*1.1=22 <= (64-4)=60 → Recommended
-	// apple-heavy: 40*1.1=44 <= 60 → Recommended
+	// apple-ok: 30B * 0.625 = 18.75GB, max(20, 18.75) = 20, 20*1.1=22 ≤ 60 → Recommended
+	// apple-heavy: 70B * 0.625 = 43.75GB, max(40, 43.75) = 43.75, 43.75*1.1=48.125 ≤ 60 → Recommended
 	if len(results) != 2 {
 		t.Fatalf("expected 2 results, got %d", len(results))
 	}

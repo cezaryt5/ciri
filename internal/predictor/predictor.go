@@ -20,17 +20,14 @@ type Predictor struct {
 
 // ModelPrediction is a single model's fit and speed assessment.
 type ModelPrediction struct {
-	Model        model.Model
+	Model        *model.Model // Changed to pointer to prevent heavy memory duplication
 	FitStatus    FitStatus
 	EstTokPerSec float64
 	Confidence   string
 }
 
-// NewPredictor — internal/predictor/predictor.go:30
-// Called from: cmd/ciri/main.go:57; predictor_test.go:291,316,343,364,393
-// Creates a Predictor bound to the detected GPU, available system RAM, model
-// catalog, and benchmark database. Automatically detects Apple Silicon by
-// checking GPU name, architecture, and vendor ID (106b).
+// NewPredictor creates a Predictor bound to the detected hardware.
+// Note: Single GPU bottleneck remains here. Tech debt for future multi-GPU scaling.
 func NewPredictor(gpu *hardware.GPU, sysRAMAvailGB float64, models []model.Model, benchmarks *BenchmarkDB) *Predictor {
 	p := &Predictor{
 		gpu:         gpu,
@@ -38,6 +35,7 @@ func NewPredictor(gpu *hardware.GPU, sysRAMAvailGB float64, models []model.Model
 		models:      models,
 		benchmarks:  benchmarks,
 	}
+
 	if gpu != nil {
 		p.isApple = strings.Contains(strings.ToLower(gpu.Name), "apple") ||
 			strings.Contains(strings.ToLower(gpu.Architecture), "apple") ||
@@ -46,11 +44,8 @@ func NewPredictor(gpu *hardware.GPU, sysRAMAvailGB float64, models []model.Model
 	return p
 }
 
-// Predict — internal/predictor/predictor.go:47
-// Called from: results.go:55 (in newResultsModel); predictor_test.go:293,318,326,345,399
-// Returns all models in the given category with fit and speed estimates.
-// Excludes TooHeavy models. Results are sorted: Recommended first (by tok/s
-// descending), then Advanced.
+// Predict returns all models in the given category with fit and speed estimates.
+// Excludes TooHeavy models. Results are sorted: Recommended first, then by tok/s.
 func (p *Predictor) Predict(category model.Category) []ModelPrediction {
 	var results []ModelPrediction
 
@@ -68,13 +63,15 @@ func (p *Predictor) Predict(category model.Category) []ModelPrediction {
 		tokPerSec, confidence := EstimateSpeed(m, p.gpu, p.benchmarks)
 
 		results = append(results, ModelPrediction{
-			Model:        *m,
+			Model:        m, // Pointing to original slice, no longer copying
 			FitStatus:    fit,
 			EstTokPerSec: tokPerSec,
 			Confidence:   confidence,
 		})
 	}
 
+	// Sorts Recommended (<) before Advanced. Breaks ties via Token Speed.
+	// ASSUMES: Recommended iota < Advanced iota
 	sort.Slice(results, func(i, j int) bool {
 		if results[i].FitStatus != results[j].FitStatus {
 			return results[i].FitStatus < results[j].FitStatus
@@ -85,31 +82,30 @@ func (p *Predictor) Predict(category model.Category) []ModelPrediction {
 	return results
 }
 
-// CountByCategory — internal/predictor/predictor.go:83
-// Called from: app.go:50 (in NewApp); predictor_test.go:366
-// Counts how many models per category are not TooHeavy (Recommended +
-// Advanced). Used by the home screen menu to display "(N models fit)".
+// CountByCategory counts how many models per category are not TooHeavy.
+// Used by the home screen menu to display "(N models fit)".
 func (p *Predictor) CountByCategory() map[model.Category]int {
 	counts := make(map[model.Category]int)
-	for _, cat := range model.AllCategories() {
-		for i := range p.models {
-			m := &p.models[i]
-			if !hasCategory(m, cat) {
-				continue
-			}
-			fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
-			if fit != TooHeavy {
-				counts[cat]++
-			}
+
+	// Optimized: O(Models) instead of O(Models * Categories)
+	// We evaluate CheckFit exactly once per model now.
+	for i := range p.models {
+		m := &p.models[i]
+
+		fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
+		if fit == TooHeavy {
+			continue
+		}
+
+		// If it fits, increment the count for every category it belongs to
+		for _, cat := range m.Categories {
+			counts[cat]++
 		}
 	}
 	return counts
 }
 
-// hasCategory — internal/predictor/predictor.go:100
-// Called from: predictor.go:52,88 (in Predict and CountByCategory)
-// Checks whether a model belongs to the given category by iterating its
-// pre-computed Categories slice.
+// hasCategory checks whether a model belongs to the given category.
 func hasCategory(m *model.Model, want model.Category) bool {
 	for _, c := range m.Categories {
 		if c == want {

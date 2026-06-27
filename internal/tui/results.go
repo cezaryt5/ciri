@@ -419,7 +419,7 @@ func renderTableRow(p predictor.ModelPrediction, gpu *hardware.GPU, w colWidths,
 		speed = "~" + fmt.Sprintf("%.0f", p.EstTokPerSec)
 	}
 
-	memPct := formatMemPctRaw(&p.Model, gpu)
+	memPct := formatMemPctRaw(p.Model, gpu)
 	// For a selected row we keep cells uncolored so the reverse-video
 	// highlight stays clean and uniform across the whole line.
 	coloredMem := memPct
@@ -460,7 +460,7 @@ func renderTableRow(p predictor.ModelPrediction, gpu *hardware.GPU, w colWidths,
 		{truncate(p.Model.ParameterCount, w.params), w.params},
 		{truncate(speed, w.tokS), w.tokS},
 		{truncate(p.Model.Quantization, w.quant), w.quant},
-		{truncate(formatDiskGB(&p.Model), w.disk), w.disk},
+		{truncate(formatDiskGB(p.Model), w.disk), w.disk},
 		{truncate(formatMode(p.FitStatus), w.mode), w.mode},
 		{coloredMem, w.mem},
 		{truncate(formatContext(p.Model.ContextLength), w.ctx), w.ctx},
@@ -522,10 +522,14 @@ func fitLabelPlain(fit predictor.FitStatus) string {
 }
 
 func formatMemPctRaw(m *model.Model, gpu *hardware.GPU) string {
-	if gpu == nil || gpu.VRAMGB <= 0 || m.MinVRAMGB <= 0 {
+	if gpu == nil || gpu.VRAMGB <= 0 {
 		return "\u2014"
 	}
-	pct := m.MinVRAMGB / gpu.VRAMGB * 100
+	needed := predictor.ModelVRAMRequirement(m)
+	if needed <= 0 {
+		return "\u2014"
+	}
+	pct := needed / gpu.VRAMGB * 100
 	if pct > 100 {
 		pct = 100
 	}

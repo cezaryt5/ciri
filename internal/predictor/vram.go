@@ -39,14 +39,15 @@ const (
 // Called from: predictor.go:56,91 (in Predict and CountByCategory); predictor_test.go:21,30,39,49,58,67,76,86
 // Determines fit status for a model on given hardware:
 //   - Apple Silicon: checks unified memory (minus 4 GB OS overhead) with 10% buffer
-//   - dGPU: checks VRAM with 10% buffer → Recommended; else checks system RAM → Advanced; else TooHeavy
+//   - dGPU: uses max(MinVRAMGB, computed weight size) with 10% buffer → Recommended;
+//     else checks system RAM → Advanced; else TooHeavy
 func CheckFit(m *model.Model, gpu *hardware.GPU, sysRAMAvailGB float64, isAppleSilicon bool) FitStatus {
 	if isAppleSilicon {
 		availableUnified := sysRAMAvailGB - appleOSOverhead
 		if availableUnified < 0 {
 			availableUnified = 0
 		}
-		if m.MinVRAMGB*vramBufferFactor <= availableUnified {
+		if ModelVRAMRequirement(m)*vramBufferFactor <= availableUnified {
 			return Recommended
 		}
 		return TooHeavy
@@ -56,7 +57,7 @@ func CheckFit(m *model.Model, gpu *hardware.GPU, sysRAMAvailGB float64, isAppleS
 	if gpu != nil && gpu.VRAMGB > 0 {
 		vramHeadroom = gpu.VRAMGB
 	}
-	if m.MinVRAMGB*vramBufferFactor <= vramHeadroom {
+	if ModelVRAMRequirement(m)*vramBufferFactor <= vramHeadroom {
 		return Recommended
 	}
 	if m.MinRAMGB <= sysRAMAvailGB {
