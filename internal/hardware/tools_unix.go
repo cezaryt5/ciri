@@ -9,7 +9,7 @@ import (
 )
 
 // execWithTimeout — internal/hardware/tools_unix.go:12
-// Called from: detection_linux.go:88,134,144; detection_darwin.go:29
+// Called from: detection_linux.go:93,143,157; detection_darwin.go:23
 // Runs an external command with a context deadline. Returns stdout bytes on
 // success, or an error if the command times out or fails.
 func execWithTimeout(ctx context.Context, timeout time.Duration, name string, args ...string) ([]byte, error) {
@@ -19,7 +19,7 @@ func execWithTimeout(ctx context.Context, timeout time.Duration, name string, ar
 }
 
 // execLookPath — internal/hardware/tools_unix.go:19
-// Called from: detection.go:126,128,129 (in DetectOllamaCpp)
+// Called from: detection.go:139,140,141 (in DetectOllamaCpp)
 // Returns the absolute path of an executable via exec.LookPath. Returns ""
 // if the executable is not found on PATH.
 func execLookPath(name string) string {

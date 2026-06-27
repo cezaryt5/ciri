@@ -4,70 +4,66 @@ package hardware
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/jaypipes/ghw"
 )
 
-// detectPCI — internal/hardware/detection_darwin.go:15
-// Called from: matcher_pci.go:10, matcher_vendor.go:13
-// macOS has no sysfs — returns nil. Forces fallback to detectVendorName
-// (system_profiler) and GHW matchers.
-func detectPCI(ctx context.Context) *PCIInfo {
+// detectPCI returns nil on macOS — the platform has no sysfs.
+func detectPCI() []*PCIInfo {
 	return nil
 }
 
-// detectVRAM — internal/hardware/detection_darwin.go:20
-// Called from: matcher_pci.go:20
-// macOS stub — returns 0 since VRAM detection requires IOKit which is not
-// available through this code path.
+// detectVRAM fetches total system memory via sysctl.
+// On Apple Silicon, GPU memory is Unified Memory (shared with system RAM).
 func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
+	out, err := execWithTimeout(ctx, 3*time.Second, "sysctl", "-n", "hw.memsize")
+	if err == nil {
+		var bytes uint64
+		if _, err := fmt.Sscanf(strings.TrimSpace(string(out)), "%d", &bytes); err == nil && bytes > 0 {
+			return float64(bytes) / (1024 * 1024 * 1024) // Bytes to GiB
+		}
+	}
 	return 0
 }
 
-// detectVendorName — internal/hardware/detection_darwin.go:25
-// Called from: matcher_vendor.go:14
-// Uses system_profiler SPDisplaysDataType to extract the "Chipset Model"
-// line (e.g. "Apple M4 Max").
-func detectVendorName(ctx context.Context, target *PCIInfo) string {
-	if target == nil {
-		return ""
-	}
+// detectVendorNames queries system_profiler for the GPU model name.
+func detectVendorNames(ctx context.Context) []string {
+	// i intentionally ignore `pci` here because we know it's nil.
+	// this is a macOS-specific implementation.
+
 	out, err := execWithTimeout(ctx, 3*time.Second, "system_profiler", "SPDisplaysDataType")
 	if err != nil {
-		return ""
+		return nil
 	}
+
+	var names []string
 	for _, line := range strings.Split(string(out), "\n") {
 		if strings.Contains(line, "Chipset Model:") {
 			parts := strings.SplitN(line, ":", 2)
 			if len(parts) == 2 {
-				return strings.TrimSpace(parts[1])
+				names = append(names, strings.TrimSpace(parts[1]))
 			}
 		}
 	}
-	return ""
+	return names
 }
 
-// glxinfoQuery — internal/hardware/detection_darwin.go:45
-// Called from: (defined, not called in current code)
-// macOS stub — glxinfo is not available. Returns "".
-func glxinfoQuery(ctx context.Context) string {
-	return ""
-}
-
-// detectRawGPUName — internal/hardware/detection_darwin.go:50
-// Called from: matcher_ghw.go:11
-// Uses ghw as a fallback on macOS. Returns the first GPU's product name,
-// or "" if ghw fails.
-func detectRawGPUName() string {
+// detectRawGPUNames uses ghw as a fallback for GPU name detection.
+func detectRawGPUNames() []string {
 	gpuInfo, err := ghw.GPU()
 	if err != nil || gpuInfo == nil || len(gpuInfo.GraphicsCards) == 0 {
-		return ""
+		return nil
 	}
-	if gpuInfo.GraphicsCards[0].DeviceInfo != nil &&
-		gpuInfo.GraphicsCards[0].DeviceInfo.Product != nil {
-		return gpuInfo.GraphicsCards[0].DeviceInfo.Product.Name
+
+	var names []string
+	for _, card := range gpuInfo.GraphicsCards {
+		if card != nil && card.DeviceInfo != nil && card.DeviceInfo.Product != nil {
+			// Extracting the Apple SoC name (e.g., "Apple M2 Max")
+			names = append(names, card.DeviceInfo.Product.Name)
+		}
 	}
-	return ""
+	return names
 }

@@ -74,6 +74,111 @@ func TestPCIMatcher_FindByPCILogic(t *testing.T) {
 	}
 }
 
+func TestVendorAPIMatcher_ResolveByName_Apple(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "Apple M4 Max",
+			CanonicalName: "m4 max",
+			Aliases:       []string{}},
+		{ID: 2, Name: "Apple M2 Ultra",
+			CanonicalName: "m2 ultra",
+			Aliases:       []string{}},
+		{ID: 3, Name: "Apple M1 Max",
+			CanonicalName: "m1 max",
+			Aliases:       []string{}},
+	}
+
+	tests := []struct {
+		query       string
+		expectedID  int
+		expectMatch bool
+	}{
+		{"Apple M4 Max", 1, true},
+		{"apple m4 max", 1, true},
+		// Apple has no aliases → fallback to canonical match
+		{"m4 max", 1, true},
+		{"Apple M2 Ultra", 2, true},
+		{"Apple M1 Max", 3, true},
+		{"M1 Pro", 0, false},   // laptop variant not in DB
+		{"", 0, false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.query, func(t *testing.T) {
+			gpu, confidence, _ := resolveByName(db, tc.query, 0.95)
+			if tc.expectMatch {
+				if gpu == nil {
+					t.Errorf("resolveByName(%q): expected match, got nil", tc.query)
+					return
+				}
+				if gpu.ID != int64(tc.expectedID) {
+					t.Errorf("resolveByName(%q): got ID %d, want %d", tc.query, gpu.ID, tc.expectedID)
+				}
+				if confidence <= 0 || confidence > 1.0 {
+					t.Errorf("resolveByName(%q): confidence %f out of range", tc.query, confidence)
+				}
+			} else {
+				if gpu != nil {
+					t.Errorf("resolveByName(%q): expected nil, got %v", tc.query, gpu.Name)
+				}
+			}
+		})
+	}
+}
+
+func TestVendorAPIMatcher_ResolveByName_AMD(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "AMD Radeon RX 7900 XTX",
+			CanonicalName: "7900 xtx",
+			Aliases:       []string{"7900 xtx"}},
+		{ID: 2, Name: "AMD Radeon RX 7800 XT",
+			CanonicalName: "7800 xt",
+			Aliases:       []string{"7800 xt"}},
+		{ID: 3, Name: "AMD Radeon PRO W7900",
+			CanonicalName: "pro w7900",
+			Aliases:       []string{"pro w7900"}},
+	}
+
+	tests := []struct {
+		query       string
+		expectedID  int
+		expectMatch bool
+	}{
+		// Exact name matches
+		{"AMD Radeon RX 7900 XTX", 1, true},
+		{"AMD Radeon RX 7800 XT", 2, true},
+		{"AMD Radeon PRO W7900", 3, true},
+		// Alias matches
+		{"7900 xtx", 1, true},
+		// Canonical matches
+		{"7800 xt", 2, true},
+		// Not in DB
+		{"AMD Radeon RX 6800 XT", 0, false},
+		{"NVIDIA GeForce RTX 4090", 0, false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.query, func(t *testing.T) {
+			gpu, confidence, _ := resolveByName(db, tc.query, 0.95)
+			if tc.expectMatch {
+				if gpu == nil {
+					t.Errorf("resolveByName(%q): expected match, got nil", tc.query)
+					return
+				}
+				if gpu.ID != int64(tc.expectedID) {
+					t.Errorf("resolveByName(%q): got ID %d, want %d", tc.query, gpu.ID, tc.expectedID)
+				}
+				if confidence <= 0 || confidence > 1.0 {
+					t.Errorf("resolveByName(%q): confidence %f out of range", tc.query, confidence)
+				}
+			} else {
+				if gpu != nil {
+					t.Errorf("resolveByName(%q): expected nil, got %v", tc.query, gpu.Name)
+				}
+			}
+		})
+	}
+}
+
 func TestVendorAPIMatcher_ResolveByName(t *testing.T) {
 	db := []GPU{
 		{ID: 1, Name: "NVIDIA GeForce RTX 5090",
@@ -115,6 +220,88 @@ func TestVendorAPIMatcher_ResolveByName(t *testing.T) {
 				t.Errorf("resolveByName(%q): expected nil, got %v", tc.query, gpu.Name)
 			}
 		}
+	}
+}
+
+func TestFindGPUsByPCI_NVIDIA_Ampere(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "NVIDIA GeForce RTX 3080", VendorID: "10de",
+			DeviceIDs: []string{"2206"}, VRAMGB: 10},
+		{ID: 2, Name: "NVIDIA GeForce RTX 3080 Ti", VendorID: "10de",
+			DeviceIDs: []string{"2208"}, VRAMGB: 12},
+		{ID: 3, Name: "NVIDIA GeForce RTX 3090", VendorID: "10de",
+			DeviceIDs: []string{"2204"}, VRAMGB: 24},
+		// Laptop variant sharing a device ID with a desktop card
+		{ID: 4, Name: "NVIDIA GeForce RTX 3080 Laptop GPU", VendorID: "10de",
+			DeviceIDs: []string{"2206"}, VRAMGB: 8, IsLaptop: true},
+	}
+
+	// Exact device ID match (single)
+	matches := findGPUsByPCI(db, "10de", "2208")
+	if len(matches) != 1 || matches[0].ID != 2 {
+		t.Errorf("3080 Ti: expected GPU ID 2, got %v", matches)
+	}
+
+	// Shared device ID (RTX 3080 desktop + laptop)
+	matches = findGPUsByPCI(db, "10de", "2206")
+	if len(matches) != 2 {
+		t.Fatalf("RTX 3080 shared: expected 2 matches, got %d", len(matches))
+	}
+
+	// pickBestPCIMatch with VRAM hint → prefers closer VRAM
+	best := pickBestPCIMatch(matches, 10.0)
+	if best == nil || best.ID != 1 {
+		t.Errorf("10GB detected: expected desktop RTX 3080 (ID 1), got %v", best)
+	}
+
+	best = pickBestPCIMatch(matches, 8.0)
+	if best == nil || best.ID != 4 {
+		t.Errorf("8GB detected: expected laptop RTX 3080 (ID 4), got %v", best)
+	}
+
+	// Without VRAM hint, prefer desktop
+	best = pickBestPCIMatch(matches, 0)
+	if best == nil || best.ID != 1 {
+		t.Errorf("No VRAM: expected desktop RTX 3080 (ID 1), got %v", best)
+	}
+}
+
+func TestGHWFuzzyMatcher_Fuzzy_AllVendors(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "NVIDIA GeForce RTX 4090", CanonicalName: "4090",
+			Aliases: []string{"4090"}},
+		{ID: 2, Name: "NVIDIA GeForce RTX 5090", CanonicalName: "5090",
+			Aliases: []string{"5090"}},
+		{ID: 3, Name: "AMD Radeon RX 7900 XTX", CanonicalName: "7900 xtx",
+			Aliases: []string{"7900 xtx"}},
+		{ID: 4, Name: "AMD Radeon RX 7900 XT", CanonicalName: "7900 xt",
+			Aliases: []string{"7900 xt"}},
+		{ID: 5, Name: "Apple M4 Max", CanonicalName: "m4 max",
+			Aliases: []string{}},
+	}
+
+	tests := []struct {
+		query     string
+		minCount  int // at least this many fuzzy results
+		name      string
+	}{
+		{"rtx 4090", 1, "NVIDIA exact canonical"},
+		{"rtx 5090", 1, "NVIDIA exact canonical"},
+		{"7900 xtx", 1, "AMD exact alias"},
+		{"7900 xt", 1, "AMD fuzzy (7900 XT)"},
+		{"m4 max", 1, "Apple exact canonical"},
+		// Cross-vendor: should not match wrong vendor
+		{"4090", 1, "NVIDIA by canonical only"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			candidates := fuzzyFindGPUs(db, tc.query)
+			if len(candidates) < tc.minCount {
+				t.Errorf("fuzzyFindGPUs(%q): expected >= %d results, got %d",
+					tc.query, tc.minCount, len(candidates))
+			}
+		})
 	}
 }
 

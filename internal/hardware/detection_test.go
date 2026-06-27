@@ -195,6 +195,26 @@ func TestFindGPUsByPCI_MultipleDeviceIDs(t *testing.T) {
 	}
 }
 
+func TestFindGPUsByPCI_AMDExact(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "NVIDIA GeForce RTX 5090", VendorID: "10de", DeviceIDs: []string{"2b85"}},
+		{ID: 2, Name: "AMD Radeon RX 7900 XTX", VendorID: "1002", DeviceIDs: []string{"744c"}},
+		{ID: 3, Name: "Intel Arc A770", VendorID: "8086", DeviceIDs: []string{"56a0"}},
+	}
+
+	// AMD match
+	matches := findGPUsByPCI(db, "1002", "744c")
+	if len(matches) != 1 || matches[0].ID != 2 {
+		t.Fatalf("AMD: expected GPU ID 2, got %v", matches)
+	}
+
+	// Ensure AMD PCI ID doesn't cross-match to other vendors
+	matches = findGPUsByPCI(db, "10de", "744c")
+	if len(matches) != 0 {
+		t.Errorf("NVIDIA vendor with AMD device: expected 0, got %d", len(matches))
+	}
+}
+
 func TestFindGPUsByPCI_NoMatch(t *testing.T) {
 	db := []GPU{
 		{ID: 1, Name: "RTX 4090", VendorID: "10de", DeviceIDs: []string{"2684"}},
@@ -208,6 +228,44 @@ func TestFindGPUsByPCI_NoMatch(t *testing.T) {
 	matches = findGPUsByPCI(db, "8086", "2684")
 	if len(matches) != 0 {
 		t.Errorf("expected 0 matches for wrong vendor, got %d", len(matches))
+	}
+}
+
+func TestFindGPUsByPCI_AppleSilicon(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "Apple M4 Max", VendorID: "106b", DeviceIDs: []string{}},
+	}
+
+	// Apple GPUs use vendor ID 106b but have no PCI device IDs → should not match.
+	for _, did := range []string{"", "0000", "ffff"} {
+		matches := findGPUsByPCI(db, "106b", did)
+		if len(matches) != 0 {
+			t.Errorf("Apple with device %q: expected 0 matches, got %d", did, len(matches))
+		}
+	}
+
+	// Wrong vendor ID should also not match (even with Apple vendor ID checked)
+	matches := findGPUsByPCI(db, "10de", "")
+	if len(matches) != 0 {
+		t.Errorf("NVIDIA vendor with empty device: expected 0 matches, got %d", len(matches))
+	}
+}
+
+func TestFindGPUsByPCI_AMD_SharedDeviceID(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "RX 7900 XT", VendorID: "1002", DeviceIDs: []string{"744c"}, VRAMGB: 20},
+		{ID: 2, Name: "RX 7900 XTX", VendorID: "1002", DeviceIDs: []string{"744c"}, VRAMGB: 24},
+	}
+
+	matches := findGPUsByPCI(db, "1002", "744c")
+	if len(matches) != 2 {
+		t.Fatalf("expected 2 AMD matches for shared device ID, got %d", len(matches))
+	}
+
+	// Wrong vendor
+	matches = findGPUsByPCI(db, "10de", "744c")
+	if len(matches) != 0 {
+		t.Errorf("NVIDIA vendor with AMD device: expected 0 matches, got %d", len(matches))
 	}
 }
 
@@ -290,6 +348,33 @@ func TestPickBestPCIMatch_VRAMOverridesDesktop(t *testing.T) {
 // ---------------------------------------------------------------------------
 // deriveAliases
 // ---------------------------------------------------------------------------
+
+func TestDeriveAliases_Apple(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{"Apple M4 Max", []string{"m4 max"}},
+		{"Apple M2 Ultra", []string{"m2 ultra"}},
+		{"Apple M3 Pro", []string{"m3 pro"}},
+		{"Apple M1 Max", []string{"m1 max"}},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.input, func(t *testing.T) {
+			aliases := deriveAliases(tc.input)
+			if len(aliases) != len(tc.expected) {
+				t.Errorf("aliases = %v, want %v", aliases, tc.expected)
+				return
+			}
+			for i, a := range aliases {
+				if a != tc.expected[i] {
+					t.Errorf("alias[%d] = %q, want %q", i, a, tc.expected[i])
+				}
+			}
+		})
+	}
+}
 
 func TestDeriveAliases_NVIDIA(t *testing.T) {
 	tests := []struct {
@@ -552,6 +637,51 @@ func TestLoadGPUDB_MX150_VRAMDisambiguation(t *testing.T) {
 	best = pickBestPCIMatch(matches, 4.0)
 	if best == nil || best.Name != "NVIDIA GeForce MX150 4 GB" {
 		t.Errorf("VRAM=4.0: expected MX150 4GB, got %v", best)
+	}
+}
+
+func TestResolveByName_AppleSilicon(t *testing.T) {
+	db := []GPU{
+		{ID: 1, Name: "Apple M4 Max", CanonicalName: "m4 max", Aliases: []string{}},
+		{ID: 2, Name: "Apple M2 Ultra", CanonicalName: "m2 ultra", Aliases: []string{}},
+		{ID: 3, Name: "AMD Radeon RX 7900 XTX", CanonicalName: "7900 xtx",
+			Aliases: []string{"7900 xtx"}},
+	}
+
+	tests := []struct {
+		query       string
+		expectedID  int
+		description string
+	}{
+		// Apple exact name match (no aliases)
+		{"Apple M4 Max", 1, "Apple exact match"},
+		{"apple m4 max", 1, "Apple case-insensitive exact"},
+		{"Apple M2 Ultra", 2, "Apple M2 Ultra exact"},
+
+		// AMD exact + alias
+		{"AMD Radeon RX 7900 XTX", 3, "AMD exact match"},
+		{"7900 xtx", 3, "AMD canonical/alias match"},
+
+		// Non-existent
+		{"NVIDIA GeForce RTX 4090", 0, "NVIDIA not in DB"},
+		{"Apple M1", 0, "Apple M1 not in DB"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.description, func(t *testing.T) {
+			gpu, _, _ := resolveByName(db, tc.query, 0.95)
+			if tc.expectedID == 0 {
+				if gpu != nil {
+					t.Errorf("resolveByName(%q): expected nil, got %v", tc.query, gpu.Name)
+				}
+			} else {
+				if gpu == nil {
+					t.Errorf("resolveByName(%q): expected GPU ID %d, got nil", tc.query, tc.expectedID)
+				} else if gpu.ID != int64(tc.expectedID) {
+					t.Errorf("resolveByName(%q): got ID %d, want %d", tc.query, gpu.ID, tc.expectedID)
+				}
+			}
+		})
 	}
 }
 

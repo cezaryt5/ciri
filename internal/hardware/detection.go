@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jaypipes/ghw"
+	"github.com/shirou/gopsutil/v4/mem"
 )
 
 // ---- Types ----
@@ -114,22 +115,21 @@ func (s *Specs) DetectCPU() error {
 	return nil
 }
 
-// DetectRAM — internal/hardware/detection.go:110
-// Called from: detection.go:81 (via GetSpecs)
-// Uses ghw to detect total and usable physical RAM. Stores both float (GB)
-// and uint64 (bytes) representations for display and offloading math.
+// DetectRAM — internal/hardware/detection.go:119
+// Called from: detection.go:85 (via GetSpecs)
+// Uses gopsutil/mem VirtualMemory to get total and available physical RAM.
+// "Available" is MemAvailable on Linux, free+inactive on macOS, dwAvailPhys
+// on Windows — accurate cross-platform free memory. Stores both float (GB)
+// and uint64 (bytes) for display and offloading math.
 func (s *Specs) DetectRAM() error {
-	mem, err := ghw.Memory()
-	if err != nil || mem == nil {
-		return fmt.Errorf("failed to read memory info, check permissions")
+	v, err := mem.VirtualMemory()
+	if err != nil {
+		return fmt.Errorf("failed to read memory info: %w", err)
 	}
-
-	s.RamTotalBytes = uint64(mem.TotalPhysicalBytes)
-	s.RamAvailBytes = uint64(mem.TotalUsableBytes)
-
-	// Keep floats for display, but keep bytes for math.
-	s.RamTotalGB = float64(mem.TotalPhysicalBytes) / (1024 * 1024 * 1024)
-	s.RamAvailGB = float64(mem.TotalUsableBytes) / (1024 * 1024 * 1024)
+	s.RamTotalBytes = v.Total
+	s.RamAvailBytes = v.Available
+	s.RamTotalGB = float64(v.Total) / (1024 * 1024 * 1024)
+	s.RamAvailGB = float64(v.Available) / (1024 * 1024 * 1024)
 	return nil
 }
 
@@ -297,6 +297,7 @@ func deriveAliases(name string) []string {
 		"nvidia geforce rtx ", "nvidia geforce gtx ", "nvidia geforce ", "nvidia rtx ", "nvidia ", "geforce ",
 		"amd radeon rx ", "amd radeon pro ", "amd radeon ", "amd instinct ", "amd ", "radeon ",
 		"intel arc ", "intel ", "arc ",
+		"apple ",
 	}
 
 	for _, prefix := range vendorPrefixes {

@@ -15,20 +15,18 @@ type VendorAPIMatcher struct{}
 // Detects the GPU by querying vendor CLI tools (nvidia-smi for NVIDIA,
 // rocm-smi for AMD, system_profiler for macOS) and resolving the returned
 // name against the GPU database via resolveByName.
-// edits simplified
+
 func (m *VendorAPIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	for _, pci := range detectPCI() {
-		name := detectVendorName(ctx, pci)
-		if name == "" {
-			continue
+	for _, name := range detectVendorNames(ctx) {
+		if gpu, con, err := resolveByName(gpuDB, name, 0.95); err == nil && gpu != nil {
+			return gpu, con, err
 		}
-		return resolveByName(gpuDB, name, 0.95)
 	}
 	return nil, 0, nil
 }
 
-// resolveByName — internal/hardware/matcher_vendor.go:23
-// Called from: matcher_vendor.go:18 (in VendorAPIMatcher.Detect); matcher_pci_test.go:101
+// resolveByName — internal/hardware/matcher_vendor.go:28
+// Called from: matcher_vendor.go:20 (in VendorAPIMatcher.Detect); matcher_pci_test.go:101
 // Tries progressively less-reliable name lookups against the GPU DB with
 // decreasing confidence: exact marketing name → alias → canonical → fuzzy.
 // Base confidence (0.95) is decremented at each fallback stage.
@@ -158,8 +156,8 @@ func fuzzyFindGPUs(db []GPU, query string) []*GPU {
 	return results
 }
 
-// tokenOverlapScore — internal/hardware/matcher_vendor.go:116
-// Called from: matcher_ghw.go:40,42; matcher_pci_test.go:139
+// tokenOverlapScore — internal/hardware/matcher_vendor.go:164
+// Called from: matcher_vendor.go:131-132 (in fuzzyFindGPUs); matcher_pci_test.go:122
 // Counts the number of shared tokens between two GPU names (both are
 // tokenized via tokenizeGPUName). Tokens shorter than 2 characters are
 // ignored. Used to rank fuzzy matches by lexical similarity.
@@ -186,8 +184,8 @@ func tokenOverlapScore(a, b string) int {
 	return score
 }
 
-// tokenizeGPUName — internal/hardware/matcher_vendor.go:139
-// Called from: matcher_vendor.go:117-118 (in tokenOverlapScore)
+// tokenizeGPUName — internal/hardware/matcher_vendor.go:191
+// Called from: matcher_vendor.go:165-166 (in tokenOverlapScore)
 // Normalizes a GPU name and splits it into tokens (whitespace-separated parts
 // with length ≥ 2). Used by tokenOverlapScore for fuzzy matching.
 func tokenizeGPUName(name string) []string {
