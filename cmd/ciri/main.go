@@ -48,7 +48,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Failed to read embedded benchmark_cache.json: %v\n", err)
 		os.Exit(1)
 	}
-	benchDB, err := predictor.LoadBenchmarks(benchData, gpuDB)
+	benchDB, err := predictor.LoadBenchmarks(benchData)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Benchmark load warning: %v\n", err)
 	}

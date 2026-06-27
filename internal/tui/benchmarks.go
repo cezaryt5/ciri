@@ -49,7 +49,7 @@ func (bm *benchmarksModel) benchUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 	case "esc":
 		target := a.benchOrigin
 		if target == screenBenchmarks {
-			target = screenResults
+			target = screenExplore
 		}
 		return func() tea.Msg { return navigateMsg{target: target} }
 	case "up", "k":

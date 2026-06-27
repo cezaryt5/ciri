@@ -13,49 +13,47 @@ type GHWFuzzyMatcher struct{}
 // exact name → alias → canonical → fuzzy substring → token overlap scoring.
 // Returns a bare GPU with confidence 0.30 even if no DB match is found.
 func (m *GHWFuzzyMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	rawName := detectRawGPUName()
-	if rawName == "" || rawName == "None/Unsupported" || rawName == "Unknown" {
+	rawNames := detectRawGPUNames()
+	if len(rawNames) == 0 {
 		return nil, 0, nil
 	}
 
-	// Try exact name match first.
-	if gpu := findGPUByName(gpuDB, rawName); gpu != nil {
-		return gpu, 0.90, nil
-	}
+	var firstValid string
 
-	// Alias match.
-	if gpu := findGPUByAlias(gpuDB, rawName); gpu != nil {
-		return gpu, 0.85, nil
-	}
-
-	// Canonical name match.
-	normalized := NormalizeGPUName(rawName)
-	if gpu := findGPUByCanonicalName(gpuDB, normalized); gpu != nil {
-		return gpu, 0.80, nil
-	}
-
-	// Fuzzy search by canonical name.
-	candidates := fuzzyFindGPUs(gpuDB, normalized)
-	if len(candidates) == 1 {
-		return candidates[0], 0.70, nil
-	}
-	if len(candidates) > 1 {
-		// Use token overlap to pick the best fuzzy match.
-		best := candidates[0]
-		bestScore := tokenOverlapScore(rawName, best.Name)
-		for _, g := range candidates[1:] {
-			score := tokenOverlapScore(rawName, g.Name)
-			if score > bestScore {
-				best = g
-				bestScore = score
-			}
+	for _, rawName := range rawNames {
+		if rawName == "" || rawName == "None/Unsupported" || rawName == "Unknown" {
+			continue
 		}
-		return best, 0.50, nil
+		if firstValid == "" {
+			firstValid = rawName
+		}
+
+		if gpu := findGPUByName(gpuDB, rawName); gpu != nil {
+			return gpu, 0.90, nil
+		}
+		if gpu := findGPUByAlias(gpuDB, rawName); gpu != nil {
+			return gpu, 0.85, nil
+		}
+
+		normalized := NormalizeGPUName(rawName)
+		if gpu := findGPUByCanonicalName(gpuDB, normalized); gpu != nil {
+			return gpu, 0.80, nil
+		}
+
+		candidates := fuzzyFindGPUs(gpuDB, normalized)
+		if len(candidates) == 1 {
+			return candidates[0], 0.70, nil
+		}
+		if len(candidates) > 1 {
+			return candidates[0], 0.50, nil
+		}
 	}
 
-	// DB lookup failed — return a bare GPU with just the detected name.
-	return &GPU{
-		Name:          rawName,
-		CanonicalName: normalized,
-	}, 0.30, nil
+	if firstValid != "" {
+		return &GPU{
+			Name:          firstValid,
+			CanonicalName: NormalizeGPUName(firstValid),
+		}, 0.30, nil
+	}
+	return nil, 0, nil
 }

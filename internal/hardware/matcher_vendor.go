@@ -2,6 +2,7 @@ package hardware
 
 import (
 	"context"
+	"sort"
 	"strings"
 )
 
@@ -14,17 +15,18 @@ type VendorAPIMatcher struct{}
 // Detects the GPU by querying vendor CLI tools (nvidia-smi for NVIDIA,
 // rocm-smi for AMD, system_profiler for macOS) and resolving the returned
 // name against the GPU database via resolveByName.
+
 func (m *VendorAPIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	pci := detectPCI(ctx)
-	name := detectVendorName(ctx, pci)
-	if name == "" {
-		return nil, 0, nil
+	for _, name := range detectVendorNames(ctx) {
+		if gpu, con, err := resolveByName(gpuDB, name, 0.95); err == nil && gpu != nil {
+			return gpu, con, err
+		}
 	}
-	return resolveByName(gpuDB, name, 0.95)
+	return nil, 0, nil
 }
 
-// resolveByName — internal/hardware/matcher_vendor.go:23
-// Called from: matcher_vendor.go:18 (in VendorAPIMatcher.Detect); matcher_pci_test.go:101
+// resolveByName — internal/hardware/matcher_vendor.go:28
+// Called from: matcher_vendor.go:20 (in VendorAPIMatcher.Detect); matcher_pci_test.go:101
 // Tries progressively less-reliable name lookups against the GPU DB with
 // decreasing confidence: exact marketing name → alias → canonical → fuzzy.
 // Base confidence (0.95) is decremented at each fallback stage.
@@ -120,19 +122,42 @@ func fuzzyFindGPUs(db []GPU, query string) []*GPU {
 		}
 	}
 
-	// Prefer matches where the canonical name starts with the query.
-	for i := 0; i < len(results); i++ {
-		if strings.HasPrefix(strings.ToLower(results[i].CanonicalName), q) {
-			results[0], results[i] = results[i], results[0]
-			break
-		}
+	if len(results) <= 1 {
+		return results
 	}
+
+	// Actually use the scoring function you wrote to rank the candidates
+	sort.SliceStable(results, func(i, j int) bool {
+		scoreI := tokenOverlapScore(q, results[i].CanonicalName)
+		scoreJ := tokenOverlapScore(q, results[j].CanonicalName)
+
+		if scoreI != scoreJ {
+			return scoreI > scoreJ // Higher token overlap wins
+		}
+
+		// Tie-breaker: If token scores are equal, the name closest in length to the query wins.
+		// This ensures "RTX 3060" beats "RTX 3060 Ti" when searching for "RTX 3060".
+		lenI := len(results[i].CanonicalName)
+		lenJ := len(results[j].CanonicalName)
+
+		diffI := lenI - len(q)
+		if diffI < 0 {
+			diffI = -diffI
+		}
+
+		diffJ := lenJ - len(q)
+		if diffJ < 0 {
+			diffJ = -diffJ
+		}
+
+		return diffI < diffJ
+	})
 
 	return results
 }
 
-// tokenOverlapScore — internal/hardware/matcher_vendor.go:116
-// Called from: matcher_ghw.go:40,42; matcher_pci_test.go:139
+// tokenOverlapScore — internal/hardware/matcher_vendor.go:164
+// Called from: matcher_vendor.go:131-132 (in fuzzyFindGPUs); matcher_pci_test.go:122
 // Counts the number of shared tokens between two GPU names (both are
 // tokenized via tokenizeGPUName). Tokens shorter than 2 characters are
 // ignored. Used to rank fuzzy matches by lexical similarity.
@@ -159,8 +184,8 @@ func tokenOverlapScore(a, b string) int {
 	return score
 }
 
-// tokenizeGPUName — internal/hardware/matcher_vendor.go:139
-// Called from: matcher_vendor.go:117-118 (in tokenOverlapScore)
+// tokenizeGPUName — internal/hardware/matcher_vendor.go:191
+// Called from: matcher_vendor.go:165-166 (in tokenOverlapScore)
 // Normalizes a GPU name and splits it into tokens (whitespace-separated parts
 // with length ≥ 2). Used by tokenOverlapScore for fuzzy matching.
 func tokenizeGPUName(name string) []string {

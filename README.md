@@ -36,14 +36,17 @@ All data files are embedded in the binary — no external files needed at runtim
 ciri
 ```
 
-That's it. The tool starts an interactive terminal interface with four screens:
+That's it. The tool starts an interactive terminal interface with seven screens:
 
 | Screen | What it shows |
 |--------|---------------|
-| **Home** | Category menu (Coding, Chat, General, Vision, Translation) with model counts |
-| **Results** | All models for a category, sorted by fit quality and estimated speed |
+| **Home** | Menu: Explore Models, Download Models, Manage Local LLMs, Settings / Hardware Configs |
+| **Explore Models** | All 4500+ models from the catalog (≥ 500M params), filterable by type, fit, search; sortable by column with asc/desc |
 | **Detail** | Full specs for a single model — parameters, quantization, RAM/VRAM/disk requirements, community stats |
 | **Benchmarks** | Real-world tok/s measurements from benchmark data, matched to the closest available GPU |
+| **Download Models** | (coming soon) |
+| **Manage Local LLMs** | (coming soon) |
+| **Settings** | Hardware configuration (GPU, VRAM, RAM, CPU, Ollama/llama.cpp status) |
 
 ### Keyboard controls
 
@@ -51,9 +54,16 @@ That's it. The tool starts an interactive terminal interface with four screens:
 |-----|--------|
 | `↑` `↓` / `j` `k` | Navigate lists |
 | `Enter` / `Space` | Select / open |
-| `b` | Open benchmarks for selected model |
 | `Esc` | Go back |
 | `q` / `Ctrl+C` | Quit |
+| | **On Explore screen:** |
+| `/` | Search models by name, quant, or parameter count |
+| `s` | Cycle sort column (Name → Params → Speed → Disk → Date → Fit) |
+| `A` | Sort ascending |
+| `D` | Sort descending |
+| `t` | Filter by type (All / Coding / Chat / Vision / Translation / General) |
+| `f` | Filter by fit (All / Perfect / Good / Slow) |
+| `b` | Open benchmarks for selected model |
 
 ## How it works
 
@@ -87,7 +97,9 @@ Every model is checked against your hardware:
 
 - **Recommended** — fits entirely in your VRAM (with a 10% buffer), will run at full speed
 - **Advanced** — needs more VRAM than you have but fits in system RAM; will run, but slowly
-- **Too heavy** — exceeds both VRAM *and* available system RAM; not shown
+- **Too heavy** — exceeds both VRAM *and* available system RAM
+
+The VRAM requirement used is the larger of the model's `min_vram_gb` and its actual weight size (`parameters × bytes_per_param(quantization)`), so the assessment is always honest — even if the catalog's minimum is set too low.
 
 See [VRAM fit checking](docs/DOCUMENTAION.md#7-prediction-engine) for the exact logic.
 
