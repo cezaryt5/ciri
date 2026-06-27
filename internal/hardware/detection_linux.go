@@ -19,18 +19,27 @@ import (
 
 // detectPCI — internal/hardware/detection_linux.go:21
 // Called from: matcher_pci.go:10, matcher_vendor.go:13
-// Scans /sys/class/drm/card*/device for vendor/device IDs. Returns the first
+// Scans /sys/bus/pci/devices/* for vendor/device IDs. Returns the first
 // discrete GPU found with priority NVIDIA > AMD > Intel (iGPU fallback).
-func detectPCI(ctx context.Context) *PCIInfo {
-	entries, err := filepath.Glob("/sys/class/drm/card*/device")
+func detectPCI() []*PCIInfo {
+	// i will uery the PCI bus directly. This sees the hardware even if drivers aren't loaded.
+	entries, err := filepath.Glob("/sys/bus/pci/devices/*")
 	if err != nil || len(entries) == 0 {
 		return nil
 	}
 
-	var nvidia, amd, intel *PCIInfo
+	var results []*PCIInfo
 
 	for _, devDir := range entries {
-		i := 0
+		class := readHexFile(filepath.Join(devDir, "class"))
+
+		// The class file in sysfs PCI contains a 6-digit hex (e.g., 030000).
+		// 030000 = VGA compatible controller (Your RTX 3060 desktop setup)
+		// 030200 = 3D controller (Your GTX 1070 Optimus laptop setup behind the Intel iGPU)
+		if !strings.HasPrefix(class, "03") {
+			continue
+		}
+
 		vendorID := readHexFile(filepath.Join(devDir, "vendor"))
 		deviceID := readHexFile(filepath.Join(devDir, "device"))
 
@@ -41,31 +50,12 @@ func detectPCI(ctx context.Context) *PCIInfo {
 		info := &PCIInfo{
 			VendorID: vendorID,
 			DeviceID: deviceID,
-			SysfsDir: devDir,
+			SysfsDir: devDir, // This path is now far more useful for reading PCIe link speeds/widths later
 		}
 
-		switch vendorID {
-		case "10de": // NVIDIA
-			nvidia = info
-		case "1002": // AMD
-			amd = info
-		case "8086": // Intel
-			if intel == nil {
-				intel = info
-			}
-
-		}
-		i++
+		results = append(results, info)
 	}
-
-	// dGPU priority: NVIDIA > AMD > Intel (fallback for iGPU only systems)
-	if nvidia != nil {
-		return nvidia
-	}
-	if amd != nil {
-		return amd
-	}
-	return intel
+	return results
 }
 
 // readHexFile — internal/hardware/detection_linux.go:68
@@ -94,10 +84,15 @@ func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 		return 0
 	}
 
-	// 1. If NVIDIA, nvidia-smi is usually the most accurate source of truth for usable VRAM
+	// Extract the PCI Bus ID from the sysfs path (e.g., "0000:01:00.0")
+	pciID := filepath.Base(target.SysfsDir)
+	pciID = strings.TrimPrefix(pciID, "0000:")
+	// 1. NVIDIA strict targeting
 	if target.VendorID == "10de" {
+		// We pass '-i pciID' so we don't cross-contaminate VRAM readings on multi-GPU setups
 		if out, err := execWithTimeout(ctx, 3*time.Second,
-			"nvidia-smi", "--query-gpu=memory.total", "--format=csv,noheader,nounits"); err == nil {
+			"nvidia-smi", "-i", pciID, "--query-gpu=memory.total", "--format=csv,noheader,nounits"); err == nil {
+
 			var vram float64
 			if _, err := fmt.Sscanf(strings.TrimSpace(string(out)), "%f", &vram); err == nil && vram > 0 {
 				return vram / 1024.0 // MiB to GiB
@@ -105,14 +100,12 @@ func detectVRAM(ctx context.Context, target *PCIInfo) float64 {
 		}
 	}
 
-	// 2. Sysfs fallback (Crucial for AMD/Intel).
-	// We ONLY read from the specific SysfsDir we mapped to our target PCI card.
+	// 2. Sysfs fallback (Works for AMD, fails silently for Intel)
 	vramPath := filepath.Join(target.SysfsDir, "mem_info_vram_total")
-	raw, err := os.ReadFile(vramPath)
-	if err == nil {
+	if raw, err := os.ReadFile(vramPath); err == nil {
 		var bytes uint64
 		if _, err := fmt.Sscanf(strings.TrimSpace(string(raw)), "%d", &bytes); err == nil && bytes > 0 {
-			return float64(bytes) / (1024 * 1024 * 1024)
+			return float64(bytes) / (1024 * 1024 * 1024) // Bytes to GiB
 		}
 	}
 
@@ -130,9 +123,11 @@ func detectVendorName(ctx context.Context, target *PCIInfo) string {
 	if target == nil {
 		return ""
 	}
+	pciID := filepath.Base(target.SysfsDir)
+	pciID = strings.TrimPrefix(pciID, "0000:")
 
 	if target.VendorID == "10de" {
-		if name := nvidiaSMIQuery(ctx); name != "" {
+		if name := nvidiaSMIQuery(ctx, pciID); name != "" {
 			return name
 		}
 	}
@@ -150,9 +145,18 @@ func detectVendorName(ctx context.Context, target *PCIInfo) string {
 // Called from: detection_linux.go:119 (in detectVendorName)
 // Executes nvidia-smi --query-gpu=name and returns the trimmed output, or ""
 // on error.
-func nvidiaSMIQuery(ctx context.Context) string {
+func nvidiaSMIQuery(ctx context.Context, pciID string) string {
+	if pciID == "" {
+		out, err := execWithTimeout(ctx, 3*time.Second,
+			"nvidia-smi", "--query-gpu=name", "--format=csv,noheader,nounits")
+		if err != nil {
+			return ""
+		}
+		return strings.TrimSpace(string(out))
+	}
+
 	out, err := execWithTimeout(ctx, 3*time.Second,
-		"nvidia-smi", "--query-gpu=name", "--format=csv,noheader")
+		"nvidia-smi", "-i", pciID, "--query-gpu=name", "--format=csv,noheader,nounits")
 	if err != nil {
 		return ""
 	}
@@ -192,11 +196,13 @@ func rocmSMIQuery(ctx context.Context) string {
 // Uses ghw to enumerate GPUs, filters out integrated graphics (Intel HD/UHD/Iris,
 // non-RX AMD Radeon), and returns the product name of the first discrete GPU.
 // Falls back to the first GPU's name if no discrete is identified.
-func detectRawGPUName() string {
+func detectRawGPUNames() []string {
 	gpuInfo, err := ghw.GPU()
 	if err != nil || gpuInfo == nil || len(gpuInfo.GraphicsCards) == 0 {
-		return ""
+		return nil
 	}
+
+	var validGPUs []string
 
 	for _, card := range gpuInfo.GraphicsCards {
 		if card == nil || card.DeviceInfo == nil || card.DeviceInfo.Product == nil {
@@ -204,32 +210,40 @@ func detectRawGPUName() string {
 		}
 		name := strings.ToLower(card.DeviceInfo.Product.Name)
 
-		// Filter out obvious iGPUs.
+		// 1. Filter out all Intel integrated graphics (including the new Arc iGPUs)
+		// We catch Arc iGPUs by looking for standard laptop naming schemes (e.g., "130v", "140v", "8-core")
+		// while leaving desktop Arc (A770, B580) alone.
 		if strings.Contains(name, "intel hd") ||
 			strings.Contains(name, "intel uhd") ||
-			strings.Contains(name, "intel iris") {
+			strings.Contains(name, "intel iris") ||
+			strings.Contains(name, "graphics 1") || // Catches Arc 130V/140V
+			strings.Contains(name, "core igpu") || // Catches "Arc 8-Core iGPU"
+			name == "intel graphics" || name == "intel arc graphics" {
 			continue
 		}
+
+		// 2. Filter out AMD iGPUs (780M, 890M, generic Radeon Graphics)
 		if strings.Contains(name, "radeon") &&
 			!strings.Contains(name, "rx") &&
 			!strings.Contains(name, "pro") &&
 			!strings.Contains(name, "vii") &&
-			!strings.Contains(name, "vega") {
+			!strings.Contains(name, "vega") &&
+			!strings.Contains(name, "xt") { // Added XT just to be safe
 			continue
 		}
+		validGPUs = append(validGPUs, card.DeviceInfo.Product.Name)
+		/*
+			// its a little bit over engineered so i kept it and i dont want to use it since it introduce other problems but its helpfull when i add multigpu detection so i will keep it for now
+				// If it survived the filters, it's a discrete GPU. Add it to the list.
+				if strings.Contains(name, "rtx") || strings.Contains(name, "gtx") ||
+					strings.Contains(name, "radeon") || strings.Contains(name, "apple") ||
+					strings.Contains(name, "quadro") || strings.Contains(name, "tesla") ||
+					strings.Contains(name, "arc") {
 
-		if strings.Contains(name, "rtx") || strings.Contains(name, "gtx") ||
-			strings.Contains(name, "radeon") || strings.Contains(name, "apple") ||
-			strings.Contains(name, "quadro") || strings.Contains(name, "tesla") ||
-			strings.Contains(name, "arc") {
-			return card.DeviceInfo.Product.Name
-		}
+					// Return the clean, original cased name
+					validGPUs = append(validGPUs, card.DeviceInfo.Product.Name)
+				}*/
 	}
 
-	if len(gpuInfo.GraphicsCards) > 0 &&
-		gpuInfo.GraphicsCards[0].DeviceInfo != nil &&
-		gpuInfo.GraphicsCards[0].DeviceInfo.Product != nil {
-		return gpuInfo.GraphicsCards[0].DeviceInfo.Product.Name
-	}
-	return ""
+	return validGPUs
 }
