@@ -12,8 +12,19 @@ type GHWFuzzyMatcher struct{}
 // Lowest-confidence matcher. Gets raw GPU name from ghw, then tries:
 // exact name → alias → canonical → fuzzy substring → token overlap scoring.
 // Returns a bare GPU with confidence 0.30 even if no DB match is found.
+// Detect gets raw GPU names from ghw, then tries:
+// exact name → alias → canonical → fuzzy substring.
+// Returns a bare GPU with confidence 0.30 if no DB match is found.
 func (m *GHWFuzzyMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	rawName := detectRawGPUName()
+	// 1. Handle the new slice signature
+	rawNames := detectRawGPUNames()
+	if len(rawNames) == 0 {
+		return nil, 0, nil
+	}
+
+	// TEMPORARY: Just grab the first valid GPU until you refactor for multi-GPU
+	rawName := rawNames[0]
+
 	if rawName == "" || rawName == "None/Unsupported" || rawName == "Unknown" {
 		return nil, 0, nil
 	}
@@ -40,20 +51,15 @@ func (m *GHWFuzzyMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float6
 		return candidates[0], 0.70, nil
 	}
 	if len(candidates) > 1 {
-		// Use token overlap to pick the best fuzzy match.
-		best := candidates[0]
-		bestScore := tokenOverlapScore(rawName, best.Name)
-		for _, g := range candidates[1:] {
-			score := tokenOverlapScore(rawName, g.Name)
-			if score > bestScore {
-				best = g
-				bestScore = score
-			}
-		}
-		return best, 0.50, nil
+		// fuzzyFindGPUs already sorted the best match to index 0 using
+		// token overlap and length tie-breaking. We just grab it.
+		// Confidence is lower (0.50) because multiple DB entries matched the query.
+		return candidates[0], 0.50, nil
 	}
 
 	// DB lookup failed — return a bare GPU with just the detected name.
+	// WARNING: This returns 0 VRAM. llmfit must be prepared to handle
+	// hardware capability checks for a GPU with 0 recorded memory.
 	return &GPU{
 		Name:          rawName,
 		CanonicalName: normalized,
