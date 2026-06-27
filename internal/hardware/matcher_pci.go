@@ -12,25 +12,51 @@ type PCIMatcher struct{}
 // or returns nil (macOS). When multiple GPUs share the same PCI ID, uses
 // detected VRAM or desktop preference to disambiguate.
 func (p PCIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	pci := detectPCI()
-	if pci == nil {
+	pciDevices := detectPCI()
+	if len(pciDevices) == 0 {
 		return nil, 0, nil
 	}
 
-	matches := findGPUsByPCI(gpuDB, pci.VendorID, pci.DeviceID)
-	if len(matches) == 0 {
+	var bestGPU *GPU
+	var bestConfidence float64
+	var bestVram float64
+
+	for _, pci := range pciDevices {
+		matches := findGPUsByPCI(gpuDB, pci.VendorID, pci.DeviceID)
+		if len(matches) == 0 {
+			continue // unknown iGPU , skip
+		}
+
+		vram := detectVRAM(ctx, pci)
+		candidate := pickBestPCIMatch(matches, vram)
+
+		conf := 0.98
+		if len(matches) > 1 && vram > 0 {
+			conf = 0.95
+		} else if len(matches) > 1 {
+			conf = 0.94
+		}
+
+		isBest := false
+		if bestGPU == nil {
+			isBest = true
+		} else if vram > bestVram {
+			isBest = true
+		} else if vram < bestVram {
+			isBest = false
+		}
+
+		if isBest == true {
+			bestGPU = candidate
+			bestConfidence = conf
+			bestVram = vram
+		}
+
+	}
+
+	if bestGPU == nil {
 		return nil, 0, nil
 	}
 
-	vram := detectVRAM(ctx, pci)
-	best := pickBestPCIMatch(matches, vram)
-
-	confidence := 0.98
-	if len(matches) > 1 && vram > 0 {
-		confidence = 0.96
-	} else if len(matches) > 1 {
-		confidence = 0.94 // ambiguous, falls to VendorAPIMatcher
-	}
-
-	return best, confidence, nil
+	return bestGPU, bestConfidence, nil
 }
