@@ -163,8 +163,60 @@ const (
 	ConfHeuristic = "Heuristic"
 )
 
-// memoryEfficiency — no GPU hits 100% of spec-sheet bandwidth in practice.
-const memoryEfficiency = 0.75
+// memoryEfficiencyByArch maps architecture families to realistic sustained
+// bandwidth utilization. No GPU hits 100% of spec-sheet bandwidth in practice;
+// Tensor Core / matrix-unit generations sustain higher fractions because
+// dequantization is cheaper relative to memory pressure.
+var memoryEfficiencyByArch = map[string]float64{
+	// NVIDIA
+	"ada lovelace": 0.80,
+	"ampere":       0.75,
+	"turing":       0.55,
+	"hopper":       0.85,
+	"volta":        0.60,
+	"pascal":       0.50,
+	"maxwell":      0.45,
+	"kepler":       0.40,
+	// AMD
+	"rdna 3":  0.70,
+	"rdna 2":  0.65,
+	"rdna 1":  0.55,
+	"cdna 3":  0.80,
+	"cdna 2":  0.75,
+	"cdna 1":  0.70,
+	"vega":    0.50,
+	"polaris": 0.45,
+	// Apple unified memory
+	"apple m4": 0.75,
+	"apple m3": 0.70,
+	"apple m2": 0.70,
+	"apple m1": 0.65,
+	// Intel
+	"alchemist":  0.55,
+	"battlemage": 0.60,
+	"gaudi 3":    0.80,
+	"gaudi 2":    0.75,
+}
+
+// GetMemoryEfficiency returns the bandwidth scaling factor for a given
+// GPU architecture. Unrecognized architectures get a conservative baseline.
+func GetMemoryEfficiency(arch string) float64 {
+	arch = strings.ToLower(strings.TrimSpace(arch))
+	if eff, ok := memoryEfficiencyByArch[arch]; ok {
+		return eff
+	}
+	// Fuzzy fallback: check if the arch string contains a known family name.
+	for family, eff := range memoryEfficiencyByArch {
+		if strings.Contains(arch, family) || strings.Contains(family, arch) {
+			return eff
+		}
+	}
+	// System RAM / DDR fallback — no dedicated VRAM to optimize.
+	if strings.Contains(arch, "ddr") || strings.Contains(arch, "system") {
+		return 0.45
+	}
+	return 0.60 // Conservative baseline for unrecognized architectures.
+}
 
 // quantBytesPerParam maps exact quantization tags to bytes per parameter.
 // Derivation: bits-per-weight / 8. GGUF bitrates are not flat; e.g. Q4_0
@@ -291,7 +343,8 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 
 	memoryBound := 0.0
 	if gpu.Bandwidth > 0 && modelSzGB > 0 {
-		memoryBound = (gpu.Bandwidth * memoryEfficiency) / modelSzGB
+		efficiency := GetMemoryEfficiency(gpu.Architecture)
+		memoryBound = (gpu.Bandwidth * efficiency) / modelSzGB
 	}
 	computeBound := computeBoundEstimate(gpu, m)
 

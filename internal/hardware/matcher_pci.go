@@ -12,7 +12,7 @@ type PCIMatcher struct{}
 // or returns nil (macOS). When multiple GPUs share the same PCI ID, uses
 // detected VRAM or desktop preference to disambiguate.
 func (p PCIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	pci := detectPCI(ctx)
+	pci := detectPCI()
 	if pci == nil {
 		return nil, 0, nil
 	}

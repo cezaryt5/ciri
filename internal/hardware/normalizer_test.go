@@ -176,3 +176,25 @@ func TestNormalizeGPUName_KnownPatterns(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeGPUName_MX150(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"NVIDIA GeForce MX150", "mx150"},
+		{"GeForce MX150", "mx150"},
+		{"NVIDIA Corporation GP108M [GeForce MX150]", "gp108m geforce mx150"},
+		{"NVIDIA Corporation GP108 [GeForce MX150]", "gp108 geforce mx150"},
+		{"NVIDIA GeForce MX150 4 GB", "mx150 4 gb"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.input, func(t *testing.T) {
+			got := NormalizeGPUName(tc.input)
+			if got != tc.expected {
+				t.Errorf("NormalizeGPUName(%q) = %q, want %q", tc.input, got, tc.expected)
+			}
+		})
+	}
+}

@@ -2,6 +2,7 @@ package hardware
 
 import (
 	"encoding/json"
+	"os"
 	"testing"
 )
 
@@ -412,5 +413,180 @@ func TestDetectGPU_NilDB(t *testing.T) {
 	}
 	if status == GPUUnverified && gpu == nil {
 		t.Error("GPUUnverified status should have non-nil GPU")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// GeForce MX150 (GP108M) — integration tests against real gpus.json
+// ---------------------------------------------------------------------------
+
+func TestLoadGPUDB_MX150_Presence(t *testing.T) {
+	data, err := os.ReadFile("../../data/gpus.json")
+	if err != nil {
+		t.Fatalf("failed to read gpus.json: %v", err)
+	}
+
+	gpus, err := LoadGPUDB(data)
+	if err != nil {
+		t.Fatalf("LoadGPUDB failed: %v", err)
+	}
+
+	var mx150_2gb, mx150_4gb *GPU
+	for i := range gpus {
+		switch gpus[i].Name {
+		case "NVIDIA GeForce MX150":
+			mx150_2gb = &gpus[i]
+		case "NVIDIA GeForce MX150 4 GB":
+			mx150_4gb = &gpus[i]
+		}
+	}
+
+	if mx150_2gb == nil {
+		t.Fatal("NVIDIA GeForce MX150 (2GB) not found in GPU database")
+	}
+	if mx150_4gb == nil {
+		t.Fatal("NVIDIA GeForce MX150 4 GB not found in GPU database")
+	}
+
+	// Verify 2GB entry
+	if mx150_2gb.VendorID != "10de" {
+		t.Errorf("MX150 2GB vendorID = %q, want 10de", mx150_2gb.VendorID)
+	}
+	if mx150_2gb.VRAMGB != 2.0 {
+		t.Errorf("MX150 2GB VRAM = %f, want 2.0", mx150_2gb.VRAMGB)
+	}
+	if mx150_2gb.Architecture != "GP108" {
+		t.Errorf("MX150 2GB architecture = %q, want GP108", mx150_2gb.Architecture)
+	}
+	if !mx150_2gb.IsLaptop {
+		t.Error("MX150 2GB should be marked as laptop (has mobile variant)")
+	}
+	if len(mx150_2gb.DeviceIDs) == 0 {
+		t.Error("MX150 2GB should have device IDs")
+	}
+
+	// Verify 4GB entry
+	if mx150_4gb.VRAMGB != 4.0 {
+		t.Errorf("MX150 4GB VRAM = %f, want 4.0", mx150_4gb.VRAMGB)
+	}
+	if mx150_4gb.Architecture != "GP108" {
+		t.Errorf("MX150 4GB architecture = %q, want GP108", mx150_4gb.Architecture)
+	}
+
+	// Both should share the same PCI device IDs
+	if len(mx150_2gb.DeviceIDs) != len(mx150_4gb.DeviceIDs) {
+		t.Errorf("MX150 2GB and 4GB should have same device IDs: 2GB=%v, 4GB=%v",
+			mx150_2gb.DeviceIDs, mx150_4gb.DeviceIDs)
+	}
+}
+
+func TestLoadGPUDB_MX150_PCILookup(t *testing.T) {
+	data, err := os.ReadFile("../../data/gpus.json")
+	if err != nil {
+		t.Fatalf("failed to read gpus.json: %v", err)
+	}
+
+	gpus, err := LoadGPUDB(data)
+	if err != nil {
+		t.Fatalf("LoadGPUDB failed: %v", err)
+	}
+
+	// Verify that both MX150 device IDs are findable via findGPUsByPCI
+	for _, did := range []string{"1d10", "1d12"} {
+		matches := findGPUsByPCI(gpus, "10de", did)
+		if len(matches) == 0 {
+			t.Errorf("findGPUsByPCI(10de, %s): expected at least 1 match, got 0", did)
+			continue
+		}
+		found := false
+		for _, m := range matches {
+			if m.Name == "NVIDIA GeForce MX150" || m.Name == "NVIDIA GeForce MX150 4 GB" {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("findGPUsByPCI(10de, %s): no MX150 in matches %v", did, matches)
+		}
+	}
+}
+
+func TestLoadGPUDB_MX150_VRAMDisambiguation(t *testing.T) {
+	data, err := os.ReadFile("../../data/gpus.json")
+	if err != nil {
+		t.Fatalf("failed to read gpus.json: %v", err)
+	}
+
+	gpus, err := LoadGPUDB(data)
+	if err != nil {
+		t.Fatalf("LoadGPUDB failed: %v", err)
+	}
+
+	// Simulate PCI match for device ID 1d10 (both entries share it)
+	matches := findGPUsByPCI(gpus, "10de", "1d10")
+	if len(matches) < 2 {
+		t.Fatalf("expected at least 2 MX150 matches for device 1d10, got %d", len(matches))
+	}
+
+	// find the MX150 entries
+	var mx150_2gb, mx150_4gb *GPU
+	for _, m := range matches {
+		switch m.Name {
+		case "NVIDIA GeForce MX150":
+			mx150_2gb = m
+		case "NVIDIA GeForce MX150 4 GB":
+			mx150_4gb = m
+		}
+	}
+	if mx150_2gb == nil || mx150_4gb == nil {
+		t.Fatalf("expected both MX150 entries in matches, got 2GB=%v, 4GB=%v", mx150_2gb, mx150_4gb)
+	}
+
+	// pickBestPCIMatch with 2GB VRAM hint → should pick 2GB
+	best := pickBestPCIMatch(matches, 2.0)
+	if best == nil || best.Name != "NVIDIA GeForce MX150" {
+		t.Errorf("VRAM=2.0: expected MX150 2GB, got %v", best)
+	}
+
+	// pickBestPCIMatch with 4GB VRAM hint → should pick 4GB
+	best = pickBestPCIMatch(matches, 4.0)
+	if best == nil || best.Name != "NVIDIA GeForce MX150 4 GB" {
+		t.Errorf("VRAM=4.0: expected MX150 4GB, got %v", best)
+	}
+}
+
+func TestLoadGPUDB_MX150_NameResolution(t *testing.T) {
+	data, err := os.ReadFile("../../data/gpus.json")
+	if err != nil {
+		t.Fatalf("failed to read gpus.json: %v", err)
+	}
+
+	gpus, err := LoadGPUDB(data)
+	if err != nil {
+		t.Fatalf("LoadGPUDB failed: %v", err)
+	}
+
+	// Test that nvidia-smi style names resolve correctly
+	tests := []struct {
+		query      string
+		expectName string
+	}{
+		{"NVIDIA GeForce MX150", "NVIDIA GeForce MX150"},
+		{"GeForce MX150", "NVIDIA GeForce MX150"},
+		{"NVIDIA GeForce MX150 4 GB", "NVIDIA GeForce MX150 4 GB"},
+	}
+
+	for _, tc := range tests {
+		gpu, confidence, _ := resolveByName(gpus, tc.query, 0.95)
+		if gpu == nil {
+			t.Errorf("resolveByName(%q): expected match, got nil", tc.query)
+			continue
+		}
+		if gpu.Name != tc.expectName {
+			t.Errorf("resolveByName(%q): got name %q, want %q", tc.query, gpu.Name, tc.expectName)
+		}
+		if confidence <= 0.85 {
+			t.Errorf("resolveByName(%q): confidence %f too low for exact match", tc.query, confidence)
+		}
 	}
 }

@@ -183,3 +183,120 @@ func TestGHWFuzzyMatcher_Detect_WithDB(t *testing.T) {
 		}
 	}
 }
+
+// ---------------------------------------------------------------------------
+// GeForce MX150 (GP108M) detection tests
+// ---------------------------------------------------------------------------
+
+func TestFindGPUsByPCI_MX150(t *testing.T) {
+	db := []GPU{
+		{ID: 100, Name: "NVIDIA GeForce MX150", VendorID: "10de",
+			DeviceIDs: []string{"1d10", "1d12"}, VRAMGB: 2.0},
+		{ID: 101, Name: "NVIDIA GeForce MX150 4 GB", VendorID: "10de",
+			DeviceIDs: []string{"1d10", "1d12"}, VRAMGB: 4.0},
+	}
+
+	// Both device IDs should match both MX150 entries
+	for _, did := range []string{"1d10", "1d12"} {
+		matches := findGPUsByPCI(db, "10de", did)
+		if len(matches) != 2 {
+			t.Errorf("device %s: expected 2 matches (2GB + 4GB), got %d", did, len(matches))
+		}
+	}
+
+	// Wrong device ID should not match
+	matches := findGPUsByPCI(db, "10de", "ffff")
+	if len(matches) != 0 {
+		t.Errorf("bogus device: expected 0 matches, got %d", len(matches))
+	}
+}
+
+func TestPickBestPCIMatch_MX150_VRAMTiebreaker(t *testing.T) {
+	matches := []*GPU{
+		{ID: 100, Name: "NVIDIA GeForce MX150", VRAMGB: 2.0, IsLaptop: true},
+		{ID: 101, Name: "NVIDIA GeForce MX150 4 GB", VRAMGB: 4.0, IsLaptop: true},
+	}
+
+	// 2048 MiB ≈ 2.0 GiB → should pick 2GB variant
+	best := pickBestPCIMatch(matches, 2.0)
+	if best == nil || best.ID != 100 {
+		t.Errorf("detected 2.0GB: expected MX150 2GB (ID 100), got %v", best)
+	}
+
+	// 4096 MiB ≈ 4.0 GiB → should pick 4GB variant
+	best = pickBestPCIMatch(matches, 4.0)
+	if best == nil || best.ID != 101 {
+		t.Errorf("detected 4.0GB: expected MX150 4GB (ID 101), got %v", best)
+	}
+
+	// 1920 MiB ≈ 1.875 GiB → closer to 2GB
+	best = pickBestPCIMatch(matches, 1.875)
+	if best == nil || best.ID != 100 {
+		t.Errorf("detected 1.875GB: expected MX150 2GB (ID 100), got %v", best)
+	}
+
+	// 3840 MiB ≈ 3.75 GiB → closer to 4GB
+	best = pickBestPCIMatch(matches, 3.75)
+	if best == nil || best.ID != 101 {
+		t.Errorf("detected 3.75GB: expected MX150 4GB (ID 101), got %v", best)
+	}
+}
+
+func TestPickBestPCIMatch_MX150_NoVRAMHint(t *testing.T) {
+	matches := []*GPU{
+		{ID: 100, Name: "NVIDIA GeForce MX150", VRAMGB: 2.0, IsLaptop: true},
+		{ID: 101, Name: "NVIDIA GeForce MX150 4 GB", VRAMGB: 4.0, IsLaptop: true},
+	}
+
+	// Both are laptops, no desktop preference applies → falls back to first match
+	best := pickBestPCIMatch(matches, 0)
+	if best == nil {
+		t.Fatal("expected a match, got nil")
+	}
+	if best.ID != 100 && best.ID != 101 {
+		t.Errorf("expected MX150 (ID 100 or 101), got ID %d", best.ID)
+	}
+}
+
+func TestResolveByName_MX150(t *testing.T) {
+	db := []GPU{
+		{ID: 100, Name: "NVIDIA GeForce MX150", CanonicalName: "mx150",
+			Aliases: []string{"mx150"}},
+		{ID: 101, Name: "NVIDIA GeForce MX150 4 GB", CanonicalName: "mx150 4 gb",
+			Aliases: []string{"mx150 4 gb"}},
+	}
+
+	tests := []struct {
+		query       string
+		expectedID  int
+		expectMatch bool
+	}{
+		{"NVIDIA GeForce MX150", 100, true},
+		{"nvidia geforce mx150", 100, true},
+		{"GeForce MX150", 100, true},
+		{"mx150", 100, true}, // alias match
+		{"NVIDIA GeForce MX150 4 GB", 101, true},
+		{"mx150 4 gb", 101, true}, // alias match
+		{"RTX 4090", 0, false},    // not in DB
+	}
+
+	for _, tc := range tests {
+		gpu, confidence, _ := resolveByName(db, tc.query, 0.95)
+		if tc.expectMatch {
+			if gpu == nil {
+				t.Errorf("resolveByName(%q): expected match, got nil", tc.query)
+				continue
+			}
+			if gpu.ID != int64(tc.expectedID) {
+				t.Errorf("resolveByName(%q): got ID %d, want %d", tc.query, gpu.ID, tc.expectedID)
+			}
+			if confidence <= 0 || confidence > 1.0 {
+				t.Errorf("resolveByName(%q): confidence %f out of range", tc.query, confidence)
+			}
+		} else {
+			if gpu != nil {
+				t.Errorf("resolveByName(%q): expected nil, got %v", tc.query, gpu.Name)
+			}
+		}
+	}
+}

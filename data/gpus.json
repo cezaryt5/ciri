@@ -2726,6 +2726,62 @@
     "tdp_watts": 30.0
   },
   {
+  "name": "NVIDIA GeForce MX150",
+  "category": "discrete_gpu",
+  "pci_vendor_id": "10de",
+  "pci_device_id": "1d10",
+  "pci_device_ids": ["1d10", "1d12"],
+  "pci_variants": {
+    "mobile": {
+      "ids": ["1d10", "1d12"],
+      "description": "Mobile / laptop variant"
+    }
+  },
+  "vram_gb": 2.0,
+  "memory_type": "GDDR5",
+  "memory_bus": 64.0,
+  "pcie": "PCIe 3.0 x4",
+  "shading_units": 384.0,
+  "tmus": 24.0,
+  "rops": 16.0,
+  "gpu_cores": null,
+  "release_date": "2017-05-17",
+  "architecture": "GP108",
+  "memory_bandwidth_gbps": 48.0,
+  "tflops": 1.2,
+  "int8_tops": 2.4,
+  "neural_engine_tops": null,
+  "tdp_watts": 25.0
+},
+{
+  "name": "NVIDIA GeForce MX150 4 GB",
+  "category": "discrete_gpu",
+  "pci_vendor_id": "10de",
+  "pci_device_id": "1d10",
+  "pci_device_ids": ["1d10", "1d12"],
+  "pci_variants": {
+    "mobile": {
+      "ids": ["1d10", "1d12"],
+      "description": "Mobile / laptop variant"
+    }
+  },
+  "vram_gb": 4.0,
+  "memory_type": "GDDR5",
+  "memory_bus": 64.0,
+  "pcie": "PCIe 3.0 x4",
+  "shading_units": 384.0,
+  "tmus": 24.0,
+  "rops": 16.0,
+  "gpu_cores": null,
+  "release_date": "2017-05-17",
+  "architecture": "GP108",
+  "memory_bandwidth_gbps": 48.0,
+  "tflops": 1.2,
+  "int8_tops": 2.4,
+  "neural_engine_tops": null,
+  "tdp_watts": 25.0
+},
+  {
     "name": "AMD Radeon RX 580 2048SP",
     "category": "discrete_gpu",
     "pci_vendor_id": "1002",

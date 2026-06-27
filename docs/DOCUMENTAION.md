@@ -375,13 +375,19 @@ Tier C: Roofline heuristic
 
 | Constant | Value | Meaning |
 |----------|-------|---------|
-| `memoryEfficiency` | 0.75 | Real-world bandwidth utilisation |
 | `modelFLOPUtilization` | 0.20 | Decode FLOP utilisation |
 | `flopsPerParamPerToken` | 2.0 | One multiply-add per param per token |
 | `vramBufferFactor` | 1.1 | 10% VRAM headroom |
 | `appleOSOverhead` | 4.0 GB | macOS unified memory reserved by OS |
 
-### `BytesPerParam()` — `estimate.go:325`
+### `GetMemoryEfficiency()` — `estimate.go:195`
+
+Resolves bandwidth utilisation dynamically from the GPU architecture string (e.g.
+`"ada lovelace"` → 0.80, `"pascal"` → 0.50, `"apple m4"` → 0.75). Falls back
+to 0.60 for unrecognised architectures, or 0.45 for system RAM. Replaces the
+old hardcoded `memoryEfficiency` constant.
+
+### `BytesPerParam()` — `estimate.go:331`
 
 Maps quantization tags to bytes-per-parameter (e.g. `Q4_K_M` → 0.625, `FP16` → 2.0). Defaults to 2.0 for unknown quants.
 

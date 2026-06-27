@@ -15,7 +15,7 @@ type VendorAPIMatcher struct{}
 // rocm-smi for AMD, system_profiler for macOS) and resolving the returned
 // name against the GPU database via resolveByName.
 func (m *VendorAPIMatcher) Detect(ctx context.Context, gpuDB []GPU) (*GPU, float64, error) {
-	pci := detectPCI(ctx)
+	pci := detectPCI()
 	name := detectVendorName(ctx, pci)
 	if name == "" {
 		return nil, 0, nil
