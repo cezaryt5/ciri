@@ -31,7 +31,7 @@ func (s FitStatus) String() string {
 }
 
 const (
-	vramBufferFactor = 1.1  // 10 % headroom
+	vramBufferFactor = 1.1 // 10 % headroom
 	appleOSOverhead  = 4.0 // macOS typically reserves ~4 GB
 )
 

@@ -51,6 +51,23 @@ func (p *Predictor) PredictAll() []ModelPrediction {
 	var results []ModelPrediction
 	for i := range p.models {
 		m := &p.models[i]
+		if len(m.Quants) > 0 {
+			// Pick the best-quality quant that still fits. This keeps the
+			// first catalog honest: a model with a Q2 that fits is not shown
+			// as "slow" only because its default Q4_K_M does not.
+			var best ModelPrediction
+			bestBits := -1
+			for _, q := range m.Quants {
+				pred := p.PredictQuant(m, q, q.PreferredSource())
+				if best.Model == nil || pred.FitStatus < best.FitStatus ||
+					(pred.FitStatus == best.FitStatus && q.Bits > bestBits) {
+					best = pred
+					bestBits = q.Bits
+				}
+			}
+			results = append(results, best)
+			continue
+		}
 		fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
 		tokPerSec, confidence := EstimateSpeed(m, p.gpu, p.benchmarks)
 		results = append(results, ModelPrediction{
@@ -69,73 +86,43 @@ func (p *Predictor) PredictAll() []ModelPrediction {
 	return results
 }
 
-// Predict returns all models in the given category with fit and speed estimates.
-// Excludes TooHeavy models. Results are sorted: Recommended first, then by tok/s.
-func (p *Predictor) Predict(category model.Category) []ModelPrediction {
-	var results []ModelPrediction
-
-	for i := range p.models {
-		m := &p.models[i]
-		if !hasCategory(m, category) {
-			continue
+// PredictQuant evaluates one quant/source combination for the detail screen.
+// It uses the exact file size when available and falls back to the model's
+// params × bytes-per-param estimate.
+func (p *Predictor) PredictQuant(m *model.Model, q model.Quant, source *model.QuantSource) ModelPrediction {
+	mm := *m
+	mm.Quantization = q.Label
+	mm.WeightsBytes = q.WeightsBytes
+	mm.BenchmarkIDs = q.SourceRepos()
+	if source != nil {
+		if source.WeightsBytes > 0 {
+			mm.WeightsBytes = source.WeightsBytes
 		}
-
-		fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
-		if fit == TooHeavy {
-			continue
-		}
-
-		tokPerSec, confidence := EstimateSpeed(m, p.gpu, p.benchmarks)
-
-		results = append(results, ModelPrediction{
-			Model:        m, // Pointing to original slice, no longer copying
-			FitStatus:    fit,
-			EstTokPerSec: tokPerSec,
-			Confidence:   confidence,
-		})
+		mm.BenchmarkIDs = []string{source.Repo}
 	}
-
-	// Sorts Recommended (<) before Advanced. Breaks ties via Token Speed.
-	// ASSUMES: Recommended iota < Advanced iota
-	sort.Slice(results, func(i, j int) bool {
-		if results[i].FitStatus != results[j].FitStatus {
-			return results[i].FitStatus < results[j].FitStatus
-		}
-		return results[i].EstTokPerSec > results[j].EstTokPerSec
-	})
-
-	return results
+	mm.MinVRAMGB = float64(mm.WeightsBytes) / 1e9
+	mm.MinRAMGB = mm.MinVRAMGB*1.15 + 2
+	if mm.MinRAMGB < 1 {
+		mm.MinRAMGB = 1
+	}
+	mm.RecommendedRAMGB = mm.MinRAMGB + 4
+	fit := CheckFit(&mm, p.gpu, p.sysRAMAvail, p.isApple)
+	tokPerSec, confidence := EstimateSpeed(&mm, p.gpu, p.benchmarks)
+	return ModelPrediction{
+		Model:        &mm,
+		FitStatus:    fit,
+		EstTokPerSec: tokPerSec,
+		Confidence:   confidence,
+	}
 }
 
-// CountByCategory counts how many models per category are not TooHeavy.
-// Used by the home screen menu to display "(N models fit)".
-func (p *Predictor) CountByCategory() map[model.Category]int {
-	counts := make(map[model.Category]int)
-
-	// Optimized: O(Models) instead of O(Models * Categories)
-	// We evaluate CheckFit exactly once per model now.
-	for i := range p.models {
-		m := &p.models[i]
-
-		fit := CheckFit(m, p.gpu, p.sysRAMAvail, p.isApple)
-		if fit == TooHeavy {
-			continue
-		}
-
-		// If it fits, increment the count for every category it belongs to
-		for _, cat := range m.Categories {
-			counts[cat]++
-		}
+// BenchmarkIDs returns the variant repo IDs used to look up measurements.
+func (p *Predictor) BenchmarkIDs(m *model.Model) []string {
+	if len(m.BenchmarkIDs) > 0 {
+		return m.BenchmarkIDs
 	}
-	return counts
-}
-
-// hasCategory checks whether a model belongs to the given category.
-func hasCategory(m *model.Model, want model.Category) bool {
-	for _, c := range m.Categories {
-		if c == want {
-			return true
-		}
+	if strings.Contains(m.Name, "/") {
+		return []string{m.Name}
 	}
-	return false
+	return nil
 }

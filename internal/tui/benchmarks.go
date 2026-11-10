@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
+
 	"github.com/cezaryt5/ciri/internal/hardware"
 	"github.com/cezaryt5/ciri/internal/predictor"
 
@@ -25,12 +27,26 @@ func newBenchmarksModel(selected predictor.ModelPrediction, gpu *hardware.GPU, b
 	closest := ""
 
 	if benchDB != nil && gpu != nil {
-		canonical := strings.ToLower(gpu.CanonicalName)
-		hfID := strings.ToLower(selected.Model.Name)
-		key := canonical + "|" + hfID
-		if r, ok := benchDB.ByNameHfID()[key]; ok {
-			rows = r
-			closest = gpu.Name
+		ids := selected.Model.BenchmarkIDs
+		if len(ids) == 0 {
+			ids = []string{selected.Model.Name}
+		}
+		keys := []string{strings.ToLower(gpu.CanonicalName), strings.ToLower(gpu.Name)}
+		seen := map[string]bool{}
+		for _, id := range ids {
+			hfID := strings.ToLower(id)
+			for _, gpuKey := range keys {
+				for _, r := range benchDB.ByNameHfID()[gpuKey+"|"+hfID] {
+					sig := fmt.Sprintf("%s|%s|%s|%.1f|%d",
+						r.HfID, r.EngineName, r.Quantization, r.TokSOut, r.ContextLen)
+					if seen[sig] {
+						continue
+					}
+					seen[sig] = true
+					rows = append(rows, r)
+					closest = gpu.Name
+				}
+			}
 		}
 	}
 
@@ -65,76 +81,124 @@ func (bm *benchmarksModel) benchUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 }
 
 func (bm *benchmarksModel) benchView(a *App) string {
+	inner := a.width - 6
+	if inner < 22 {
+		inner = 22
+	}
+
 	var b strings.Builder
 
-	name := truncate(bm.selected.Model.Name, 45)
-	b.WriteString(Title.Render("  Benchmarks: "+name) + "\n\n")
-
+	b.WriteString("\n")
+	match := "NONE"
 	if bm.closestHW != "" {
-		b.WriteString(fmt.Sprintf("  Benchmark Results (closest hardware match: %s)\n\n", bm.closestHW))
-	} else {
-		b.WriteString("  Benchmark Results\n\n")
+		match = bm.closestHW
 	}
+	metaLeft := Label.Render("CLOSEST HARDWARE") + "  " + Value.Render(truncate(match, 26))
+	modelLabel := "  " + Label.Render("MODEL") + "  "
+	nameW := inner - lipgloss.Width(metaLeft) - lipgloss.Width(modelLabel)
+	if nameW < 8 {
+		nameW = 8
+	}
+	name := bm.selected.Model.Display
+	if name == "" {
+		name = bm.selected.Model.Name
+	}
+	b.WriteString("  " + metaLeft + modelLabel +
+		Value.Render(truncate(name, nameW)) + "\n")
+	b.WriteString("\n")
 
 	if len(bm.rows) == 0 {
-		b.WriteString("  No benchmarks available for this model on comparable hardware.\n")
-		if bm.gpu != nil {
-			b.WriteString(fmt.Sprintf("  * Estimated from TFLOPS heuristic: %s class\n", bm.gpu.Architecture))
+		b.WriteString("  " + statusSquare(false) + " " +
+			Value.Render("NO BENCHMARKS ON COMPARABLE HARDWARE") + "\n")
+		b.WriteString("\n")
+		b.WriteString("  " + Label.Render("FALLBACK") + "  " +
+			Tagline.Render("TFLOPS HEURISTIC") + "\n")
+		if bm.gpu != nil && bm.gpu.Architecture != "" {
+			b.WriteString("  " + Label.Render("GPU CLASS") + "  " +
+				Value.Render(bm.gpu.Architecture) + "\n")
 		}
-	} else {
-		vis := bmVisibleRows(a)
-		end := bm.scroll + vis
-		if end > len(bm.rows) {
-			end = len(bm.rows)
-		}
-
-		if bm.scroll > 0 {
-			b.WriteString(fmt.Sprintf("  ↑ %d above\n", bm.scroll))
-		}
-
-		b.WriteString(TableHeader.Render(
-			fmt.Sprintf("  %-15s %8s %8s %10s   Notes", "Engine", "tok/s", "VRAM", "Context"),
-		) + "\n")
-		b.WriteString(RenderDivider(a.width-2) + "\n")
-
-		for i := bm.scroll; i < end; i++ {
-			row := bm.rows[i]
-			prefix := "  "
-			if i == bm.scroll && bm.scroll > 0 {
-				prefix = Cursor.Render("  ") // Not a cursor, just spacing
-			}
-
-			vramStr := "\u2014"
-			if row.PeakVRAMGB > 0 {
-				vramStr = fmt.Sprintf("%.1f GB", row.PeakVRAMGB)
-			}
-			ctxStr := "\u2014"
-			if row.ContextLen > 0 {
-				ctxStr = formatContext(row.ContextLen)
-			}
-
-			notes := ""
-			if row.Notes != "" {
-				notes = truncate(row.Notes, 40)
-			} else {
-				notes = fmt.Sprintf("%s, %s", row.EngineName, row.Quantization)
-			}
-
-			line := fmt.Sprintf("%s %-15s %8.1f %8s %10s   %s",
-				prefix, truncate(row.EngineName, 15),
-				row.TokSOut, vramStr, ctxStr,
-				notes,
-			)
-			b.WriteString(ModelName.Render(line) + "\n")
-		}
-
-		remaining := len(bm.rows) - end
-		if remaining > 0 {
-			b.WriteString(fmt.Sprintf("  ↓ %d more\n", remaining))
-		}
+		return b.String()
 	}
 
-	b.WriteString("\n" + Footer.Render("  Esc Back"))
+	w := benchColWidths(inner)
+	b.WriteString(renderBenchHeader(w) + "\n")
+	b.WriteString("  " + RenderRule(inner) + "\n")
+
+	vis := bmVisibleRows(a)
+	end := bm.scroll + vis
+	if end > len(bm.rows) {
+		end = len(bm.rows)
+	}
+
+	if bm.scroll > 0 {
+		b.WriteString("  " + Tagline.Render(fmt.Sprintf("\u2191 %d ABOVE", bm.scroll)) + "\n")
+	} else {
+		b.WriteString("\n")
+	}
+
+	for i := bm.scroll; i < end; i++ {
+		b.WriteString(renderBenchRow(bm.rows[i], w) + "\n")
+	}
+
+	if remaining := len(bm.rows) - end; remaining > 0 {
+		b.WriteString("  " + Tagline.Render(fmt.Sprintf("\u2193 %d MORE", remaining)) + "\n")
+	} else {
+		b.WriteString("\n")
+	}
+
+	return b.String()
+}
+
+type benchCols struct {
+	engine int
+	tokS   int
+	vram   int
+	ctx    int
+	notes  int
+}
+
+func benchColWidths(inner int) benchCols {
+	c := benchCols{engine: 16, tokS: 8, vram: 8, ctx: 9}
+	c.notes = inner - c.engine - c.tokS - c.vram - c.ctx
+	if c.notes < 12 {
+		c.notes = 12
+	}
+	return c
+}
+
+func renderBenchHeader(w benchCols) string {
+	var b strings.Builder
+	b.WriteString("  ")
+	b.WriteString(renderCell(Label.Render("ENGINE"), w.engine, lipgloss.Left))
+	b.WriteString(renderCell(Label.Render("TOK/S"), w.tokS, lipgloss.Right))
+	b.WriteString(renderCell(Label.Render("VRAM"), w.vram, lipgloss.Right))
+	b.WriteString(renderCell(Label.Render("CONTEXT"), w.ctx, lipgloss.Right))
+	b.WriteString(renderCell(Label.Render("NOTES"), w.notes, lipgloss.Left))
+	return b.String()
+}
+
+func renderBenchRow(r predictor.BenchmarkRow, w benchCols) string {
+	vram := "\u2014"
+	if r.PeakVRAMGB > 0 {
+		vram = fmt.Sprintf("%.1fG", r.PeakVRAMGB)
+	}
+	ctx := "\u2014"
+	if r.ContextLen > 0 {
+		ctx = formatContext(r.ContextLen)
+	}
+
+	notes := r.Notes
+	if notes == "" {
+		notes = strings.TrimSpace(r.EngineName + " · " + r.Quantization)
+	}
+
+	var b strings.Builder
+	b.WriteString("  ")
+	b.WriteString(renderCell(Value.Render(truncate(r.EngineName, w.engine-1)), w.engine, lipgloss.Left))
+	b.WriteString(renderCell(Value.Render(fmt.Sprintf("%.1f", r.TokSOut)), w.tokS, lipgloss.Right))
+	b.WriteString(renderCell(Tagline.Render(vram), w.vram, lipgloss.Right))
+	b.WriteString(renderCell(Tagline.Render(ctx), w.ctx, lipgloss.Right))
+	b.WriteString(renderCell(Tagline.Render(truncate(notes, w.notes-1)), w.notes, lipgloss.Left))
 	return b.String()
 }
 

@@ -23,38 +23,59 @@ func (s *settingsModel) settingsUpdate(a *App, msg tea.KeyMsg) tea.Cmd {
 }
 
 func (s *settingsModel) settingsView(a *App) string {
+	inner := a.width - 4
+	if inner < 22 {
+		inner = 22
+	}
+
 	var b strings.Builder
 
-	b.WriteString("\n\n  Hardware Config\n\n")
-
-	gpuName := "Unknown"
-	vramGB := 0.0
+	gpuName := "UNKNOWN"
+	vram := "\u2014"
+	gpuClass := ""
 	if s.gpu != nil {
 		gpuName = s.gpu.Name
-		vramGB = s.gpu.VRAMGB
+		if s.gpu.VRAMGB > 0 {
+			vram = fmt.Sprintf("%.1f GB", s.gpu.VRAMGB)
+		}
+		gpuClass = s.gpu.Architecture
 	}
 
-	cpuModel := s.specs.CpuModel
+	cpuModel := strings.TrimSpace(s.specs.CpuModel)
 	if cpuModel == "" {
-		cpuModel = "Unknown"
+		cpuModel = "UNKNOWN"
+	}
+	cores := "\u2014"
+	if s.specs.CpuCores > 0 {
+		cores = fmt.Sprintf("%d", s.specs.CpuCores)
 	}
 
-	ollamaStr := "\u2713"
-	if !s.specs.HasOllama {
-		ollamaStr = "\u00d7"
+	b.WriteString("\n")
+	b.WriteString(RenderSection("System Profile", inner) + "\n")
+	b.WriteString("  " + field("GPU", gpuName, 12) + "\n")
+	b.WriteString("  " + field("VRAM", vram, 12) + "\n")
+	if gpuClass != "" {
+		b.WriteString("  " + field("GPU Class", gpuClass, 12) + "\n")
 	}
-	llamaStr := "\u2713"
-	if !s.specs.HasLlamaCPP {
-		llamaStr = "\u00d7"
-	}
+	b.WriteString("  " + field("Memory", fmt.Sprintf("%.1f / %.1f GB", s.specs.RamAvailGB, s.specs.RamTotalGB), 12) + "\n")
+	b.WriteString("  " + field("CPU", cpuModel, 12) + "\n")
+	b.WriteString("  " + field("Cores", cores, 12) + "\n")
 
-	b.WriteString(fmt.Sprintf("  %-18s %s\n", "GPU:", gpuName))
-	b.WriteString(fmt.Sprintf("  %-18s %.1f GB\n", "VRAM:", vramGB))
-	b.WriteString(fmt.Sprintf("  %-18s %.1f / %.1f GB\n", "RAM:", s.specs.RamAvailGB, s.specs.RamTotalGB))
-	b.WriteString(fmt.Sprintf("  %-18s %s (%dc)\n", "CPU:", cpuModel, s.specs.CpuCores))
-	b.WriteString(fmt.Sprintf("  %-18s %s\n", "Ollama:", ollamaStr))
-	b.WriteString(fmt.Sprintf("  %-18s %s\n", "llama.cpp:", llamaStr))
+	b.WriteString("\n")
+	b.WriteString(RenderSection("Runtimes", inner) + "\n")
+	b.WriteString(runtimeLine("OLLAMA", s.specs.HasOllama) + "\n")
+	b.WriteString(runtimeLine("LLAMA.CPP", s.specs.HasLlamaCPP) + "\n")
 
-	b.WriteString("\n" + Footer.Render("  Esc Back"))
 	return b.String()
+}
+
+func runtimeLine(name string, on bool) string {
+	state := "NOT FOUND"
+	nameStyle := Tagline
+	if on {
+		state = "DETECTED"
+		nameStyle = Value
+	}
+	return "  " + statusSquare(on) + " " + padRight(nameStyle.Render(name), 14) +
+		Tagline.Render(state)
 }

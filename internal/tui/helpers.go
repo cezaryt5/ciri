@@ -2,23 +2,15 @@ package tui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
 
 	"github.com/cezaryt5/ciri/internal/hardware"
 	"github.com/cezaryt5/ciri/internal/model"
 	"github.com/cezaryt5/ciri/internal/predictor"
 )
-
-func truncate(s string, max int) string {
-	if max <= 0 {
-		return ""
-	}
-	if len(s) <= max {
-		return s
-	}
-	return s[:max-1] + "\u2026"
-}
 
 func formatDate(date string) string {
 	if date == "" || len(date) < 7 {
@@ -49,72 +41,155 @@ func formatMemPctRaw(m *model.Model, gpu *hardware.GPU) string {
 	return fmt.Sprintf("%.0f%%", pct)
 }
 
-func fitDotStr(fit predictor.FitStatus) string {
+// statusSquare renders the design system's 8x8 status indicator: a square,
+// never a circle. Signal red is reserved for alerts.
+func statusSquare(on bool) string {
+	if on {
+		return StatusOn.Render("\u25a0")
+	}
+	return StatusOff.Render("\u25a0")
+}
+
+func fitSquare(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
-		return FitDotPerfect.Render("\u25cf")
+		return FitPerfect.Render("\u25a0")
 	case predictor.Advanced:
-		return FitDotGood.Render("\u25cf")
+		return FitGood.Render("\u25a0")
 	default:
-		return "\u25cf"
+		return FitSlow.Render("\u25a0")
 	}
 }
 
 func fitLabel(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
-		return FitPerfect.Render("Perfect")
+		return FitPerfect.Render("PERFECT")
 	case predictor.Advanced:
-		return FitGood.Render("Good")
+		return FitGood.Render("GOOD")
 	default:
-		return "Slow"
+		return FitSlow.Render("SLOW")
 	}
 }
 
 func fitLabelPlain(fit predictor.FitStatus) string {
 	switch fit {
 	case predictor.Recommended:
-		return "Perfect"
+		return "PERFECT"
 	case predictor.Advanced:
-		return "Good"
+		return "GOOD"
 	default:
-		return "Slow"
+		return "SLOW"
 	}
 }
 
-func padCell(text string, width int) string {
+func fitStatusTag(fit predictor.FitStatus) string {
+	return fitSquare(fit) + " " + fitLabel(fit)
+}
+
+// field renders a mono label followed by a value, padded to a fixed label
+// width so consecutive fields align like a data table.
+func field(label, value string, labelW int) string {
+	if strings.TrimSpace(value) == "" {
+		value = "\u2014"
+	}
+	l := lipgloss.NewStyle().Width(labelW).Render(Label.Render(strings.ToUpper(label)))
+	return l + Value.Render(value)
+}
+
+// renderCell pads text into width cells and appends a single gutter space.
+// The gutter is part of the column width, so header and rows share geometry.
+func renderCell(text string, width int, align lipgloss.Position) string {
+	if width <= 0 {
+		return ""
+	}
+	contentW := width - 1
+	if contentW < 1 {
+		contentW = 1
+	}
+	text = ansi.Truncate(text, contentW, "")
+	st := lipgloss.NewStyle().Width(contentW).MaxWidth(contentW)
+	if align != lipgloss.Left {
+		st = st.Align(align)
+	}
+	return st.Render(text) + " "
+}
+
+func centerLine(text string, width int) string {
 	if width <= 0 {
 		return text
 	}
-	return lipgloss.NewStyle().Width(width).Render(text)
+	tw := lipgloss.Width(text)
+	if tw >= width {
+		return truncate(text, width)
+	}
+	return strings.Repeat(" ", (width-tw)/2) + text
 }
 
-func renderMiniBox(title, value string, totalWidth int, active bool) string {
-	if totalWidth < 10 {
-		totalWidth = 10
+// padRight pads a rendered string to width, truncating when it overflows.
+func padRight(s string, width int) string {
+	if width <= 0 {
+		return s
 	}
-	innerWidth := totalWidth - 2
-	content := " " + title + "  " + value + " "
-	if lipgloss.Width(content) > innerWidth {
-		content = truncate(content, innerWidth)
+	s = ansi.Truncate(s, width, "")
+	return lipgloss.NewStyle().Width(width).MaxWidth(width).Render(s)
+}
+
+// alignLine places left and right on one line, right-aligned. The right
+// side wins when space is tight.
+func alignLine(left, right string, width int) string {
+	if width <= 0 {
+		return left
 	}
-	content += repeat(" ", innerWidth-lipgloss.Width(content))
-	box := "\u256d" + content + "\u256e"
-	if active {
-		return SearchActive.Render(box)
+	rw := lipgloss.Width(right)
+	if rw == 0 {
+		return padRight(left, width)
 	}
-	return SearchBar.Render(box)
+	if rw+2 >= width {
+		return truncate(right, width)
+	}
+	leftW := width - rw
+	left = padRight(truncate(left, leftW-2), leftW)
+	return left + right
 }
 
 func fitFilterLabel(f fitFilter) string {
 	switch f {
 	case fitRecommended:
-		return "Perfect"
+		return "PERFECT"
 	case fitAdvanced:
-		return "Good"
+		return "GOOD"
 	case fitTooHeavy:
-		return "Slow"
+		return "SLOW"
 	default:
-		return "All"
+		return "ALL"
 	}
+}
+
+// versionLabel formats the build version for the chrome and status strip.
+func versionLabel(v string) string {
+	if v == "" {
+		return ""
+	}
+	if v == "dev" || strings.HasPrefix(v, "dev-") {
+		return "DEV BUILD"
+	}
+	return "v" + strings.TrimPrefix(v, "v")
+}
+
+// formatBytes renders a byte count in human-friendly units.
+func formatBytes(n int64) string {
+	if n < 0 {
+		n = 0
+	}
+	const unit = 1024
+	if n < unit {
+		return fmt.Sprintf("%d B", n)
+	}
+	div, exp := int64(unit), 0
+	for n/div >= unit && exp < 5 {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB", float64(n)/float64(div), "KMGTPE"[exp])
 }

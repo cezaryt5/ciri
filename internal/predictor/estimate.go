@@ -361,15 +361,21 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 
 	canonical := strings.ToLower(gpu.CanonicalName)
 	gpuName := strings.ToLower(gpu.Name)
-	hfID := strings.ToLower(m.Name)
+	ids := m.BenchmarkIDs
+	if len(ids) == 0 && strings.Contains(m.Name, "/") {
+		ids = []string{m.Name}
+	}
 
 	// ---- Tier A: exact benchmark match by GPU name ----
 	if db != nil {
-		if tok, ok := lookupMedian(db.byNameHfID, canonical, hfID); ok {
-			return tok, ConfBenchmark
-		}
-		if tok, ok := lookupMedian(db.byNameHfID, gpuName, hfID); ok {
-			return tok, ConfBenchmark
+		for _, id := range ids {
+			hfID := strings.ToLower(id)
+			if tok, ok := lookupMedian(db.byNameHfID, canonical, hfID); ok {
+				return tok, ConfBenchmark
+			}
+			if tok, ok := lookupMedian(db.byNameHfID, gpuName, hfID); ok {
+				return tok, ConfBenchmark
+			}
 		}
 	}
 
@@ -415,7 +421,13 @@ func EstimateSpeed(m *model.Model, gpu *hardware.GPU, db *BenchmarkDB) (float64,
 // ModelWeightSizeGB returns the on-disk weight size of a model in GB.
 // This is the theoretical minimum VRAM needed for the weights alone (no KV cache, no CUDA overhead).
 func ModelWeightSizeGB(m *model.Model) float64 {
-	if m == nil || m.ParametersRaw <= 0 {
+	if m == nil {
+		return 0
+	}
+	if m.WeightsBytes > 0 {
+		return float64(m.WeightsBytes) / 1e9
+	}
+	if m.ParametersRaw <= 0 {
 		return 0
 	}
 	return float64(m.ParametersRaw) / 1e9 * BytesPerParam(m.Quantization)

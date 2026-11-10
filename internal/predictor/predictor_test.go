@@ -220,15 +220,14 @@ func TestBytesPerParam(t *testing.T) {
 
 func TestComputeBoundEstimate(t *testing.T) {
 	tests := []struct {
-		name      string
-		gpu       *hardware.GPU
-		params    int
-		expectGT  float64
+		name     string
+		gpu      *hardware.GPU
+		params   int
+		expectGT float64
 	}{
 		{"RTX 4090 + 7B", &hardware.GPU{TFLOPS: 165.2, Architecture: "ada lovelace"}, 7000000000, 0},
 		{"zero TFLOPS", &hardware.GPU{TFLOPS: 0, Architecture: "ada lovelace"}, 7000000000, 0},
 		{"zero params", &hardware.GPU{TFLOPS: 165.2, Architecture: "ada lovelace"}, 0, 0},
-
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -471,17 +470,15 @@ func TestEstimateSpeed_Heuristic(t *testing.T) {
 // Predict
 // ---------------------------------------------------------------------------
 
-func TestPredict_SortsRecommendedFirst(t *testing.T) {
+func TestPredictAll_SortsRecommendedFirst(t *testing.T) {
 	models := []model.Model{
-		{Name: "fast-model", MinVRAMGB: 4, MinRAMGB: 8, Categories: []model.Category{model.CategoryCoding},
-			ParametersRaw: 4000000000, UseCase: "Code generation and completion"},
-		{Name: "big-model", MinVRAMGB: 24, MinRAMGB: 32, Categories: []model.Category{model.CategoryCoding},
-			ParametersRaw: 70000000000, UseCase: "Code generation and completion"},
+		{Name: "fast-model", MinVRAMGB: 4, MinRAMGB: 8, ParametersRaw: 4000000000},
+		{Name: "big-model", MinVRAMGB: 24, MinRAMGB: 32, ParametersRaw: 70000000000},
 	}
 	gpu := &hardware.GPU{Name: "RTX 4090", VRAMGB: 16, TFLOPS: 165, Architecture: "AD102", CanonicalName: "4090"}
 	p := NewPredictor(gpu, 64, models, nil)
 
-	results := p.Predict(model.CategoryCoding)
+	results := p.PredictAll()
 	if len(results) != 2 {
 		t.Fatalf("expected 2 results, got %d", len(results))
 	}
@@ -496,76 +493,21 @@ func TestPredict_SortsRecommendedFirst(t *testing.T) {
 	}
 }
 
-func TestPredict_FiltersByCategory(t *testing.T) {
-	models := []model.Model{
-		{Name: "coder", Categories: []model.Category{model.CategoryCoding},
-			MinVRAMGB: 4, MinRAMGB: 8, UseCase: "Code generation and completion"},
-		{Name: "chatter", Categories: []model.Category{model.CategoryChat},
-			MinVRAMGB: 4, MinRAMGB: 8, UseCase: "Instruction following, chat"},
-	}
+func TestPredictQuant_UsesExactBytes(t *testing.T) {
 	gpu := &hardware.GPU{Name: "RTX 4090", VRAMGB: 24, TFLOPS: 165, Architecture: "AD102", CanonicalName: "4090"}
-	p := NewPredictor(gpu, 30, models, nil)
-
-	codingResults := p.Predict(model.CategoryCoding)
-	if len(codingResults) != 1 {
-		t.Fatalf("expected 1 coding result, got %d", len(codingResults))
+	m := &model.Model{Name: "Qwen/Qwen3-30B", ParametersRaw: 30_000_000_000, Quantization: "Q4_K_M"}
+	quant := model.Quant{
+		Label:        "Q8_0",
+		Bits:         8,
+		WeightsBytes: 32_000_000_000,
+		Sources:      []model.QuantSource{{Repo: "owner/qwen-q8"}},
 	}
-	if codingResults[0].Model.Name != "coder" {
-		t.Errorf("expected coder model, got %s", codingResults[0].Model.Name)
+	pred := NewPredictor(gpu, 64, nil, nil).PredictQuant(m, quant, nil)
+	if pred.Model.WeightsBytes != quant.WeightsBytes {
+		t.Errorf("weights bytes = %d, want %d", pred.Model.WeightsBytes, quant.WeightsBytes)
 	}
-
-	chatResults := p.Predict(model.CategoryChat)
-	if len(chatResults) != 1 {
-		t.Fatalf("expected 1 chat result, got %d", len(chatResults))
-	}
-	if chatResults[0].Model.Name != "chatter" {
-		t.Errorf("expected chatter model, got %s", chatResults[0].Model.Name)
-	}
-}
-
-func TestPredict_ExcludesTooHeavy(t *testing.T) {
-	models := []model.Model{
-		{Name: "huge", MinVRAMGB: 80, MinRAMGB: 100, Categories: []model.Category{model.CategoryGeneral},
-			ParametersRaw: 400000000000, UseCase: "General purpose"},
-		{Name: "small", MinVRAMGB: 2, MinRAMGB: 4, Categories: []model.Category{model.CategoryGeneral},
-			ParametersRaw: 1000000000, UseCase: "General purpose"},
-	}
-	gpu := &hardware.GPU{Name: "RTX 3060", VRAMGB: 12, TFLOPS: 12.7, Architecture: "GA106", CanonicalName: "rtx 3060"}
-	p := NewPredictor(gpu, 16, models, nil)
-
-	results := p.Predict(model.CategoryGeneral)
-	if len(results) != 1 {
-		t.Fatalf("expected 1 result (small fits, huge excluded), got %d", len(results))
-	}
-	if results[0].Model.Name != "small" {
-		t.Errorf("expected small model, got %s", results[0].Model.Name)
-	}
-}
-
-func TestCountByCategory(t *testing.T) {
-	models := []model.Model{
-		{Name: "c1", Categories: []model.Category{model.CategoryCoding},
-			MinVRAMGB: 4, MinRAMGB: 8, UseCase: "Code generation"},
-		{Name: "c2", Categories: []model.Category{model.CategoryCoding},
-			MinVRAMGB: 6, MinRAMGB: 8, UseCase: "Code generation"},
-		{Name: "ch1", Categories: []model.Category{model.CategoryChat},
-			MinVRAMGB: 4, MinRAMGB: 8, UseCase: "Instruction following"},
-	}
-	gpu := &hardware.GPU{Name: "RTX 4090", VRAMGB: 8, TFLOPS: 165, Architecture: "AD102", CanonicalName: "4090"}
-	p := NewPredictor(gpu, 16, models, nil)
-
-	counts := p.CountByCategory()
-	// c1 fits (4GB), c2 fits (6GB) = 2 coding
-	// ch1 fits (4GB) = 1 chat
-	if counts[model.CategoryCoding] != 2 {
-		t.Errorf("expected 2 coding models, got %d", counts[model.CategoryCoding])
-	}
-	if counts[model.CategoryChat] != 1 {
-		t.Errorf("expected 1 chat model, got %d", counts[model.CategoryChat])
-	}
-	// Vision should be 0 since none are categorized as Vision
-	if counts[model.CategoryVision] != 0 {
-		t.Errorf("expected 0 vision models, got %d", counts[model.CategoryVision])
+	if pred.FitStatus != Advanced {
+		t.Errorf("expected 32 GB to spill to RAM on 24 GB GPU, got %v", pred.FitStatus)
 	}
 }
 
@@ -601,11 +543,11 @@ func TestCheckFit_WeightSizeWithinVRAM(t *testing.T) {
 	}
 }
 
-func TestPredict_AppleSilicon(t *testing.T) {
+func TestPredictAll_AppleSilicon(t *testing.T) {
 	models := []model.Model{
-		{Name: "apple-ok", MinVRAMGB: 20, MinRAMGB: 32, Categories: []model.Category{model.CategoryChat},
+		{Name: "apple-ok", MinVRAMGB: 20, MinRAMGB: 32,
 			ParametersRaw: 30000000000, Quantization: "Q4_K_M", UseCase: "Instruction following"},
-		{Name: "apple-heavy", MinVRAMGB: 40, MinRAMGB: 64, Categories: []model.Category{model.CategoryChat},
+		{Name: "apple-heavy", MinVRAMGB: 40, MinRAMGB: 64,
 			ParametersRaw: 70000000000, Quantization: "Q4_K_M", UseCase: "Instruction following"},
 	}
 	gpu := &hardware.GPU{
@@ -619,7 +561,7 @@ func TestPredict_AppleSilicon(t *testing.T) {
 		t.Error("Apple Silicon not detected")
 	}
 
-	results := p.Predict(model.CategoryChat)
+	results := p.PredictAll()
 	// apple-ok: 30B * 0.625 = 18.75GB, max(20, 18.75) = 20, 20*1.1=22 ≤ 60 → Recommended
 	// apple-heavy: 70B * 0.625 = 43.75GB, max(40, 43.75) = 43.75, 43.75*1.1=48.125 ≤ 60 → Recommended
 	if len(results) != 2 {

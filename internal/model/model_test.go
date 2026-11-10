@@ -14,214 +14,126 @@ func marshalModels(t *testing.T, models []Model) []byte {
 	return raw
 }
 
-func TestLoadCatalog_Valid(t *testing.T) {
+func TestLoadCatalog_Legacy(t *testing.T) {
 	models := []Model{
-		{Name: "meta-llama/Llama-3.1-8B-Instruct", MinVRAMGB: 5.0, MinRAMGB: 8.0, ParametersRaw: 8000000000, Quantization: "Q4_K_M", IsMoE: false},
-		{Name: "mistralai/Mixtral-8x7B-Instruct", MinVRAMGB: 26.0, MinRAMGB: 32.0, ParametersRaw: 46000000000, IsMoE: true, ActiveParameters: 12000000000},
+		{Name: "meta-llama/Llama-3.1-8B-Instruct", MinVRAMGB: 5.0, MinRAMGB: 8.0, ParametersRaw: 8000000000, Quantization: "Q4_K_M", PipelineTag: "text-generation"},
+		{Name: "mistralai/Mixtral-8x7B-Instruct", MinVRAMGB: 26.0, MinRAMGB: 32.0, ParametersRaw: 46000000000, IsMoE: true, ActiveParameters: 12000000000, PipelineTag: "text-generation"},
 	}
-	raw := marshalModels(t, models)
-	loaded, err := LoadCatalog(raw)
+	loaded, err := LoadCatalog(marshalModels(t, models))
 	if err != nil {
 		t.Fatalf("LoadCatalog: %v", err)
 	}
 	if len(loaded) != 2 {
 		t.Fatalf("expected 2 models, got %d", len(loaded))
 	}
-	if loaded[0].Name != models[0].Name {
-		t.Errorf("name = %q, want %q", loaded[0].Name, models[0].Name)
+	if loaded[0].Type != "generative" {
+		t.Errorf("type = %q, want generative", loaded[0].Type)
 	}
-	if loaded[0].MinVRAMGB != 5.0 {
-		t.Errorf("min_vram = %f, want 5.0", loaded[0].MinVRAMGB)
+	if loaded[0].Density != "dense" {
+		t.Errorf("density = %q, want dense", loaded[0].Density)
 	}
-	if loaded[0].IsMoE {
-		t.Error("Llama should not be MoE")
-	}
-	if !loaded[1].IsMoE {
-		t.Error("Mixtral should be MoE")
+	if loaded[1].Density != "moe" || !loaded[1].IsMoE {
+		t.Errorf("expected MoE, got %+v", loaded[1])
 	}
 	if loaded[1].ActiveParameters != 12000000000 {
 		t.Errorf("active_params = %d, want 12000000000", loaded[1].ActiveParameters)
 	}
+	if loaded[0].BenchmarkIDs[0] != models[0].Name {
+		t.Errorf("benchmark IDs = %v", loaded[0].BenchmarkIDs)
+	}
 }
 
 func TestLoadCatalog_InvalidJSON(t *testing.T) {
-	_, err := LoadCatalog([]byte("not json{{{"))
-	if err == nil {
+	if _, err := LoadCatalog([]byte("not json{{{")); err == nil {
 		t.Fatal("expected error for invalid JSON")
 	}
 }
 
-func TestLoadCatalog_MultipleCategories(t *testing.T) {
-	models := []Model{
-		{
-			Name:   "meta-llama/Llama-3.2-11B-Vision-Instruct",
-			UseCase: "Multimodal, vision and text",
-			Capabilities: []string{"vision"},
-		},
-	}
-	raw := marshalModels(t, models)
-	loaded, err := LoadCatalog(raw)
+func TestLoadCatalogV2(t *testing.T) {
+	raw := []byte(`{
+		"schema": 5,
+		"models": [{
+			"id": "Qwen/Qwen3.8-27B",
+			"display": "Qwen3.8 27B",
+			"provider": "Qwen",
+			"params_total": 27800000000,
+			"type": "generative",
+			"density": "moe",
+			"arch": "qwen35moe",
+			"moe": true,
+			"experts": 8,
+			"experts_active": 3,
+			"ctx_train": 32768,
+			"downloads": 1234,
+			"likes": 56,
+			"quants": [{
+				"label": "Q8_0",
+				"bits": 8,
+				"weights_bytes": 9000,
+				"download_bytes": 9500,
+				"sources": [{"repo": "unsloth/Qwen3.8-27B-GGUF", "downloads": 10, "preferred": true, "weights_bytes": 9000, "files": [{"path": "q8.gguf", "size": 9000}]}]
+			}, {
+				"label": "Q4_K_M",
+				"bits": 4,
+				"weights_bytes": 4200,
+				"download_bytes": 4400,
+				"sources": [{"repo": "bartowski/Qwen3.8-27B-GGUF", "downloads": 20, "preferred": true, "weights_bytes": 4200, "files": [{"path": "q4.gguf", "size": 4200}]}]
+			}]
+		}]
+	}`)
+	models, err := LoadCatalogV2(raw)
 	if err != nil {
-		t.Fatalf("LoadCatalog: %v", err)
+		t.Fatalf("LoadCatalogV2: %v", err)
 	}
-	if len(loaded) != 1 {
-		t.Fatalf("expected 1 model, got %d", len(loaded))
+	if len(models) != 1 {
+		t.Fatalf("models = %d, want 1", len(models))
 	}
+	m := models[0]
+	if m.ParameterCount != "27.8B" {
+		t.Errorf("parameter count = %q, want 27.8B", m.ParameterCount)
+	}
+	if m.Quantization != "Q4_K_M" {
+		t.Errorf("default quant = %q, want Q4_K_M", m.Quantization)
+	}
+	if m.WeightsBytes != 4200 {
+		t.Errorf("weights bytes = %d, want 4200", m.WeightsBytes)
+	}
+	if m.QuantCount != 2 {
+		t.Errorf("quant count = %d, want 2", m.QuantCount)
+	}
+	if m.ActiveParameters != 27800000000*3/8 {
+		t.Errorf("active params = %d", m.ActiveParameters)
+	}
+	if len(m.BenchmarkIDs) != 2 {
+		t.Errorf("benchmark IDs = %v, want 2 repos", m.BenchmarkIDs)
+	}
+	if q := m.Quants[0].PreferredSource(); q == nil || q.Repo != "unsloth/Qwen3.8-27B-GGUF" {
+		t.Errorf("preferred source = %+v", q)
+	}
+}
 
-	// Should have Vision (from capabilities + use_case) but also General (since it's text-generation)
-	cats := loaded[0].Categories
-	if len(cats) == 0 {
-		t.Fatal("expected at least 1 category")
+func TestLoadCatalogV2_WrongSchema(t *testing.T) {
+	if _, err := LoadCatalogV2([]byte(`{"schema":4,"models":[]}`)); err == nil {
+		t.Fatal("expected schema error")
 	}
-	hasVision := false
-	for _, c := range cats {
-		if c == CategoryVision {
-			hasVision = true
+}
+
+func TestInferType(t *testing.T) {
+	cases := []struct {
+		m    Model
+		want string
+	}{
+		{Model{PipelineTag: "automatic-speech-recognition"}, "asr"},
+		{Model{PipelineTag: "text-to-speech"}, "tts"},
+		{Model{PipelineTag: "image-text-to-text"}, "vlm"},
+		{Model{PipelineTag: "text-to-image"}, "diffusion"},
+		{Model{PipelineTag: "feature-extraction"}, "embedding"},
+		{Model{PipelineTag: "text-generation"}, "generative"},
+		{Model{ID: "deepseek-ai/DeepSeek-OCR"}, "ocr"},
+	}
+	for _, c := range cases {
+		if got := inferType(&c.m); got != c.want {
+			t.Errorf("inferType(%+v) = %q, want %q", c.m, got, c.want)
 		}
-	}
-	if !hasVision {
-		t.Errorf("expected Vision category, got %v", cats)
-	}
-}
-
-func TestCategorize_Coding(t *testing.T) {
-	m := Model{UseCase: "Code generation and completion"}
-	Categorize(&m)
-	if len(m.Categories) == 0 || m.Categories[0] != CategoryCoding {
-		t.Errorf("expected Coding, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_CodingAdvanced(t *testing.T) {
-	m := Model{UseCase: "Advanced reasoning, math and code"}
-	Categorize(&m)
-	hasCoding := false
-	for _, c := range m.Categories {
-		if c == CategoryCoding {
-			hasCoding = true
-		}
-	}
-	if !hasCoding {
-		t.Errorf("expected Coding, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_Chat(t *testing.T) {
-	m := Model{UseCase: "Instruction following, chat"}
-	Categorize(&m)
-	if len(m.Categories) == 0 || m.Categories[0] != CategoryChat {
-		t.Errorf("expected Chat, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_VisionByCapability(t *testing.T) {
-	m := Model{UseCase: "General purpose", Capabilities: []string{"vision"}}
-	Categorize(&m)
-	hasVision := false
-	for _, c := range m.Categories {
-		if c == CategoryVision {
-			hasVision = true
-		}
-	}
-	if !hasVision {
-		t.Errorf("expected Vision, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_VisionByPipeline(t *testing.T) {
-	m := Model{UseCase: "Multimodal, on-device (effective 2B)", PipelineTag: "image-text-to-text"}
-	Categorize(&m)
-	hasVision := false
-	for _, c := range m.Categories {
-		if c == CategoryVision {
-			hasVision = true
-		}
-	}
-	if !hasVision {
-		t.Errorf("expected Vision from pipeline_tag, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_Translation(t *testing.T) {
-	m := Model{UseCase: "Audio transcription (state-of-the-art accuracy)", PipelineTag: "automatic-speech-recognition"}
-	Categorize(&m)
-	if len(m.Categories) == 0 || m.Categories[0] != CategoryTranslation {
-		t.Errorf("expected Translation, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_General(t *testing.T) {
-	m := Model{UseCase: "General purpose"}
-	Categorize(&m)
-	if len(m.Categories) == 0 || m.Categories[0] != CategoryGeneral {
-		t.Errorf("expected General, got %v", m.Categories)
-	}
-}
-
-func TestCategorize_GeneralEdgeDeploy(t *testing.T) {
-	m := Model{UseCase: "Lightweight, edge deployment"}
-	Categorize(&m)
-	if len(m.Categories) == 0 || m.Categories[0] != CategoryGeneral {
-		t.Errorf("expected General, got %v", m.Categories)
-	}
-}
-
-func TestAllCategories_Order(t *testing.T) {
-	expected := []Category{
-		CategoryCoding,
-		CategoryChat,
-		CategoryGeneral,
-		CategoryVision,
-		CategoryTranslation,
-	}
-	got := AllCategories()
-	if len(got) != len(expected) {
-		t.Fatalf("len = %d, want %d", len(got), len(expected))
-	}
-	for i := range expected {
-		if got[i] != expected[i] {
-			t.Errorf("position %d: got %q, want %q", i, got[i], expected[i])
-		}
-	}
-}
-
-func TestLoadCatalog_CaseInsensitiveCategoryMatch(t *testing.T) {
-	models := []Model{
-		{Name: "test-model", UseCase: "INSTRUCTION FOLLOWING, CHAT"},
-	}
-	raw := marshalModels(t, models)
-	loaded, err := LoadCatalog(raw)
-	if err != nil {
-		t.Fatalf("LoadCatalog: %v", err)
-	}
-	if len(loaded[0].Categories) == 0 || loaded[0].Categories[0] != CategoryChat {
-		t.Errorf("case-insensitive chat match failed, got %v", loaded[0].Categories)
-	}
-}
-
-func TestLoadCatalog_EmptyFile(t *testing.T) {
-	models := []Model{}
-	raw := marshalModels(t, models)
-	loaded, err := LoadCatalog(raw)
-	if err != nil {
-		t.Fatalf("LoadCatalog: %v", err)
-	}
-	if len(loaded) != 0 {
-		t.Errorf("expected 0 models, got %d", len(loaded))
-	}
-}
-
-func TestLoadCatalog_IntVRAMValues(t *testing.T) {
-	// JSON numbers may be int or float — both must unmarshal into float64.
-	raw := []byte(`[{"name":"test","min_vram_gb":8,"min_ram_gb":16,"use_case":"General purpose"}]`)
-	loaded, err := LoadCatalog(raw)
-	if err != nil {
-		t.Fatalf("LoadCatalog: %v", err)
-	}
-	if loaded[0].MinVRAMGB != 8.0 {
-		t.Errorf("min_vram (int→float64): got %f, want 8.0", loaded[0].MinVRAMGB)
-	}
-	if loaded[0].MinRAMGB != 16.0 {
-		t.Errorf("min_ram (int→float64): got %f, want 16.0", loaded[0].MinRAMGB)
 	}
 }

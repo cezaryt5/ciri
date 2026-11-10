@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
+	"flag"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/cezaryt5/ciri/data"
@@ -32,12 +36,11 @@ func main() {
 	specs := result.Specs
 	gpu := result.GPU
 
-	modelsData, err := ciridata.FS.ReadFile("hf_models.json")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to read embedded hf_models.json: %v\n", err)
-		os.Exit(1)
-	}
-	models, err := model.LoadCatalog(modelsData)
+	catalogPath := flag.String("catalog", os.Getenv("CIRI_CATALOG"),
+		"path to a schema-5 model/quant catalog (default: embedded hf_models.json)")
+	flag.Parse()
+
+	models, err := loadModels(*catalogPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to load model catalog: %v\n", err)
 		os.Exit(1)
@@ -58,8 +61,42 @@ func main() {
 	app := tui.NewApp(specs, gpu, models, pred, benchDB, Version)
 	program := tea.NewProgram(app, tea.WithAltScreen())
 
-	if _, err := program.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "TUI error: %v\n", err)
+	restoreBackground := tui.BlackTerminalBackground()
+	_, runErr := program.Run()
+	restoreBackground()
+	if runErr != nil {
+		fmt.Fprintf(os.Stderr, "TUI error: %v\n", runErr)
 		os.Exit(1)
 	}
+}
+
+func loadModels(path string) ([]model.Model, error) {
+	if path != "" {
+		raw, err := os.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("read %s: %w", path, err)
+		}
+		return model.LoadCatalogV2(raw)
+	}
+
+	if blob, err := ciridata.FS.ReadFile("catalog_v2.json.gz"); err == nil {
+		zr, zerr := gzip.NewReader(bytes.NewReader(blob))
+		if zerr == nil {
+			raw, rerr := io.ReadAll(zr)
+			_ = zr.Close()
+			if rerr == nil {
+				if models, merr := model.LoadCatalogV2(raw); merr == nil {
+					return models, nil
+				} else {
+					fmt.Fprintf(os.Stderr, "embedded catalog_v2 invalid: %v; using legacy catalog\n", merr)
+				}
+			}
+		}
+	}
+
+	raw, err := ciridata.FS.ReadFile("hf_models.json")
+	if err != nil {
+		return nil, fmt.Errorf("read embedded hf_models.json: %w", err)
+	}
+	return model.LoadCatalog(raw)
 }

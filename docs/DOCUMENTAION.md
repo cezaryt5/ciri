@@ -415,48 +415,106 @@ The terminal UI uses [Bubble Tea](https://github.com/charmbracelet/bubbletea) (t
 
 ### Root model: `App` — `internal/tui/app.go:31`
 
-Manages seven screens via a `screen` enum:
+Manages eight screens via a `screen` enum:
 
 | Screen | Model | File | Purpose |
 |--------|-------|------|---------|
-| `screenHome` | `homeModel` | `home.go` | 4-option menu (Explore, Download, Local LLMs, Settings) |
+| `screenHome` | `homeModel` | `home.go` | 5-option menu (Chat, Explore, Downloads, Local LLMs, Settings) |
+| `screenChat` | `chatModel` | `chat.go` | dsh-backed local chat + inference analysis via `internal/inference` |
 | `screenExplore` | `exploreModel` | `explore.go` | Full model catalog browser with search, sort & filters |
-| `screenDetail` | `detailModel` | `detail.go` | Full model specs & fit assessment |
+| `screenDetail` | `detailModel` | `detail.go` | Full model specs, fit assessment, and download actions |
 | `screenBenchmarks` | `benchmarksModel` | `benchmarks.go` | Benchmark rows for selected model |
-| `screenDownload` | `downloadModel` | `download.go` | Coming-soon placeholder |
+| `screenDownload` | `downloadsModel` | `download.go` | Download manager: active queue + session history (see `DOWNLOADS.md`) |
 | `screenLocal` | `localModel` | `local.go` | Coming-soon placeholder |
 | `screenSettings` | `settingsModel` | `settings.go` | Hardware info display |
 
 ### Screen flow
 
 ```
-Home ──Enter──► Explore ──Enter──► Detail ──b──► Benchmarks
-  ▲                │                                   │
-  ├──Esc───────────┘              ◄───────Esc──────────┘
+Home ──Enter──► Chat (dsh + inference analysis)
   │
-  ├──► Download     (Esc → Home)
+  ├──Enter──► Explore ──Enter──► Detail ──b──► Benchmarks
+  ▲                │                    │
+  ├──Esc───────────┘                    │
+  │                                     │
+  ├──► Downloads  ◄─────Enter───────────┘   (Esc → origin; transfer keeps running)
   ├──► Local        (Esc → Home)
   └──► Settings     (Esc → Home)
 ```
 
-### CIRI logo + hardware header
+### CIRI wordmark + hardware chrome
 
-When on the home screen, the 6-line CIRI ASCII art is rendered side-by-side with system info (GPU name, VRAM, RAM, CPU, Ollama/llama.cpp status) above all boxes. Only shown on the home screen to avoid visual clutter on other pages.
+The home screen shows the CIRI block wordmark as a centered hero. Every other
+screen is wrapped in the hardware chrome: two telemetry lines above the content
+panel plus the key-hint footer. The whole frame is painted on the design
+system's void-black canvas (`paintCanvas` in `styles.go`), so the user's
+terminal background never shows through — white/grey content on black, with
+signal red used for the frame crosshairs, the list cursor, and status alerts.
 
-### Hardware bar — `hardware_bar.go:11`
+### Hardware bar — `hardware_bar.go`
 
-Always-visible status line at the top (in the title box) showing: `CPU | RAM avail/total | GPU name + VRAM`
+Always-visible status lines above the content panel:
+
+- **GPU** — name, utilization %, used/total VRAM, temperature, power draw
+- **CPU** — model, core count, utilization %, package temperature
+- **Memory** — available / total RAM with used percentage (red at 90%+)
+- **Runtimes** — Ollama / llama.cpp detection badges
+
+All live values come from `hardware.Sample()` (see [Live telemetry](#live-telemetry))
+and refresh every 2 seconds. Unknown platform fields render as `—`.
+
+### Live telemetry
+
+Implemented in `internal/hardware/telemetry.go` with per-platform collectors in
+`telemetry_linux.go` / `telemetry_windows.go` / `telemetry_darwin.go`.
+`hardware.Sample(gpu *GPU) Metrics` returns a point-in-time snapshot:
+
+| Field | Source |
+|-------|--------|
+| `CPUPercent` | `gopsutil cpu.Percent` (delta between samples; the first call primes with a 100 ms window) |
+| `CPUTempC` | Linux hwmon (`coretemp`, `k10temp`, `zenpower`, `cpu_thermal`) max sensor |
+| `MemUsedGB` / `MemTotalGB` | `gopsutil mem.VirtualMemory` |
+| `GPUUtilPct`, `VRAMUsedGB`, `GPUTempC`, `GPUPowerW` | Linux/Windows: `nvidia-smi --query-gpu=utilization.gpu,memory.used,temperature.gpu,power.draw`; Linux AMD fallback: `amdgpu` sysfs (`gpu_busy_percent`, `mem_info_vram_used`, hwmon temp/power) |
+| `VRAMTotalGB` | AMD sysfs only; NVIDIA totals come from the GPU database |
+
+A zero value means "not available" and the chrome renders a dash. macOS has no
+unprivileged GPU utilization source (`powermetrics` requires root), so those
+fields stay zero there while CPU/RAM keep ticking (unified memory is reported
+through the RAM fields).
+
+The TUI drives sampling with `tea.Tick` every `telemetryInterval` (2 s). Each
+tick re-arms the timer and dispatches `hardware.Sample` as its own `tea.Cmd`,
+so the `nvidia-smi` subprocess never blocks `Update` — the Bubble Tea rule that
+no I/O happens on the event loop.
 
 ### Home screen (`home.go`)
 
-A menu with four items:
+A menu with five items:
 
-1. **Explore Models** → `screenExplore`
-2. **Download Models** → `screenDownload`
-3. **Manage Local LLMs** → `screenLocal`
-4. **Settings / Hardware Configs** → `screenSettings`
+1. **Chat** → `screenChat`
+2. **Explore Models** → `screenExplore`
+3. **Downloads** → `screenDownload` (download manager: active, queued, history)
+4. **Manage Local LLMs** → `screenLocal`
+5. **Settings / Hardware Configs** → `screenSettings`
 
 Navigated with ↑/↓, selected with Enter/Space.
+
+### Chat screen (`chat.go` + `inference/proxy.go`)
+
+The Chat screen drives a local OpenAI-compatible `llama-server` through DeepSeek Harness headless JSON mode. Each user prompt spawns `dsh --profile headless --json`; the dsh workspace is `CIRI_CHAT_WORKSPACE` (default `~/.ciri/chat`) and sessions resume by dsh session id.
+
+A local transparent proxy sits between dsh and `llama-server`. It records each model call without changing the response bytes seen by dsh:
+
+- request sampling settings and max tokens
+- prompt/cached tokens, prompt-processing throughput
+- generated tokens, generation throughput, TTFT, answer TTFT, reasoning estimate
+- per-chunk token pacing (p50 / p95)
+- context/KV usage and cache-hit percentage
+- GPU utilization, memory-controller utilization, VRAM, temperature, power, clocks and throttle reasons at 250 ms resolution
+
+`Ctrl+O` expands the analysis across every call in the Ciri session; `Ctrl+S` exports the records and a Chrome Trace/Perfetto timeline with timestamped hardware counters. `Ctrl+R` re-probes `/props` after restarting the server with a different context or KV configuration.
+
+The analysis is runtime-level. Kernel-level CUDA traces require Nsight Systems and are outside this screen.
 
 ### Explore screen (`explore.go`)
 
@@ -469,25 +527,26 @@ Compact llmfit-style bar with five boxed controls:
 | Control | Key | Values |
 |---------|-----|--------|
 | **Search** | `/` | Type to filter by name, quant, or parameter count |
-| **Sort** | `s` / `A` / `D` | Name, Params, Speed, Disk, Date, Fit — direction toggled by `A` (asc) / `D` (desc) |
+| **Sort** | `s` / `S` | `s` cycles the column (Name, Params, Speed, Disk, Date, Fit). `S` tap flips ascending/descending; pressing `S` twice within 500 ms opens the arrow sort editor: `←`/`→` pick the column, `↑`/`↓` set ascending/descending, `Esc` closes it |
 | **Type** | `t` | All, Coding, Chat, Vision, Translation, General |
 | **Fit** | `f` | All, Perfect, Good, Slow |
 | **Shown** | — | `N/M` (filtered / total) |
 
-Search highlights the box in bold cyan when active. Sort, Type, and Fit boxes are highlighted when the selection deviates from the default.
+Search highlights the box in stark white when active. Sort, Type, and Fit boxes
+are highlighted when the selection deviates from the default.
 
 #### Table columns (no Provider column)
 
 | Column | Content |
 |--------|---------|
-| `●` | Fit indicator (green = Perfect, yellow = Good, grey = Slow) + ▶ for selected row |
+| `●` | Fit indicator (white = Perfect, grey = Good, red = Slow) + ▌ for selected row |
 | **Model** | Shows `provider/model-name` (e.g. `meta-llama/Llama-3.2-3B-Instruct`); gets all freed width from removed Provider column |
 | **Params** | Parameter count string (e.g. `7B`, `70B`) |
 | **tok/s** | Estimated tokens/sec, prefixed with `~` for spill models |
 | **Quant** | Quantization format (e.g. `Q4_K_M`, `FP16`) |
 | **Disk** | Model weight footprint — **dynamic units**: `<1GB` → `320MB`, `>=1GB` → `8.2G` |
 | **Mode** | `GPU` (Recommended) / `CPU` (spills) |
-| **Mem%** | VRAM usage % with color: green `<50%`, yellow `≤80%`, red `>80%`, em-dash if no GPU |
+| **Mem%** | VRAM usage % with color: grey `<50%`, white `≤80%`, red `>80%`, em-dash if no GPU |
 | **Ctx** | Context length (k/M suffix) |
 | **Date** | Release date (YYYY-MM) |
 | **Fit** | Perfect, Good, or Slow — colored text matches fit status |
@@ -747,10 +806,19 @@ Every function with its file location, callers, and purpose is documented as a G
 
 #### `download.go`
 
-| Function | Line | Callers | Purpose |
-|----------|------|---------|---------|
-| `downloadUpdate` | 10 | `app.go:106` | Esc→Home |
-| `downloadView` | 17 | `app.go:158` | "Coming soon" placeholder |
+The download manager keeps the app-level queue and session history. Downloads
+are enqueued from `detail.go` using the catalog's per-quant file metadata.
+`App.Update` feeds `downloadsModel.handleMsg` on every screen, so transfers keep
+running while the user browses the catalog.
+
+| Method | Purpose |
+|--------|---------|
+| `newDownloadsModel` | Creates the queue and event channel |
+| `enqueue` | Adds a job, deduplicates, and either starts it or opens the concurrency prompt |
+| `pumpQueue` | Starts queued jobs under the current sequential/concurrent limit |
+| `handleMsg` | Consumes progress/files/done messages from the downloader |
+| `update` | Manager keys: Esc back, X cancel, C clear history, C/S prompt choice |
+| `view` | Active/queued/history rows with scroll indicators |
 
 #### `local.go`
 

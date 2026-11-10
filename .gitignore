@@ -10,17 +10,21 @@ internal/hardware/example.go
 # agents
 .kilo
 .opencode
+.tmp/
 
 # goreleaser output
 dist/
 
 # built binary
 ciri
+server
 
 # asciinema recordings
 *.cast
-# built binary
-ciri
-
-# asciinema recording
 .cast
+
+# scraper output (regenerate with tools/scrape_gguf.py)
+data/gguf_catalog.json
+data/gguf_catalog.json.state.json
+data/gguf_catalog.json.empty.json
+data/catalog_v2.json
